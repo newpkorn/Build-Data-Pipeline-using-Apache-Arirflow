@@ -1,0 +1,44 @@
+from datetime import datetime
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from airflow.hooks.base import BaseHook
+import pandas as pd
+from sqlalchemy import create_engine
+import logging
+
+CSV_FILE_PATH = "/opt/airflow/data/people.csv"
+TABLE_NAME = "people"
+
+def load_csv_to_mysql():
+    df = pd.read_csv(CSV_FILE_PATH)
+
+    connection = BaseHook.get_connection("mysql_default")
+
+    engine = create_engine(
+        f"mysql+pymysql://{connection.login}:{connection.password}"
+        f"@{connection.host}:{connection.port}/{connection.schema}"
+    )
+
+    with engine.begin() as conn:
+        df.to_sql(name=TABLE_NAME, con=conn, if_exists="replace", index=False)
+
+    logging.info(f"Loaded {len(df)} rows into {TABLE_NAME}")
+
+
+default_args = {
+    "retries": 1,
+}
+
+with DAG(
+    dag_id="csv_to_mysql",
+    start_date=datetime(2024, 1, 1),
+    schedule=None,
+    catchup=False,
+    default_args=default_args,
+    tags=["demo"],
+) as dag:
+
+    load_csv_task = PythonOperator(
+        task_id="load_csv_to_mysql",
+        python_callable=load_csv_to_mysql,
+    )
