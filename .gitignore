@@ -1,2 +1,8 @@
 .env
 __pycache__/
+
+# ignore all nested files and folders under logs
+logs/**
+
+.DS_Store
+.vscode
