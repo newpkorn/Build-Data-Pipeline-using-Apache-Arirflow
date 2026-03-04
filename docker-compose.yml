@@ -42,6 +42,12 @@ services:
       interval: 10s
       retries: 5
 
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
   airflow-init:
     image: apache/airflow:2.9.3
     env_file:
@@ -50,16 +56,31 @@ services:
       postgres:
         condition: service_healthy
     command: >
-      bash -c "airflow db migrate && airflow users create --username ${AIRFLOW_ADMIN_USERNAME} --password ${AIRFLOW_ADMIN_PASSWORD} --firstname ${AIRFLOW_ADMIN_FIRSTNAME} --lastname ${AIRFLOW_ADMIN_LASTNAME} --role Admin --email ${AIRFLOW_ADMIN_EMAIL} || true"
+      bash -c "
+        airflow db migrate &&
+        # create admin user if not exists
+        airflow users create --username $${AIRFLOW_ADMIN_USERNAME} --password $${AIRFLOW_ADMIN_PASSWORD} --firstname $${AIRFLOW_ADMIN_FIRSTNAME} --lastname $${AIRFLOW_ADMIN_LASTNAME} --role Admin --email $${AIRFLOW_ADMIN_EMAIL} || true &&
+        # ensure mysql connection for covid19 exists
+        airflow connections add covid19 --conn-type mysql --conn-host mysql --conn-port 3306 --conn-login $${MYSQL_USER} --conn-password $${MYSQL_PASSWORD} --conn-schema $${MYSQL_DB} || true &&
+        # ensure mysql_default connection points to the mysql container
+        airflow connections delete mysql_default || true &&
+        airflow connections add mysql_default --conn-type mysql --conn-host mysql --conn-port 3306 --conn-login $${MYSQL_USER} --conn-password $${MYSQL_PASSWORD} --conn-schema $${MYSQL_DB} || true
+      "
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: 'true'
+      AIRFLOW__SMTP__SMTP_HOST: mailhog
+      AIRFLOW__SMTP__SMTP_PORT: 1025
+      AIRFLOW__SMTP__SMTP_MAIL_FROM: airflow@example.com
+      AIRFLOW__SMTP__SMTP_STARTTLS: 'False'
+      AIRFLOW__SMTP__SMTP_SSL: 'False'
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}
       _PIP_ADDITIONAL_REQUIREMENTS: "pandas sqlalchemy pymysql"
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./data:/opt/airflow/data
+      - ./config:/opt/airflow/config
 
   webserver:
     image: apache/airflow:2.9.3
@@ -73,6 +94,11 @@ services:
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: "True"
+      AIRFLOW__SMTP__SMTP_HOST: mailhog
+      AIRFLOW__SMTP__SMTP_PORT: 1025
+      AIRFLOW__SMTP__SMTP_MAIL_FROM: airflow@example.com
+      AIRFLOW__SMTP__SMTP_STARTTLS: 'False'
+      AIRFLOW__SMTP__SMTP_SSL: 'False'
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}
       _PIP_ADDITIONAL_REQUIREMENTS: "pandas sqlalchemy pymysql"
     command: webserver
@@ -82,6 +108,7 @@ services:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./data:/opt/airflow/data
+      - ./config:/opt/airflow/config
 
   scheduler:
     image: apache/airflow:2.9.3
@@ -95,6 +122,11 @@ services:
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: 'true'
+      AIRFLOW__SMTP__SMTP_HOST: mailhog
+      AIRFLOW__SMTP__SMTP_PORT: 1025
+      AIRFLOW__SMTP__SMTP_MAIL_FROM: airflow@example.com
+      AIRFLOW__SMTP__SMTP_STARTTLS: 'False'
+      AIRFLOW__SMTP__SMTP_SSL: 'False'
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}
       _PIP_ADDITIONAL_REQUIREMENTS: "pandas sqlalchemy pymysql"
     command: scheduler
@@ -102,6 +134,7 @@ services:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./data:/opt/airflow/data
+      - ./config:/opt/airflow/config
 
 volumes:
   postgres-db-volume:
