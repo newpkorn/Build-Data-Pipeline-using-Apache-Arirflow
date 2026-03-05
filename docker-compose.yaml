@@ -7,12 +7,16 @@ x-airflow-common: &airflow-common
   environment: &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}
-    AIRFLOW__CORE__LOAD_EXAMPLES: "true"
+    AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    AIRFLOW__CORE__STORE_SERIALIZED_DAGS: "false"
+    AIRFLOW__SCHEDULER__STANDALONE_DAG_PROCESSOR: "false"
 
     # ลด resource ให้เหมาะกับ VM เล็ก
     AIRFLOW__WEBSERVER__WORKERS: 1
-    AIRFLOW__CORE__PARALLELISM: 2
+    AIRFLOW__CORE__PARALLELISM: 1
     AIRFLOW__CORE__DAG_CONCURRENCY: 1
+    AIRFLOW__WEBSERVER__WORKER_CLASS: sync
+    AIRFLOW__WEBSERVER__WORKER_REFRESH_BATCH_SIZE: 1
 
     # Mail config
     AIRFLOW__SMTP__SMTP_HOST: mailhog
@@ -20,6 +24,10 @@ x-airflow-common: &airflow-common
     AIRFLOW__SMTP__SMTP_MAIL_FROM: airflow@example.com
     AIRFLOW__SMTP__SMTP_STARTTLS: "False"
     AIRFLOW__SMTP__SMTP_SSL: "False"
+
+    # Base URL for Airflow webserver behind proxy
+    AIRFLOW__WEBSERVER__BASE_URL: ${AIRFLOW__WEBSERVER__BASE_URL}
+    AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX: "True"
 
     _PIP_ADDITIONAL_REQUIREMENTS: "pandas sqlalchemy pymysql"
 

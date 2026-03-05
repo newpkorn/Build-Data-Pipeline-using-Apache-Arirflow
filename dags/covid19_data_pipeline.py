@@ -112,17 +112,28 @@ def generate_report(**context):
             writer.writerow([cases, deaths, recovered, updated])
 
     if inserted == 0:
-        html_content = "<h2>📊 COVID-19 Global Report</h2><p>⚠️ No new data updated in this run.</p>"
+        html_content = """<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body>
+<h2>📊 COVID-19 Global Report</h2>
+<p>⚠️ No new data updated in this run.</p>
+</body>
+</html>"""
     else:
-        html_content = f"""
-        <h2>📊 COVID-19 Global Report</h2>
-        <ul>
-            <li><b>Cases:</b> {cases:,}</li>
-            <li><b>Deaths:</b> {deaths:,}</li>
-            <li><b>Recovered:</b> {recovered:,}</li>
-            <li><b>Last Update:</b> {datetime.fromtimestamp(updated/1000) if updated else 'N/A'}</li>
-        </ul>
-        """
+        html_content = f"""<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body>
+<h2>📊 COVID-19 Global Report</h2>
+<ul>
+    <li><b>Cases:</b> {cases:,}</li>
+    <li><b>Deaths:</b> {deaths:,}</li>
+    <li><b>Recovered:</b> {recovered:,}</li>
+    <li><b>Last Update:</b> {datetime.fromtimestamp(updated/1000) if updated else 'N/A'}</li>
+</ul>
+</body>
+</html>""".strip()
 
     context["ti"].xcom_push(key="html_report", value=html_content)
     return "READY"
@@ -165,6 +176,7 @@ with DAG(
         subject="📊 COVID19 Global Report",
         html_content="{{ ti.xcom_pull(key='html_report') }}",
         files=[TEMP_CSV_PATH],
+        mime_charset='utf-8',
     )
 
     load >> report >> send_email
