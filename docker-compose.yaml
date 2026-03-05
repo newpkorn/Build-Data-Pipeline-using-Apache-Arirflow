@@ -41,6 +41,7 @@ services:
 
   postgres:
     image: postgres:13
+    container_name: postgres
     env_file:
       - .env
     environment:
@@ -56,6 +57,7 @@ services:
 
   mysql:
     image: mysql:8.0
+    container_name: mysql
     command: --default-authentication-plugin=mysql_native_password
     env_file:
       - .env
@@ -74,6 +76,7 @@ services:
       retries: 5
 
   mailhog:
+    container_name: mailhog
     image: mailhog/mailhog
     ports:
       - "1025:1025"
@@ -81,6 +84,7 @@ services:
 
   airflow-init:
     <<: *airflow-common
+    container_name: airflow-init
     env_file:
       - .env
     depends_on:
@@ -115,6 +119,7 @@ services:
 
   webserver:
     <<: *airflow-common
+    container_name: airflow-webserver
     command: airflow webserver
     ports:
       - "8080:8080"
@@ -124,6 +129,7 @@ services:
 
   scheduler:
     <<: *airflow-common
+    container_name: airflow-scheduler
     command: airflow scheduler
     depends_on:
       webserver:
