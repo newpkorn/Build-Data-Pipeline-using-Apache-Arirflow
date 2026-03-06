@@ -1,0 +1,7 @@
+requests
+apache-airflow-providers-mysql
+pandas
+pyarrow
+matplotlib
+sqlalchemy
+pymysql

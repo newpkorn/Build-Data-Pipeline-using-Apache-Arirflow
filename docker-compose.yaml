@@ -1,7 +1,7 @@
 version: "3.8"
 
 x-airflow-common: &airflow-common
-  image: apache/airflow:2.9.3
+  build: .
   env_file:
     - .env
   environment: &airflow-common-env
@@ -29,8 +29,6 @@ x-airflow-common: &airflow-common
     AIRFLOW__WEBSERVER__BASE_URL: ${AIRFLOW__WEBSERVER__BASE_URL}
     AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX: "True"
 
-    _PIP_ADDITIONAL_REQUIREMENTS: "pandas sqlalchemy pymysql"
-
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
@@ -51,7 +49,7 @@ services:
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
       interval: 10s
       retries: 5
 
@@ -71,7 +69,7 @@ services:
     volumes:
       - mysql-db-volume:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_PASSWORD}"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_PASSWORD}" ]
       interval: 10s
       retries: 5
 
@@ -110,7 +108,6 @@ services:
       AIRFLOW__SMTP__SMTP_STARTTLS: 'False'
       AIRFLOW__SMTP__SMTP_SSL: 'False'
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}
-      _PIP_ADDITIONAL_REQUIREMENTS: "pandas sqlalchemy pymysql"
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs

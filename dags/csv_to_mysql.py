@@ -7,7 +7,9 @@ from sqlalchemy import create_engine
 import logging
 
 CSV_FILE_PATH = "/opt/airflow/data/people.csv"
+# CSV_FILE_PATH = "/opt/airflow/data/raw_customer_reviews.csv"
 TABLE_NAME = "people"
+# TABLE_NAME = "raw_customer_reviews"
 
 def load_csv_to_mysql():
     df = pd.read_csv(CSV_FILE_PATH)
