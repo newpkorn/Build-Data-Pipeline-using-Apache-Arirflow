@@ -17,17 +17,17 @@ MYSQL_CONN_ID = "mysql_default"
 TABLE_NAME = "bot_exchange_rates"
 
 # BOT API Configuration
-# สมัคร API Key ได้ที่: https://apiportal.bot.or.th/ (ต้อง Subscribe Product: Stat-ExchangeRate)
-# หมายเหตุ: ใช้ค่า 'Client ID' จาก App ที่สร้างใน Portal เป็น API Key
-API_URL = "https://apigw1.bot.or.th/bot/public/Stat-ExchangeRate/v2/DAILY_AVG_EXG_RATE/"
-
-# พยายามดึง Key จาก Airflow Variable ถ้าไม่มีจะใช้ค่า Default
-API_KEY = Variable.get("bot_api_key", default_var="bot_api_key_default")
+# สมัคร API Key ได้ที่: https://portal.api.bot.or.th/ (New Portal)
+# หมายเหตุ: ใช้ค่า API Key จาก Developer Portal ใหม่
+API_URL = "https://gateway.api.bot.or.th/Stat-ExchangeRate/v2/DAILY_AVG_EXG_RATE/"
 
 def extract_data(**context):
     """
     Extract: ดึงข้อมูลจาก BOT API ตามวันที่ run (execution_date)
     """
+    # ดึง Key ภายใน function เพื่อลด load ของ Airflow Scheduler และป้องกัน error หากยังไม่สร้าง Variable
+    api_key = Variable.get("bot_api_key", default_var="bot_api_key_default")
+
     # ใช้ data_interval_end หรือ ds (วันที่รัน) เพื่อดึงข้อมูลของวันนั้นๆ
     # หมายเหตุ: ข้อมูล BOT มักจะมาช้ากว่าปัจจุบันเล็กน้อย อาจต้องปรับ start_period ย้อนหลังถ้าจำเป็น
     execution_date = context['ds'] 
@@ -35,7 +35,7 @@ def extract_data(**context):
     logging.info(f"Fetching BOT data for date: {execution_date}")
     
     headers = {
-        "X-IBM-Client-Id": API_KEY,
+        "Authorization": api_key,
         "Accept": "application/json"
     }
     
