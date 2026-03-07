@@ -52,7 +52,7 @@ This pipeline:
 ## 🐳 Run the Project
 
 ``` bash
-docker-compose up
+docker compose up
 ```
 
 Open:

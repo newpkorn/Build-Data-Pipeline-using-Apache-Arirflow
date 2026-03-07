@@ -1,18 +1,22 @@
 version: "3.8"
 
 x-airflow-common: &airflow-common
-  image: apache/airflow:2.9.3
+  build: .
   env_file:
     - .env
   environment: &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}
-    AIRFLOW__CORE__LOAD_EXAMPLES: "true"
+    AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    AIRFLOW__CORE__STORE_SERIALIZED_DAGS: "false"
+    AIRFLOW__SCHEDULER__STANDALONE_DAG_PROCESSOR: "false"
 
     # ลด resource ให้เหมาะกับ VM เล็ก
     AIRFLOW__WEBSERVER__WORKERS: 1
-    AIRFLOW__CORE__PARALLELISM: 2
+    AIRFLOW__CORE__PARALLELISM: 1
     AIRFLOW__CORE__DAG_CONCURRENCY: 1
+    AIRFLOW__WEBSERVER__WORKER_CLASS: sync
+    AIRFLOW__WEBSERVER__WORKER_REFRESH_BATCH_SIZE: 1
 
     # Mail config
     AIRFLOW__SMTP__SMTP_HOST: mailhog
@@ -21,7 +25,9 @@ x-airflow-common: &airflow-common
     AIRFLOW__SMTP__SMTP_STARTTLS: "False"
     AIRFLOW__SMTP__SMTP_SSL: "False"
 
-    _PIP_ADDITIONAL_REQUIREMENTS: "pandas sqlalchemy pymysql"
+    # Base URL for Airflow webserver behind proxy
+    AIRFLOW__WEBSERVER__BASE_URL: ${AIRFLOW__WEBSERVER__BASE_URL}
+    AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX: "True"
 
   volumes:
     - ./dags:/opt/airflow/dags
@@ -33,6 +39,7 @@ services:
 
   postgres:
     image: postgres:13
+    container_name: postgres
     env_file:
       - .env
     environment:
@@ -42,12 +49,13 @@ services:
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
       interval: 10s
       retries: 5
 
   mysql:
     image: mysql:8.0
+    container_name: mysql
     command: --default-authentication-plugin=mysql_native_password
     env_file:
       - .env
@@ -61,11 +69,12 @@ services:
     volumes:
       - mysql-db-volume:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_PASSWORD}"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_PASSWORD}" ]
       interval: 10s
       retries: 5
 
   mailhog:
+    container_name: mailhog
     image: mailhog/mailhog
     ports:
       - "1025:1025"
@@ -73,6 +82,7 @@ services:
 
   airflow-init:
     <<: *airflow-common
+    container_name: airflow-init
     env_file:
       - .env
     depends_on:
@@ -98,7 +108,6 @@ services:
       AIRFLOW__SMTP__SMTP_STARTTLS: 'False'
       AIRFLOW__SMTP__SMTP_SSL: 'False'
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}
-      _PIP_ADDITIONAL_REQUIREMENTS: "pandas sqlalchemy pymysql"
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
@@ -107,6 +116,7 @@ services:
 
   webserver:
     <<: *airflow-common
+    container_name: airflow-webserver
     command: airflow webserver
     ports:
       - "8080:8080"
@@ -116,6 +126,7 @@ services:
 
   scheduler:
     <<: *airflow-common
+    container_name: airflow-scheduler
     command: airflow scheduler
     depends_on:
       webserver:
