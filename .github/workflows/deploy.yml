@@ -17,7 +17,7 @@ jobs:
                   username: ${{ secrets.VM_USER }}
                   key: ${{ secrets.SSH_KEY }}
                   script: |
-                      cd airflow-project
+                      cd Build-Data-Pipeline-using-Apache-Arirflow
                       git pull
                       docker compose down
                       docker compose up -d --build
