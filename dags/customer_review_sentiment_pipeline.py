@@ -14,8 +14,8 @@ import base64
 MYSQL_CONN_ID = "mysql_default"
 TABLE_NAME = "customer_sentiment_results"
 S3_BUCKET_NAME = "my-data-lake-bucket" # Simulate an S3 bucket for "big data" storage
-RAW_REVIEWS_PATH = "/tmp/raw_customer_reviews.csv"
-SENTIMENT_DATA_PATH = "/tmp/customer_sentiment_data.parquet"
+RAW_REVIEWS_PATH = "/tmp/raw_customer_reviews_{{ ds }}.csv"
+SENTIMENT_DATA_PATH = "/tmp/customer_sentiment_data_{{ ds }}.parquet"
 DASHBOARD_IMAGE_PATH = "/tmp/sentiment_dashboard_{{ ds }}.png" # Dynamic image path
 
 def extract_reviews(**context):
@@ -24,6 +24,9 @@ def extract_reviews(**context):
     In a real-world scenario, this would connect to a data source like S3, a data lake, or a database.
     For this example, we generate dummy data.
     """
+    # Resolve dynamic path
+    raw_path = RAW_REVIEWS_PATH.replace("{{ ds }}", context['ds'])
+
     num_reviews = 100000 # Simulate a large number of reviews
     reviews = []
     products = ["Laptop", "Smartphone", "Headphones", "Smartwatch", "Monitor"]
@@ -50,8 +53,8 @@ def extract_reviews(**context):
         })
 
     df_reviews = pd.DataFrame(reviews)
-    df_reviews.to_csv(RAW_REVIEWS_PATH, index=False)
-    logging.info(f"Extracted and simulated {num_reviews} reviews to {RAW_REVIEWS_PATH}")
+    df_reviews.to_csv(raw_path, index=False)
+    logging.info(f"Extracted and simulated {num_reviews} reviews to {raw_path}")
 
 def analyze_sentiment(**context):
     """
@@ -59,7 +62,11 @@ def analyze_sentiment(**context):
     This is a simplified rule-based sentiment analysis for demonstration.
     In a real-world scenario, this would use more sophisticated NLP models (e.g., NLTK, spaCy, Hugging Face).
     """
-    df_reviews = pd.read_csv(RAW_REVIEWS_PATH)
+    # Resolve dynamic paths
+    raw_path = RAW_REVIEWS_PATH.replace("{{ ds }}", context['ds'])
+    sentiment_path = SENTIMENT_DATA_PATH.replace("{{ ds }}", context['ds'])
+
+    df_reviews = pd.read_csv(raw_path)
     
     def get_sentiment(text):
         text_lower = text.lower()
@@ -75,14 +82,17 @@ def analyze_sentiment(**context):
     # Select relevant columns for sentiment data
     df_sentiment = df_reviews[["review_id", "product_name", "review_date", "sentiment", "rating"]]
     
-    df_sentiment.to_parquet(SENTIMENT_DATA_PATH, index=False)
-    logging.info(f"Analyzed sentiment for {len(df_reviews)} reviews and saved to {SENTIMENT_DATA_PATH}")
+    df_sentiment.to_parquet(sentiment_path, index=False)
+    logging.info(f"Analyzed sentiment for {len(df_reviews)} reviews and saved to {sentiment_path}")
 
 def load_sentiment_data(**context):
     """
     Load: Save to MySQL with Dynamic Schema
     """
-    data_df = pd.read_parquet(SENTIMENT_DATA_PATH)
+    # Resolve dynamic path
+    sentiment_path = SENTIMENT_DATA_PATH.replace("{{ ds }}", context['ds'])
+
+    data_df = pd.read_parquet(sentiment_path)
     if data_df.empty:
         logging.info("No data to load into MySQL")
         return
@@ -141,7 +151,10 @@ def generate_sentiment_dashboard(**context):
     """
     Generate a bar chart of sentiment distribution and save it as a PNG image.
     """
-    df_sentiment = pd.read_parquet(SENTIMENT_DATA_PATH)
+    # Resolve dynamic path
+    sentiment_path = SENTIMENT_DATA_PATH.replace("{{ ds }}", context['ds'])
+
+    df_sentiment = pd.read_parquet(sentiment_path)
     
     if df_sentiment.empty:
         logging.info("No sentiment data to generate dashboard.")
@@ -241,7 +254,7 @@ default_args = {
     "start_date": datetime(2023, 1, 1), # Start date in the past
     "email": ["non-reply@example.com"], # Change to your email
     "email_on_failure": True,
-    "retries": 1,
+    "retries": 3,
     "retry_delay": timedelta(minutes=5),
 }
 
