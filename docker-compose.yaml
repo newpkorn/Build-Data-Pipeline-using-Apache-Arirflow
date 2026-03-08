@@ -1,5 +1,3 @@
-version: "3.8"
-
 x-airflow-common: &airflow-common
   build: .
   env_file:
@@ -139,3 +137,4 @@ services:
 volumes:
   postgres-db-volume:
   mysql-db-volume:
+  mailhog-volume:
