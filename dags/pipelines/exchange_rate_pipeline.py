@@ -21,8 +21,6 @@ TABLE_NAME = "global_exchange_rates"
 
 BOT_API = "https://api.exchangerate-api.com/v4/latest/THB"
 
-OUTPUT_FILE = "/tmp/bot_rates.csv"
-
 
 def fetch_bot_rate(**context):
 
@@ -147,17 +145,63 @@ def data_quality_check(**context):
 
 def export_csv(**context):
 
+    ds_nodash = context["ds_nodash"]
+    output_path = f"/tmp/global_exchange_rate_{ds_nodash}.csv"
+
     mysql_hook = MySqlHook(mysql_conn_id=MYSQL_CONN_ID)
 
     df = mysql_hook.get_pandas_df(
         f"SELECT * FROM {TABLE_NAME} ORDER BY rate_date DESC"
     )
 
-    df.to_csv(OUTPUT_FILE, index=False)
+    # Ensure 'rate' is numeric to avoid formatting errors
+    df['rate'] = pd.to_numeric(df['rate'], errors='coerce')
+
+    df.to_csv(output_path, index=False)
+
+    # Generate HTML Report
+    if not df.empty:
+        latest_date = df['rate_date'].max()
+        latest_df = df[df['rate_date'] == latest_date]
+        
+        # Select major currencies for preview
+        major_currencies = ['USD', 'EUR', 'JPY', 'GBP', 'CNY', 'SGD']
+        preview_df = latest_df[latest_df['currency_code'].isin(major_currencies)].sort_values('currency_code')
+        
+        html_content = f"""
+        <html>
+        <head>
+            <style>
+                body {{ font-family: Arial, sans-serif; }}
+                table {{ border-collapse: collapse; width: 100%; max-width: 500px; }}
+                th, td {{ padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }}
+                th {{ background-color: #f2f2f2; }}
+            </style>
+        </head>
+        <body>
+            <h2 style="color: #2c3e50;">📊 Global Exchange Rates Report</h2>
+            <p><strong>Date:</strong> {latest_date}</p>
+            <p>Here are the rates for major currencies (Base: THB):</p>
+            <table>
+                <tr><th>Currency</th><th>Rate</th></tr>
+        """
+        for _, row in preview_df.iterrows():
+            html_content += f"<tr><td>{row['currency_code']}</td><td>{row['rate']:.4f}</td></tr>"
+            
+        html_content += """
+            </table>
+            <p>Please find the complete data in the attached CSV file.</p>
+        </body>
+        </html>
+        """
+    else:
+        html_content = "<p>No data available.</p>"
+
+    context["ti"].xcom_push(key="html_report", value=html_content)
 
 
 with DAG(
-    dag_id="bot_fx_pipeline_portfolio",
+    dag_id="bot_fx_pipeline",
     start_date=datetime(2024,1,1),
     schedule_interval="0 13 * * 1-5",
     catchup=False,
@@ -190,15 +234,16 @@ with DAG(
 
     export = PythonOperator(
         task_id="export_csv",
-        python_callable=export_csv
+        python_callable=export_csv,
+        provide_context=True,
     )
 
     email = EmailOperator(
         task_id="send_email",
         to="test@example.com",
-        subject="BOT FX Rate",
-        html_content="BOT FX CSV Attached",
-        files=[OUTPUT_FILE]
+        subject="BOT FX Rate {{ ds_nodash }}",
+        html_content="{{ task_instance.xcom_pull(task_ids='export_csv', key='html_report') }}",
+        files=[f"/tmp/global_exchange_rate_{{{{ ds_nodash }}}}.csv"],
     )
 
     fetch >> schema >> insert >> dq >> export >> email
