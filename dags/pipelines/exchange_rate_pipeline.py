@@ -1,203 +1,51 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.email import EmailOperator
-from airflow.providers.mysql.hooks.mysql import MySqlHook
-from airflow.models import Variable
-
-# from utils.bot_api_client import fetch_bot_rates
-# from utils.schema_manager import sync_schema
-# from utils.data_quality import check_null_rates
-# from utils.alerting import slack_alert
 
 from datetime import datetime, timedelta
-import requests
-import pandas as pd
-import os
-import json
-import csv
+
+# Import refactored functions
+from utils.api_client import fetch_exchange_rates
+from utils.db_manager import update_schema, load_df_to_db
+from utils.data_quality import check_null_rates_for_date
+from utils.reporting import create_csv_report, generate_html_summary
 
 MYSQL_CONN_ID = "mysql_default"
 TABLE_NAME = "global_exchange_rates"
-
-BOT_API = "https://api.exchangerate-api.com/v4/latest/THB"
-
-
-def fetch_bot_rate(**context):
-
-    r = requests.get(BOT_API)
-    if r.status_code != 200:
-        raise ValueError(f"API failed with status {r.status_code}: {r.text}")
-
-    data = r.json()
-
-    if "rates" not in data:
-        raise KeyError(f"'rates' key not found in API response: {data}")
-
-    rates = data["rates"]
-
-    rows = []
-    for currency, rate in rates.items():
-
-        rows.append({
-            "rate_date": data["date"],
-            "period": data["date"],
-            "currency": currency,
-            "currency_code": currency,
-            "rate": rate
-        })
-
-    df = pd.DataFrame(rows)
-
-    context["ti"].xcom_push(key="df", value=df.to_json())
+API_URL = "https://api.exchangerate-api.com/v4/latest/THB"
 
 
-def detect_and_update_schema(**context):
-
-    df = pd.read_json(context["ti"].xcom_pull(key="df"))
-
-    mysql_hook = MySqlHook(mysql_conn_id=MYSQL_CONN_ID)
-    conn = mysql_hook.get_conn()
-    cursor = conn.cursor()
-
-    cursor.execute(f"""
-    CREATE TABLE IF NOT EXISTS {TABLE_NAME} (
-        id INT AUTO_INCREMENT PRIMARY KEY
-    )
-    """)
-
-    cursor.execute(f"""
-    SELECT COLUMN_NAME
-    FROM INFORMATION_SCHEMA.COLUMNS
-    WHERE TABLE_NAME = '{TABLE_NAME}'
-    """)
-
-    existing_cols = [c[0] for c in cursor.fetchall()]
-
-    for col in df.columns:
-
-        if col not in existing_cols:
-
-            cursor.execute(
-                f"ALTER TABLE {TABLE_NAME} ADD COLUMN {col} TEXT"
-            )
-
-    conn.commit()
+def _extract_and_load(**context):
+    """Extract, update schema, and load data."""
+    df = fetch_exchange_rates(API_URL)
+    
+    # Add columns to match the old structure for compatibility if needed
+    df['period'] = df['rate_date']
+    df['currency'] = df['currency_code']
+    
+    update_schema(df, TABLE_NAME, MYSQL_CONN_ID)
+    load_df_to_db(df, TABLE_NAME, MYSQL_CONN_ID)
+    
+    # Push the execution date for downstream tasks
+    context['ti'].xcom_push(key='execution_date_str', value=context['ds'])
 
 
-def insert_data(**context):
-
-    df = pd.read_json(context["ti"].xcom_pull(key="df"))
-
-    mysql_hook = MySqlHook(mysql_conn_id=MYSQL_CONN_ID)
-    conn = mysql_hook.get_conn()
-    cursor = conn.cursor()
-
-    # Defensive check: Ensure 'period' column exists, if not, create from 'rate_date'
-    if 'period' not in df.columns and 'rate_date' in df.columns:
-        df['period'] = df['rate_date']
-
-    # Clear existing data for the date to prevent duplicates
-    if not df.empty and "rate_date" in df.columns:
-        dates = df["rate_date"].unique()
-        for d in dates:
-            cursor.execute(f"DELETE FROM {TABLE_NAME} WHERE rate_date = %s", (d,))
-
-    for _, row in df.iterrows():
-
-        cursor.execute(f"""
-        INSERT INTO {TABLE_NAME}
-        (rate_date,period,currency,currency_code,rate)
-        VALUES (%s,%s,%s,%s,%s)
-        """, (
-            row["rate_date"],
-            row["period"],
-            row["currency"],
-            row["currency_code"],
-            row["rate"]
-        ))
-
-    conn.commit()
+def _data_quality_check(**context):
+    """Perform data quality check for the current run date."""
+    execution_date = context['ti'].xcom_pull(key='execution_date_str')
+    if execution_date:
+        check_null_rates_for_date(TABLE_NAME, MYSQL_CONN_ID, execution_date)
 
 
-def data_quality_check(**context):
-
-    df = pd.read_json(context["ti"].xcom_pull(key="df"))
-
-    if df.empty:
-        return
-
-    dates = df["rate_date"].unique().tolist()
-    placeholders = ', '.join(['%s'] * len(dates))
-
-    mysql_hook = MySqlHook(mysql_conn_id=MYSQL_CONN_ID)
-
-    records = mysql_hook.get_records(f"""
-    SELECT COUNT(*)
-    FROM {TABLE_NAME}
-    WHERE rate IS NULL
-    AND rate_date IN ({placeholders})
-    """, parameters=dates)
-
-    if records[0][0] > 0:
-
-        raise ValueError("Data Quality Check Failed")
-
-
-def export_csv(**context):
-
-    ds_nodash = context["ds_nodash"]
-    output_path = f"/tmp/global_exchange_rate_{ds_nodash}.csv"
-
-    mysql_hook = MySqlHook(mysql_conn_id=MYSQL_CONN_ID)
-
-    df = mysql_hook.get_pandas_df(
-        f"SELECT * FROM {TABLE_NAME} ORDER BY rate_date DESC"
-    )
-
-    # Ensure 'rate' is numeric to avoid formatting errors
-    df['rate'] = pd.to_numeric(df['rate'], errors='coerce')
-
-    df.to_csv(output_path, index=False)
-
-    # Generate HTML Report
-    if not df.empty:
-        latest_date = df['rate_date'].max()
-        latest_df = df[df['rate_date'] == latest_date]
-        
-        # Select major currencies for preview
-        major_currencies = ['USD', 'EUR', 'JPY', 'GBP', 'CNY', 'SGD']
-        preview_df = latest_df[latest_df['currency_code'].isin(major_currencies)].sort_values('currency_code')
-        
-        html_content = f"""
-        <html>
-        <head>
-            <style>
-                body {{ font-family: Arial, sans-serif; }}
-                table {{ border-collapse: collapse; width: 100%; max-width: 500px; }}
-                th, td {{ padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }}
-                th {{ background-color: #f2f2f2; }}
-            </style>
-        </head>
-        <body>
-            <h2 style="color: #2c3e50;">📊 Global Exchange Rates Report</h2>
-            <p><strong>Date:</strong> {latest_date}</p>
-            <p>Here are the rates for major currencies (Base: THB):</p>
-            <table>
-                <tr><th>Currency</th><th>Rate</th></tr>
-        """
-        for _, row in preview_df.iterrows():
-            html_content += f"<tr><td>{row['currency_code']}</td><td>{row['rate']:.4f}</td></tr>"
-            
-        html_content += """
-            </table>
-            <p>Please find the complete data in the attached CSV file.</p>
-        </body>
-        </html>
-        """
-    else:
-        html_content = "<p>No data available.</p>"
-
-    context["ti"].xcom_push(key="html_report", value=html_content)
+def _prepare_email(**context):
+    """Create CSV and HTML content for the email."""
+    ds = context['ds']
+    output_path = f"/tmp/global_exchange_rate_{ds}.csv"
+    
+    create_csv_report(output_path, TABLE_NAME, MYSQL_CONN_ID)
+    html_content = generate_html_summary(TABLE_NAME, MYSQL_CONN_ID, ds)
+    
+    context['ti'].xcom_push(key='html_report', value=html_content)
 
 
 with DAG(
@@ -212,38 +60,27 @@ with DAG(
     }
 ) as dag:
 
-    fetch = PythonOperator(
-        task_id="fetch_bot_rate",
-        python_callable=fetch_bot_rate
+    extract_and_load_task = PythonOperator(
+        task_id="extract_and_load",
+        python_callable=_extract_and_load,
     )
 
-    schema = PythonOperator(
-        task_id="detect_schema_change",
-        python_callable=detect_and_update_schema
-    )
-
-    insert = PythonOperator(
-        task_id="insert_data",
-        python_callable=insert_data
-    )
-
-    dq = PythonOperator(
+    data_quality_check_task = PythonOperator(
         task_id="data_quality_check",
-        python_callable=data_quality_check
+        python_callable=_data_quality_check,
     )
 
-    export = PythonOperator(
-        task_id="export_csv",
-        python_callable=export_csv,
-        provide_context=True,
+    prepare_email_task = PythonOperator(
+        task_id="prepare_email",
+        python_callable=_prepare_email,
     )
 
     email = EmailOperator(
         task_id="send_email",
         to="test@example.com",
-        subject="BOT FX Rate {{ ds_nodash }}",
-        html_content="{{ task_instance.xcom_pull(task_ids='export_csv', key='html_report') }}",
-        files=[f"/tmp/global_exchange_rate_{{{{ ds_nodash }}}}.csv"],
+        subject="Global FX Rate Report {{ ds }}",
+        html_content="{{ task_instance.xcom_pull(task_ids='prepare_email', key='html_report') }}",
+        files=[f"/tmp/global_exchange_rate_{{{{ ds }}}}.csv"],
     )
 
-    fetch >> schema >> insert >> dq >> export >> email
+    extract_and_load_task >> data_quality_check_task >> prepare_email_task >> email

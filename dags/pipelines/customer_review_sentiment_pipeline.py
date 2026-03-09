@@ -260,7 +260,7 @@ default_args = {
 
 with DAG(
     dag_id="customer_review_sentiment_pipeline",
-    schedule_interval="0 0 * * *", # Run once daily at midnight UTC
+    schedule_interval="@daily", # Run once daily at midnight UTC
     catchup=False,
     default_args=default_args,
     tags=["big_data", "sentiment_analysis", "customer_reviews", "dashboard"]

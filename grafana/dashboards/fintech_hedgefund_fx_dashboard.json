@@ -1,0 +1,1391 @@
+{
+  "title": "Global FX Intelligence Terminal",
+  "schemaVersion": 38,
+  "refresh": "30s",
+  "time": {
+    "from": "now-5y",
+    "to": "now"
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "currency",
+        "type": "query",
+        "datasource": "MySQL",
+        "refresh": 1,
+        "includeAll": true,
+        "query": "SELECT DISTINCT currency_code FROM global_exchange_rates ORDER BY currency_code"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Total Currencies",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "table",
+          "rawSql": "SELECT COUNT(DISTINCT currency_code) FROM global_exchange_rates"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "USD Rate",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 0
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "table",
+          "rawSql": "SELECT rate FROM global_exchange_rates WHERE currency_code='USD' ORDER BY rate_date DESC LIMIT 1"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "EUR Rate",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 0
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "table",
+          "rawSql": "SELECT rate FROM global_exchange_rates WHERE currency_code='EUR' ORDER BY rate_date DESC LIMIT 1"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "JPY Rate",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 0
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "table",
+          "rawSql": "SELECT rate FROM global_exchange_rates WHERE currency_code='JPY' ORDER BY rate_date DESC LIMIT 1"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Average FX Rate",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 0
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "table",
+          "rawSql": "SELECT AVG(rate) FROM global_exchange_rates"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "stat",
+      "title": "BOT Currency Count",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 0
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "table",
+          "rawSql": "SELECT COUNT(*) FROM bot_exchange_rates"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "type": "bargauge",
+      "title": "Top 10 Strongest Currencies",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "table",
+          "rawSql": "SELECT currency_code as metric, rate FROM global_exchange_rates ORDER BY rate DESC LIMIT 10"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "type": "bargauge",
+      "title": "Top 10 Weakest Currencies",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "table",
+          "rawSql": "SELECT currency_code as metric, rate FROM global_exchange_rates ORDER BY rate ASC LIMIT 10"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "type": "timeseries",
+      "title": "Currency Trend Explorer",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "type": "timeseries",
+      "title": "FX Volatility Proxy",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 22
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "\nSELECT rate_date as time, ABS(rate - LAG(rate) OVER (ORDER BY rate_date)) as value\nFROM global_exchange_rates\nWHERE currency_code='$currency'\n"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "type": "timeseries",
+      "title": "FX Moving Average",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 22
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "\nSELECT rate_date as time,\nAVG(rate) OVER (ORDER BY rate_date ROWS BETWEEN 30 PRECEDING AND CURRENT ROW) as value\nFROM global_exchange_rates\nWHERE currency_code='$currency'\n"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "type": "timeseries",
+      "title": "BOT Buy/Sell Spread",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT updated_at as time, (selling_rate-buying_rate) as value FROM bot_exchange_rates ORDER BY updated_at"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "type": "timeseries",
+      "title": "Quant FX Signal 1",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 42
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "type": "timeseries",
+      "title": "Quant FX Signal 2",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 42
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "type": "timeseries",
+      "title": "Quant FX Signal 3",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 50
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "type": "timeseries",
+      "title": "Quant FX Signal 4",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 50
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "type": "timeseries",
+      "title": "Quant FX Signal 5",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 58
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "type": "timeseries",
+      "title": "Quant FX Signal 6",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 58
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "type": "timeseries",
+      "title": "Quant FX Signal 7",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 66
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "type": "timeseries",
+      "title": "Quant FX Signal 8",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 66
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "type": "timeseries",
+      "title": "Quant FX Signal 9",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 74
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "type": "timeseries",
+      "title": "Quant FX Signal 10",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 74
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "type": "timeseries",
+      "title": "Quant FX Signal 11",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 82
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "type": "timeseries",
+      "title": "Quant FX Signal 12",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 82
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "type": "timeseries",
+      "title": "Quant FX Signal 13",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 90
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "type": "timeseries",
+      "title": "Quant FX Signal 14",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 90
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "type": "timeseries",
+      "title": "Quant FX Signal 15",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 98
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "type": "timeseries",
+      "title": "Quant FX Signal 16",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 98
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "type": "timeseries",
+      "title": "Quant FX Signal 17",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 106
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "type": "timeseries",
+      "title": "Quant FX Signal 18",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 106
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "type": "timeseries",
+      "title": "Quant FX Signal 19",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 114
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "type": "timeseries",
+      "title": "Quant FX Signal 20",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 114
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "type": "timeseries",
+      "title": "Quant FX Signal 21",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 122
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "type": "timeseries",
+      "title": "Quant FX Signal 22",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 122
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 35,
+      "type": "timeseries",
+      "title": "Quant FX Signal 23",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 130
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "type": "timeseries",
+      "title": "Quant FX Signal 24",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 130
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "type": "timeseries",
+      "title": "Quant FX Signal 25",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 138
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 38,
+      "type": "timeseries",
+      "title": "Quant FX Signal 26",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 138
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 39,
+      "type": "timeseries",
+      "title": "Quant FX Signal 27",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 146
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 40,
+      "type": "timeseries",
+      "title": "Quant FX Signal 28",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 146
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 41,
+      "type": "timeseries",
+      "title": "Quant FX Signal 29",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 154
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 42,
+      "type": "timeseries",
+      "title": "Quant FX Signal 30",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 154
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 43,
+      "type": "timeseries",
+      "title": "Quant FX Signal 31",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 162
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 44,
+      "type": "timeseries",
+      "title": "Quant FX Signal 32",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 162
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 45,
+      "type": "timeseries",
+      "title": "Quant FX Signal 33",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 170
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 46,
+      "type": "timeseries",
+      "title": "Quant FX Signal 34",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 170
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 47,
+      "type": "timeseries",
+      "title": "Quant FX Signal 35",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 178
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 48,
+      "type": "timeseries",
+      "title": "Quant FX Signal 36",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 178
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 49,
+      "type": "timeseries",
+      "title": "Quant FX Signal 37",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 186
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 50,
+      "type": "timeseries",
+      "title": "Quant FX Signal 38",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 186
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 51,
+      "type": "timeseries",
+      "title": "Quant FX Signal 39",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 194
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 52,
+      "type": "timeseries",
+      "title": "Quant FX Signal 40",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 194
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 53,
+      "type": "timeseries",
+      "title": "Quant FX Signal 41",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 202
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 54,
+      "type": "timeseries",
+      "title": "Quant FX Signal 42",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 202
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 55,
+      "type": "timeseries",
+      "title": "Quant FX Signal 43",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 210
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 56,
+      "type": "timeseries",
+      "title": "Quant FX Signal 44",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 210
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 57,
+      "type": "timeseries",
+      "title": "Quant FX Signal 45",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 218
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 58,
+      "type": "timeseries",
+      "title": "Quant FX Signal 46",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 218
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 59,
+      "type": "timeseries",
+      "title": "Quant FX Signal 47",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 226
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 60,
+      "type": "timeseries",
+      "title": "Quant FX Signal 48",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 226
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 61,
+      "type": "timeseries",
+      "title": "Quant FX Signal 49",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 234
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 62,
+      "type": "timeseries",
+      "title": "Quant FX Signal 50",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 234
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 63,
+      "type": "timeseries",
+      "title": "Quant FX Signal 51",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 242
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 64,
+      "type": "timeseries",
+      "title": "Quant FX Signal 52",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 242
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 65,
+      "type": "timeseries",
+      "title": "Quant FX Signal 53",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 250
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 66,
+      "type": "timeseries",
+      "title": "Quant FX Signal 54",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 250
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 67,
+      "type": "timeseries",
+      "title": "Quant FX Signal 55",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 258
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 68,
+      "type": "timeseries",
+      "title": "Quant FX Signal 56",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 258
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 69,
+      "type": "timeseries",
+      "title": "Quant FX Signal 57",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 266
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 70,
+      "type": "timeseries",
+      "title": "Quant FX Signal 58",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 266
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 71,
+      "type": "timeseries",
+      "title": "Quant FX Signal 59",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 274
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    },
+    {
+      "id": 72,
+      "type": "timeseries",
+      "title": "Quant FX Signal 60",
+      "datasource": "MySQL",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 274
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": "time_series",
+          "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date"
+        }
+      ]
+    }
+  ]
+}
