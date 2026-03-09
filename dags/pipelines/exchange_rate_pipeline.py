@@ -94,6 +94,10 @@ def insert_data(**context):
     conn = mysql_hook.get_conn()
     cursor = conn.cursor()
 
+    # Defensive check: Ensure 'period' column exists, if not, create from 'rate_date'
+    if 'period' not in df.columns and 'rate_date' in df.columns:
+        df['period'] = df['rate_date']
+
     # Clear existing data for the date to prevent duplicates
     if not df.empty and "rate_date" in df.columns:
         dates = df["rate_date"].unique()
