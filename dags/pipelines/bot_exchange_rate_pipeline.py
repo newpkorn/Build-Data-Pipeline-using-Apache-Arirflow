@@ -4,6 +4,11 @@
 # 2. Transform: Select desired currencies (USD, EUR, JPY, etc.) and convert data types
 # 3. Load: Save to MySQL table bot_exchange_rates
 
+# from utils.bot_api_client import fetch_bot_rates
+# from utils.schema_manager import sync_schema
+# from utils.data_quality import check_null_rates
+# from utils.alerting import slack_alert
+
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
@@ -203,6 +208,7 @@ default_args = {
     "email": ["bot_exchange_rate@email.com"], # <--- 
     "email_on_failure": True,            # <--- Enable email alerts on failure
     "retries": 1,
+    # "on_failure_callback": slack_alert, # <--- Slack alert on failure
     "retry_delay": timedelta(minutes=5),
 }
 

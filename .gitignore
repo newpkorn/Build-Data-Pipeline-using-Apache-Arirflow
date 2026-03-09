@@ -7,3 +7,9 @@ logs/*
 
 .DS_Store
 .vscode
+
+*.pyc
+
+data/*.csv
+
+.airflow

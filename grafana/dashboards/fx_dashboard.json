@@ -1,0 +1,23 @@
+{
+    "title": "FX Exchange Rate Dashboard",
+    "panels": [
+        {
+            "type": "timeseries",
+            "title": "USD -> THB Rate",
+            "targets": [
+                {
+                    "rawSql": "SELECT created_at as time, rate FROM exchange_rates WHERE target_currency='THB' ORDER BY created_at"
+                }
+            ]
+        },
+        {
+            "type": "stat",
+            "title": "Latest Rate",
+            "targets": [
+                {
+                    "rawSql": "SELECT rate FROM exchange_rates ORDER BY created_at DESC LIMIT 1"
+                }
+            ]
+        }
+    ]
+}
