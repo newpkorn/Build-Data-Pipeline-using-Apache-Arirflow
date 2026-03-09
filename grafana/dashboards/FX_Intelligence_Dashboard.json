@@ -1,0 +1,144 @@
+{
+    "annotations": {
+        "list": []
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "links": [],
+    "liveNow": false,
+    "refresh": "30s",
+    "schemaVersion": 38,
+    "style": "dark",
+    "tags": ["forex", "finance", "exchange-rate", "fintech"],
+    "templating": {
+        "list": [
+            {
+                "name": "currency",
+                "type": "query",
+                "datasource": "${DS_MYSQL}",
+                "refresh": 1,
+                "query": "SELECT DISTINCT currency_code FROM global_exchange_rates ORDER BY currency_code",
+                "includeAll": true,
+                "multi": false,
+                "current": {
+                    "text": "USD",
+                    "value": "USD"
+                }
+            }
+        ]
+    },
+    "time": {
+        "from": "now-5y",
+        "to": "now"
+    },
+    "timezone": "browser",
+    "title": "FX Intelligence Dashboard",
+    "version": 1,
+    "panels": [
+        {
+            "type": "stat",
+            "title": "Total Currencies",
+            "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+            "targets": [
+                {
+                    "format": "table",
+                    "rawSql": "SELECT COUNT(*) as total FROM global_exchange_rates",
+                    "refId": "A"
+                }
+            ]
+        },
+        {
+            "type": "stat",
+            "title": "USD Rate",
+            "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+            "targets": [
+                {
+                    "rawSql": "SELECT rate FROM global_exchange_rates WHERE currency_code='USD' ORDER BY rate_date DESC LIMIT 1",
+                    "refId": "A"
+                }
+            ]
+        },
+        {
+            "type": "stat",
+            "title": "EUR Rate",
+            "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+            "targets": [
+                {
+                    "rawSql": "SELECT rate FROM global_exchange_rates WHERE currency_code='EUR' ORDER BY rate_date DESC LIMIT 1",
+                    "refId": "A"
+                }
+            ]
+        },
+        {
+            "type": "stat",
+            "title": "GBP Rate",
+            "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+            "targets": [
+                {
+                    "rawSql": "SELECT rate FROM global_exchange_rates WHERE currency_code='GBP' ORDER BY rate_date DESC LIMIT 1",
+                    "refId": "A"
+                }
+            ]
+        },
+        {
+            "type": "bargauge",
+            "title": "Top 10 Currency Rates",
+            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+            "targets": [
+                {
+                    "rawSql": "SELECT currency_code as metric, rate FROM global_exchange_rates ORDER BY rate DESC LIMIT 10",
+                    "refId": "A"
+                }
+            ]
+        },
+        {
+            "type": "table",
+            "title": "Global Exchange Rates",
+            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+            "targets": [
+                {
+                    "rawSql": "SELECT currency_code, rate, rate_date FROM global_exchange_rates ORDER BY rate DESC",
+                    "refId": "A"
+                }
+            ]
+        },
+        {
+            "type": "timeseries",
+            "title": "BOT Buying vs Selling",
+            "gridPos": { "h": 8, "w": 24, "x": 0, "y": 12 },
+            "targets": [
+                {
+                    "rawSql": "SELECT updated_at as time, buying_rate as value, currency_code as metric FROM bot_exchange_rates",
+                    "refId": "A"
+                },
+                {
+                    "rawSql": "SELECT updated_at as time, selling_rate as value, currency_code as metric FROM bot_exchange_rates",
+                    "refId": "B"
+                }
+            ]
+        },
+        {
+            "type": "table",
+            "title": "BOT Official Exchange Rates",
+            "gridPos": { "h": 8, "w": 24, "x": 0, "y": 20 },
+            "targets": [
+                {
+                    "rawSql": "SELECT currency_code, currency_name, buying_rate, selling_rate, mid_rate, updated_at FROM bot_exchange_rates ORDER BY currency_code",
+                    "refId": "A"
+                }
+            ]
+        },
+        {
+            "type": "timeseries",
+            "title": "Currency Explorer",
+            "gridPos": { "h": 8, "w": 24, "x": 0, "y": 28 },
+            "targets": [
+                {
+                    "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date",
+                    "refId": "A"
+                }
+            ]
+        }
+    ]
+}
