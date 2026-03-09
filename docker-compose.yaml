@@ -1,37 +1,41 @@
+version: "3.9"
+
 x-airflow-common: &airflow-common
-  build: .
+  build:
+    context: .
+    dockerfile: docker/airflow/Dockerfile
+
   env_file:
     - .env
+
   environment: &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}
+
     AIRFLOW__CORE__LOAD_EXAMPLES: "false"
     AIRFLOW__CORE__STORE_SERIALIZED_DAGS: "false"
     AIRFLOW__SCHEDULER__STANDALONE_DAG_PROCESSOR: "false"
 
-    # ลด resource ให้เหมาะกับ VM เล็ก
     AIRFLOW__WEBSERVER__WORKERS: 1
-    AIRFLOW__CORE__PARALLELISM: 1
-    AIRFLOW__CORE__DAG_CONCURRENCY: 1
     AIRFLOW__WEBSERVER__WORKER_CLASS: sync
-    AIRFLOW__WEBSERVER__WORKER_REFRESH_BATCH_SIZE: 1
+    AIRFLOW__WEBSERVER__WEB_SERVER_MASTER_TIMEOUT: 300
+    AIRFLOW__WEBSERVER__WEB_SERVER_WORKER_TIMEOUT: 300
 
-    # Mail config
     AIRFLOW__SMTP__SMTP_HOST: mailhog
     AIRFLOW__SMTP__SMTP_PORT: 1025
     AIRFLOW__SMTP__SMTP_MAIL_FROM: airflow@example.com
     AIRFLOW__SMTP__SMTP_STARTTLS: "False"
     AIRFLOW__SMTP__SMTP_SSL: "False"
 
-    # Base URL for Airflow webserver behind proxy
-    AIRFLOW__WEBSERVER__BASE_URL: ${AIRFLOW__WEBSERVER__BASE_URL}
+    AIRFLOW__WEBSERVER__BASE_URL: ${AIRFLOW__WEBSERVER__BASE_URL:-http://localhost:8080}
     AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX: "True"
 
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
     - ./data:/opt/airflow/data
-    - ./config:/opt/airflow/config
+    - ./scripts:/opt/airflow/scripts
+    - ./config/airflow.cfg:/opt/airflow/airflow.cfg
 
 services:
 
@@ -40,10 +44,6 @@ services:
     container_name: postgres
     env_file:
       - .env
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
@@ -60,7 +60,7 @@ services:
     env_file:
       - .env
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DB}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
@@ -69,52 +69,38 @@ services:
     volumes:
       - mysql-db-volume:/var/lib/mysql
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_PASSWORD}" ]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}" ]
       interval: 10s
       retries: 5
 
   mailhog:
-    container_name: mailhog
     image: mailhog/mailhog
+    container_name: mailhog
     ports:
       - "1025:1025"
       - "8025:8025"
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin123
     volumes:
-      - mailhog-volume:/var/lib/mailhog/data
+      - grafana-storage:/var/lib/grafana
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
 
   airflow-init:
     <<: *airflow-common
     container_name: airflow-init
-    env_file:
-      - .env
     depends_on:
       postgres:
         condition: service_healthy
-    command: >
-      bash -c "
-        airflow db migrate &&
-        # create admin user if not exists
-        airflow users create --username $${AIRFLOW_ADMIN_USERNAME} --password $${AIRFLOW_ADMIN_PASSWORD} --firstname $${AIRFLOW_ADMIN_FIRSTNAME} --lastname $${AIRFLOW_ADMIN_LASTNAME} --role Admin --email $${AIRFLOW_ADMIN_EMAIL} || true &&
-        # ensure mysql connection for covid19 exists
-        airflow connections add covid19 --conn-type mysql --conn-host mysql --conn-port 3306 --conn-login $${MYSQL_USER} --conn-password $${MYSQL_PASSWORD} --conn-schema $${MYSQL_DB} || true &&
-        # ensure mysql_default connection points to the mysql container
-        airflow connections delete mysql_default || true &&
-        airflow connections add mysql_default --conn-type mysql --conn-host mysql --conn-port 3306 --conn-login $${MYSQL_USER} --conn-password $${MYSQL_PASSWORD} --conn-schema $${MYSQL_DB} || true
-      "
-    environment:
-      AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__CORE__LOAD_EXAMPLES: 'true'
-      AIRFLOW__SMTP__SMTP_HOST: mailhog
-      AIRFLOW__SMTP__SMTP_PORT: 1025
-      AIRFLOW__SMTP__SMTP_MAIL_FROM: airflow@example.com
-      AIRFLOW__SMTP__SMTP_STARTTLS: 'False'
-      AIRFLOW__SMTP__SMTP_SSL: 'False'
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}
-    volumes:
-      - ./dags:/opt/airflow/dags
-      - ./logs:/opt/airflow/logs
-      - ./data:/opt/airflow/data
-      - ./config:/opt/airflow/config
+      mysql:
+        condition: service_healthy
+    command: bash /opt/airflow/scripts/init_airflow.sh
 
   webserver:
     <<: *airflow-common
@@ -134,7 +120,15 @@ services:
       webserver:
         condition: service_started
 
+  triggerer:
+    <<: *airflow-common
+    container_name: airflow-triggerer
+    command: airflow triggerer
+    depends_on:
+      webserver:
+        condition: service_started
+
 volumes:
   postgres-db-volume:
   mysql-db-volume:
-  mailhog-volume:
+  grafana-storage:

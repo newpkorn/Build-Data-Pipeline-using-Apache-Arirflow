@@ -8,7 +8,7 @@ from airflow.operators.email import EmailOperator
 from airflow.hooks.mysql_hook import MySqlHook
 
 
-MYSQL_CONN_ID = "covid19"
+MYSQL_CONN_ID = "mysql_default"
 TABLE_NAME = "covid19_global_auto"
 TEMP_CSV_PATH = "/tmp/covid_report.csv"
 

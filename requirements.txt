@@ -1,7 +1,11 @@
-requests
-apache-airflow-providers-mysql
+pytest
 pandas
 pyarrow
+pymysql
+requests
+slack_sdk
 matplotlib
 sqlalchemy
-pymysql
+mysqlclient
+apache-airflow-providers-mysql
+apache-airflow-providers-slack
