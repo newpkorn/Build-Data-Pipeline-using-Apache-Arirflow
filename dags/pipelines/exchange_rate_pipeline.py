@@ -17,7 +17,7 @@ import json
 import csv
 
 MYSQL_CONN_ID = "mysql_default"
-TABLE_NAME = "bot_exchange_rates"
+TABLE_NAME = "global_exchange_rates"
 
 BOT_API = "https://api.exchangerate-api.com/v4/latest/THB"
 
@@ -123,13 +123,22 @@ def insert_data(**context):
 
 def data_quality_check(**context):
 
+    df = pd.read_json(context["ti"].xcom_pull(key="df"))
+
+    if df.empty:
+        return
+
+    dates = df["rate_date"].unique().tolist()
+    placeholders = ', '.join(['%s'] * len(dates))
+
     mysql_hook = MySqlHook(mysql_conn_id=MYSQL_CONN_ID)
 
     records = mysql_hook.get_records(f"""
     SELECT COUNT(*)
     FROM {TABLE_NAME}
     WHERE rate IS NULL
-    """)
+    AND rate_date IN ({placeholders})
+    """, parameters=dates)
 
     if records[0][0] > 0:
 
