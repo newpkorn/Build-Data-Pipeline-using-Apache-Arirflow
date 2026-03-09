@@ -42,7 +42,9 @@ def fetch_bot_rate(**context):
 
         rows.append({
             "rate_date": data["date"],
+            "period": data["date"],
             "currency": currency,
+            "currency_code": currency,
             "rate": rate
         })
 
@@ -102,11 +104,13 @@ def insert_data(**context):
 
         cursor.execute(f"""
         INSERT INTO {TABLE_NAME}
-        (rate_date,currency,rate)
-        VALUES (%s,%s,%s)
+        (rate_date,period,currency,currency_code,rate)
+        VALUES (%s,%s,%s,%s,%s)
         """, (
             row["rate_date"],
+            row["period"],
             row["currency"],
+            row["currency_code"],
             row["rate"]
         ))
 
