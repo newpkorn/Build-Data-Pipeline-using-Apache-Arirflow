@@ -11,7 +11,7 @@ This project demonstrates how to design, orchestrate, monitor, and test scalable
 The platform processes data from multiple sources including CSV files and external APIs.
 Apache Airflow orchestrates ETL pipelines which transform and load data into MySQL while providing monitoring and alerting capabilities.
 
-![Architecture](architecture.png)
+![Architecture](docs/architecture.png)
 
 ## Architecture Layers
 
@@ -69,7 +69,7 @@ Contains business pipelines such as:
 
 Entity relationships are defined in the ER diagram.
 
-![ER Diagram](er_diagram.png)
+![ER Diagram](docs/er_diagram.png)
 
 ---
 
@@ -288,7 +288,7 @@ Available dashboards include:
 
 Example Airflow UI:
 
-![Airflow UI](airflow_ui.png)
+![Airflow UI](docs/airflow_ui.png)
 
 ---
 
@@ -377,7 +377,13 @@ docker compose up -d --build
 
 # Example ETL Workflow
 
-Typical pipeline execution:
+The following diagram illustrates the end-to-end ETL workflow orchestrated by Apache Airflow.
+
+![ETL Pipeline](docs/dag_pipeline.png)
+
+The following diagram illustrates the end-to-end ETL workflow orchestrated by Apache Airflow.
+
+![ETL Pipeline](docs/dag_pipeline.png)
 
 ```
 Extract API / CSV Data
