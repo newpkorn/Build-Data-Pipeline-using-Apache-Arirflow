@@ -8,4 +8,4 @@ logs:
 	docker compose logs -f
 
 test:
-	docker exec airflow-webserver pytest tests/
+	docker exec -e PYTHONPATH=/opt/airflow/dags airflow-webserver pytest tests/

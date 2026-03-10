@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from dags.utils.data_quality import check_nulls, check_duplicates
+from utils.data_quality import check_nulls, check_duplicates
 
 
 def test_check_nulls_pass():
