@@ -20,3 +20,23 @@ Execution: {context['execution_date']}
         webhook,
         json={"text": message}
     )
+
+def discord_alert(context):
+
+    webhook = Variable.get("discord_webhook")
+
+    dag = context['dag'].dag_id
+    task = context['task_instance'].task_id
+
+    message = f"""
+🚨 **Airflow Failure**
+
+**DAG:** {dag}
+**Task:** {task}
+**Execution:** {context['execution_date']}
+"""
+
+    requests.post(
+        webhook,
+        json={"content": message}
+    )

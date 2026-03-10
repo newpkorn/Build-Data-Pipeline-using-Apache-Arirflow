@@ -8,6 +8,7 @@
 # from utils.schema_manager import sync_schema
 # from utils.data_quality import check_null_rates
 # from utils.alerting import slack_alert
+from utils.alerting import discord_alert
 
 from datetime import datetime, timedelta
 from airflow import DAG
@@ -209,6 +210,7 @@ default_args = {
     "email_on_failure": True,            # <--- Enable email alerts on failure
     "retries": 1,
     # "on_failure_callback": slack_alert, # <--- Slack alert on failure
+    "on_failure_callback": discord_alert, # <--- Discord alert on failure
     "retry_delay": timedelta(minutes=5),
 }
 

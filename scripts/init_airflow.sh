@@ -28,4 +28,9 @@ airflow connections add mysql_default \
   --conn-schema ${MYSQL_DB} \
 || true
 
+echo "Setting Airflow variables..."
+
+airflow variables set bot_api_key ${BOT_API_KEY} || true
+airflow variables set discord_webhook ${DISCORD_WEBHOOK} || true
+
 echo "Airflow init finished"
