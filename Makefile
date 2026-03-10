@@ -8,4 +8,4 @@ logs:
 	docker compose logs -f
 
 test:
-	pytest tests/
+	docker exec airflow-webserver pytest tests/

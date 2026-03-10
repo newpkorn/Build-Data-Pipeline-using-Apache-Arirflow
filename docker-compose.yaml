@@ -34,6 +34,7 @@ x-airflow-common: &airflow-common
     - ./data:/opt/airflow/data
     - ./scripts:/opt/airflow/scripts
     - ./config/airflow.cfg:/opt/airflow/airflow.cfg
+    - ./tests:/opt/airflow/tests
 
 services:
 
