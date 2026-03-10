@@ -1,4 +1,4 @@
-name: Deploy Airflow
+name: Airflow CI/CD Pipeline
 
 on:
     push:

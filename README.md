@@ -1,89 +1,436 @@
-# 🚀 Production-Ready CSV to MySQL Data Pipeline
+# Data Engineering Pipeline Platform with Apache Airflow
 
-![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
-![Airflow](https://img.shields.io/badge/Apache%20Airflow-Orchestration-red)
-![MySQL](https://img.shields.io/badge/MySQL-Database-orange)
-![Status](https://img.shields.io/badge/Status-Portfolio--Ready-success)
+A production-style data engineering platform built with Apache Airflow and Docker.
 
-------------------------------------------------------------------------
+This project demonstrates how to design, orchestrate, monitor, and test scalable ETL pipelines using modern data engineering practices including CI/CD, data quality validation, monitoring dashboards, and automated deployments.
 
-## 📌 Overview
+---
 
-A production-style Data Engineering project built with Apache Airflow,
-Docker, and MySQL.
+# System Architecture
 
-This pipeline:
-
--   Ingests CSV data
--   Loads data into MySQL
--   Uses PostgreSQL as Airflow metadata database
--   Is fully containerized
--   Supports environment-based configuration
-
-------------------------------------------------------------------------
-
-## 🎨 Architecture Diagram
+The platform processes data from multiple sources including CSV files and external APIs.
+Apache Airflow orchestrates ETL pipelines which transform and load data into MySQL while providing monitoring and alerting capabilities.
 
 ![Architecture](architecture.png)
 
-------------------------------------------------------------------------
+## Architecture Layers
 
-## 🧩 ER Diagram
+### 1. Data Sources
+
+- CSV datasets
+- External APIs
+- Financial exchange rate APIs
+
+### 2. Ingestion Layer
+
+Located in:
+
+```
+dags/ingestion/
+```
+
+Responsible for loading raw datasets into the system.
+
+Examples:
+
+- CSV ingestion
+- API data ingestion
+
+### 3. Processing Layer
+
+Located in:
+
+```
+dags/pipelines/
+```
+
+Contains business pipelines such as:
+
+- Exchange rate analytics
+- COVID-19 dataset processing
+- Customer review sentiment analysis
+- E-commerce analytics pipeline
+- FX anomaly detection
+
+### 4. Storage Layer
+
+- MySQL → analytical datasets
+- PostgreSQL → Airflow metadata
+
+### 5. Observability Layer
+
+- Grafana dashboards
+- Discord alert notifications
+- Airflow monitoring UI
+
+---
+
+# Data Model
+
+Entity relationships are defined in the ER diagram.
 
 ![ER Diagram](er_diagram.png)
 
-------------------------------------------------------------------------
+---
 
-## 📸 Airflow UI
+# Airflow DAG Architecture
+
+Airflow DAGs are organized into multiple logical groups.
+
+```
+dags/
+├── ingestion
+├── pipelines
+└── utils
+```
+
+### Ingestion DAGs
+
+```
+csv_to_mysql.py
+etl_api_pipeline.py
+```
+
+Purpose:
+
+- Load raw datasets
+- Normalize schema
+- Store raw data
+
+### Pipeline DAGs
+
+Examples:
+
+- exchange_rate_pipeline
+- ecommerce_full_pipeline
+- customer_review_sentiment_pipeline
+- covid19_data_pipeline
+- bot_exchange_rate_pipeline
+
+Each pipeline follows the ETL structure:
+
+```
+Extract
+   ↓
+Transform
+   ↓
+Load
+   ↓
+Reporting / Alerts
+```
+
+### Utility Modules
+
+Reusable components for pipelines.
+
+Located in:
+
+```
+dags/utils/
+```
+
+Examples include:
+
+- API clients
+- database manager
+- data quality validation
+- anomaly detection
+- schema management
+- reporting utilities
+
+---
+
+# Project Structure
+
+```
+├── dags
+│   ├── ingestion
+│   ├── pipelines
+│   ├── templates
+│   └── utils
+│
+├── data
+│   ├── people.csv
+│   └── raw_customer_reviews.csv
+│
+├── docker
+│   ├── airflow
+│   └── mysql
+│
+├── grafana
+│   ├── dashboards
+│   └── queries
+│
+├── scripts
+│   └── init_airflow.sh
+│
+├── tests
+│   ├── test_data_quality.py
+│   └── test_fx_pipeline.py
+│
+├── .github/workflows
+│   └── airflow-ci.yml
+│
+├── docker-compose.yaml
+├── requirements.txt
+├── Makefile
+├── README.md
+```
+
+---
+
+# Environment Setup
+
+Copy the environment template.
+
+```
+cp .env.example .env
+```
+
+Edit the environment variables if needed.
+
+Example variables include:
+
+```
+POSTGRES_USER
+MYSQL_USER
+BOT_API_KEY
+DISCORD_WEBHOOK
+```
+
+---
+
+# Running the Platform
+
+Start the platform using Docker Compose.
+
+```
+make up
+```
+
+or
+
+```
+docker compose up -d --build
+```
+
+Stop services
+
+```
+make down
+```
+
+View logs
+
+```
+make logs
+```
+
+---
+
+# Access Services
+
+Airflow Web UI
+
+```
+http://localhost:8080
+```
+
+Default credentials:
+
+```
+username: admin
+password: admin
+```
+
+Grafana Dashboard
+
+```
+http://localhost:3000
+```
+
+---
+
+# Airflow Initialization
+
+Airflow initialization tasks are automated using:
+
+```
+scripts/init_airflow.sh
+```
+
+The script automatically:
+
+- Runs database migrations
+- Creates the admin user
+- Configures database connections
+- Registers Airflow variables
+
+---
+
+# Monitoring & Observability
+
+Pipeline metrics and analytics are visualized using Grafana dashboards.
+
+Located in:
+
+```
+grafana/dashboards/
+```
+
+Available dashboards include:
+
+- FX Intelligence Dashboard
+- FinTech FX Intelligence Platform
+- Global Currency Exchange Intelligence
+- Hedge Fund FX Monitoring
+- Ultimate FX Portfolio Dashboard
+
+Example Airflow UI:
 
 ![Airflow UI](airflow_ui.png)
 
-------------------------------------------------------------------------
+---
 
-## ⚙️ How It Works
+# Data Quality Validation
 
-1.  Airflow Scheduler triggers DAG.
-2.  DAG reads CSV file.
-3.  Data is loaded into MySQL table.
-4.  Logs and execution history are stored.
+The platform includes built-in data quality validation.
 
-------------------------------------------------------------------------
+Located in:
 
-## 🐳 Run the Project
-
-``` bash
-docker compose up
+```
+dags/utils/data_quality.py
 ```
 
-Open:
+Validation checks include:
 
-http://localhost:8080
+- Null detection
+- Duplicate detection
+- Schema validation
+- FX anomaly detection
 
-Trigger DAG: `csv_to_mysql`
+Example usage:
 
-------------------------------------------------------------------------
+```
+from utils.data_quality import validate_dataset
 
-## 💼 Portfolio Highlights
+validate_dataset(dataframe)
+```
 
--   Containerized Infrastructure
--   Orchestrated Workflow
--   Database Integration
--   Clean Project Structure
--   Production Mindset Configuration
--   Observability via Logs
+---
 
-------------------------------------------------------------------------
+# Testing
 
-## 🚀 Future Improvements
+Automated tests are implemented using pytest.
 
--   Incremental data loading
--   Data validation layer
--   CI/CD integration
--   Cloud deployment (AWS / GCP)
--   Custom Airflow Docker image
+Test directory:
 
-------------------------------------------------------------------------
+```
+tests/
+```
 
-## 📜 License
+Run tests locally:
 
-For educational and portfolio use.
+```
+make test
+```
+
+or
+
+```
+pytest tests/
+```
+
+Test coverage includes:
+
+- data quality checks
+- FX analytics pipelines
+- transformation logic
+
+---
+
+# CI/CD Pipeline
+
+Continuous integration and deployment is handled via GitHub Actions.
+
+Workflow file:
+
+```
+.github/workflows/airflow-ci.yml
+```
+
+CI pipeline steps:
+
+1. Install dependencies
+2. Run automated tests
+3. Deploy to GCP VM via SSH
+4. Rebuild Docker containers
+
+Deployment command executed on the server:
+
+```
+docker compose down
+docker compose up -d --build
+```
+
+---
+
+# Example ETL Workflow
+
+Typical pipeline execution:
+
+```
+Extract API / CSV Data
+      ↓
+Transform Data
+      ↓
+Validate Data Quality
+      ↓
+Load into MySQL
+      ↓
+Generate Reports
+      ↓
+Send Alerts
+```
+
+---
+
+# Technologies Used
+
+Core stack:
+
+- Apache Airflow
+- Docker
+- MySQL
+- PostgreSQL
+- Grafana
+
+Python ecosystem:
+
+- Pandas
+- Requests
+- Pytest
+
+Infrastructure:
+
+- Docker Compose
+- GitHub Actions
+- GCP Virtual Machine
+
+---
+
+# Future Improvements
+
+Potential enhancements:
+
+- Kubernetes deployment
+- dbt integration
+- data warehouse layer
+- advanced anomaly detection
+- Slack / PagerDuty alerts
+
+---
+
+# License
+
+MIT License

@@ -9,6 +9,7 @@ from utils.api_client import fetch_exchange_rates
 from utils.db_manager import update_schema, load_df_to_db
 from utils.data_quality import check_null_rates_for_date
 from utils.reporting import create_csv_report, generate_html_summary
+from utils.alerting import discord_alert
 
 MYSQL_CONN_ID = "mysql_default"
 TABLE_NAME = "global_exchange_rates"
@@ -54,8 +55,10 @@ with DAG(
     schedule_interval="0 13 * * 1-5",
     catchup=False,
     default_args={
-        "retries":3,
-        # "on_failure_callback": slack_alert,
+        "email": ["global_fx_rate@email.com"], # <--- recipients for email alerts
+        "email_on_failure": True,              # <--- enable email alerts on failure
+        "retries": 3,
+        "on_failure_callback": discord_alert,
         "retry_delay":timedelta(minutes=10)
     }
 ) as dag:
@@ -77,7 +80,7 @@ with DAG(
 
     email = EmailOperator(
         task_id="send_email",
-        to="test@example.com",
+        to="global_fx_rate@email.com",
         subject="Global FX Rate Report {{ ds }}",
         html_content="{{ task_instance.xcom_pull(task_ids='prepare_email', key='html_report') }}",
         files=[f"/tmp/global_exchange_rate_{{{{ ds }}}}.csv"],
