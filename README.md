@@ -381,9 +381,7 @@ The following diagram illustrates the end-to-end ETL workflow orchestrated by Ap
 
 ![ETL Pipeline](docs/dag_pipeline.png)
 
-The following diagram illustrates the end-to-end ETL workflow orchestrated by Apache Airflow.
-
-![ETL Pipeline](docs/dag_pipeline.png)
+Typical pipeline execution:
 
 ```
 Extract API / CSV Data
