@@ -26,7 +26,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.email import EmailOperator
-from airflow.hooks.mysql_hook import MySqlHook
+from airflow.providers.mysql.hooks.mysql import MySqlHook
 import pandas as pd
 import requests
 import os
@@ -249,7 +249,7 @@ default_args = {
 
 with DAG(
     dag_id="ecommerce_full_pipeline",
-    schedule_interval="@daily",
+    schedule="@daily",
     catchup=False,
     default_args=default_args,
     tags=["ecommerce", "etl", "reporting"]
@@ -259,32 +259,27 @@ with DAG(
     extract = PythonOperator(
         task_id="extract_orders",
         python_callable=extract_orders,
-        provide_context=True
     )
 
     transform = PythonOperator(
         task_id="transform_orders",
         python_callable=transform_orders,
-        provide_context=True
     )
 
     load_orders = PythonOperator(
         task_id="load_orders",
         python_callable=load_orders,
-        provide_context=True
     )
 
     load_reports = PythonOperator(
         task_id="load_reports",
         python_callable=load_reports,
-        provide_context=True
     )
 
     # Reporting Tasks
     generate = PythonOperator(
         task_id="generate_report",
         python_callable=generate_report,
-        provide_context=True
     )
 
     send_email = EmailOperator(

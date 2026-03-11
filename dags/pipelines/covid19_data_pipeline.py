@@ -5,7 +5,7 @@ from datetime import datetime
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.email import EmailOperator
-from airflow.hooks.mysql_hook import MySqlHook
+from airflow.providers.mysql.hooks.mysql import MySqlHook
 
 
 MYSQL_CONN_ID = "mysql_default"
@@ -152,7 +152,7 @@ default_args = {
 
 with DAG(
     dag_id="covid19_enterprise_pipeline",
-    schedule_interval="@daily",
+    schedule="@daily",
     catchup=False,
     default_args=default_args,
     tags=["enterprise", "dynamic-schema"]
@@ -161,13 +161,11 @@ with DAG(
     load = PythonOperator(
         task_id="fetch_and_load",
         python_callable=fetch_and_load,
-        provide_context=True
     )
 
     report = PythonOperator(
         task_id="generate_report",
         python_callable=generate_report,
-        provide_context=True
     )
 
     send_email = EmailOperator(
