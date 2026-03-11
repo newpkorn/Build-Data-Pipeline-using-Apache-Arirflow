@@ -13,6 +13,19 @@ def update_schema(df: pd.DataFrame, table_name: str, conn_id: str):
     # Create table if it doesn't exist
     mysql_hook.run(f"CREATE TABLE IF NOT EXISTS {table_name} (id INT AUTO_INCREMENT PRIMARY KEY)")
 
+    # Self-Healing: Check if 'id' is AUTO_INCREMENT, fix if not (Prevents Error 1364)
+    check_sql = f"SELECT EXTRA, COLUMN_KEY FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='{table_name}' AND COLUMN_NAME='id' AND TABLE_SCHEMA=DATABASE()"
+    id_info_df = mysql_hook.get_pandas_df(check_sql)
+    
+    if not id_info_df.empty:
+        extra = id_info_df.iloc[0]['EXTRA']
+        col_key = id_info_df.iloc[0]['COLUMN_KEY']
+        if 'auto_increment' not in str(extra).lower():
+            if col_key == 'PRI':
+                mysql_hook.run(f"ALTER TABLE {table_name} MODIFY id INT AUTO_INCREMENT")
+            else:
+                mysql_hook.run(f"ALTER TABLE {table_name} MODIFY id INT AUTO_INCREMENT PRIMARY KEY")
+
     # Get existing columns
     existing_cols_df = mysql_hook.get_pandas_df(f"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table_name}'")
     existing_cols = existing_cols_df['COLUMN_NAME'].tolist()
@@ -38,10 +51,9 @@ def load_df_to_db(df: pd.DataFrame, table_name: str, conn_id: str):
 
     # Delete old data to ensure idempotency
     dates = df["rate_date"].unique()
-    with mysql_hook.get_conn() as conn:
-        with conn.cursor() as cursor:
-            for d in dates:
-                cursor.execute(f"DELETE FROM {table_name} WHERE rate_date = %s", (d,))
+    for d in dates:
+        # Using mysql_hook.run ensures proper connection handling and autocommit
+        mysql_hook.run(f"DELETE FROM {table_name} WHERE rate_date = %s", parameters=(d,))
 
     # Use pandas to_sql for efficient bulk insertion
     # This requires sqlalchemy to be installed
