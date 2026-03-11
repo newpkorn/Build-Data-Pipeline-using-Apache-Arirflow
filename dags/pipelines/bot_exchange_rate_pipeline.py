@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.email import EmailOperator
-from airflow.hooks.mysql_hook import MySqlHook
+from airflow.providers.mysql.hooks.mysql import MySqlHook
 from airflow.models import Variable
 import requests
 import logging
@@ -216,7 +216,7 @@ default_args = {
 
 with DAG(
     dag_id="bot_exchange_rate_pipeline",
-    schedule_interval="0 13 * * 1-5", # Run every Monday-Friday at 13:00 (BOT data usually arrives in the afternoon)
+    schedule="0 13 * * 1-5", # Run every Monday-Friday at 13:00 (BOT data usually arrives in the afternoon)
     catchup=False,
     default_args=default_args,
     tags=["bot", "finance", "etl"]
@@ -225,19 +225,16 @@ with DAG(
     extract_task = PythonOperator(
         task_id="extract_bot_data",
         python_callable=extract_data,
-        provide_context=True
     )
 
     transform_task = PythonOperator(
         task_id="transform_bot_data",
         python_callable=transform_data,
-        provide_context=True
     )
 
     load_task = PythonOperator(
         task_id="load_bot_data",
         python_callable=load_data,
-        provide_context=True
     )
 
     # Task to send email on successful completion

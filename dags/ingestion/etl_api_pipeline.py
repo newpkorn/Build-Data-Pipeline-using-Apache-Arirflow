@@ -14,7 +14,8 @@
 from datetime import datetime
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.hooks.mysql_hook import MySqlHook
+from airflow.providers.mysql.hooks.mysql import MySqlHook
+
 import requests
 import json
 
@@ -86,7 +87,7 @@ default_args = {
 
 with DAG(
     dag_id="etl_api_pipeline",
-    schedule_interval="@daily",
+    schedule="@daily",
     catchup=False,
     default_args=default_args,
     tags=["etl", "api"]
@@ -95,19 +96,16 @@ with DAG(
     extract = PythonOperator(
         task_id="extract_data",
         python_callable=extract_data,
-        provide_context=True
     )
 
     transform = PythonOperator(
         task_id="transform_data",
         python_callable=transform_data,
-        provide_context=True
     )
 
     load = PythonOperator(
         task_id="load_data",
         python_callable=load_data,
-        provide_context=True
     )
 
     extract >> transform >> load

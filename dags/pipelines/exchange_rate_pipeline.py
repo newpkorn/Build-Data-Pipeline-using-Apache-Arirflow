@@ -50,9 +50,9 @@ def _prepare_email(**context):
 
 
 with DAG(
-    dag_id="bot_fx_pipeline",
+    dag_id="exchange_rate_pipeline",
     start_date=datetime(2024,1,1),
-    schedule_interval="0 13 * * 1-5",
+    schedule="0 13 * * 1-5",
     catchup=False,
     default_args={
         "email": ["global_fx_rate@email.com"], # <--- recipients for email alerts

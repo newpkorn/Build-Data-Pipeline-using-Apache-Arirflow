@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.email import EmailOperator
-from airflow.hooks.mysql_hook import MySqlHook
+from airflow.providers.mysql.hooks.mysql import MySqlHook
 import pandas as pd
 import random
 import logging
@@ -260,7 +260,7 @@ default_args = {
 
 with DAG(
     dag_id="customer_review_sentiment_pipeline",
-    schedule_interval="@daily", # Run once daily at midnight UTC
+    schedule="@daily", # Run once daily at midnight UTC
     catchup=False,
     default_args=default_args,
     tags=["big_data", "sentiment_analysis", "customer_reviews", "dashboard"]
@@ -269,25 +269,21 @@ with DAG(
     extract_task = PythonOperator(
         task_id="extract_customer_reviews",
         python_callable=extract_reviews,
-        provide_context=True
     )
 
     analyze_task = PythonOperator(
         task_id="analyze_review_sentiment",
         python_callable=analyze_sentiment,
-        provide_context=True
     )
 
     load_to_db_task = PythonOperator(
         task_id="load_sentiment_results_to_mysql",
         python_callable=load_sentiment_data,
-        provide_context=True
     )
 
     generate_dashboard_task = PythonOperator(
         task_id="generate_sentiment_dashboard",
         python_callable=generate_sentiment_dashboard,
-        provide_context=True
     )
 
     send_email_report = EmailOperator(
