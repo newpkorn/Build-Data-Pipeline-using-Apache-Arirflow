@@ -43,12 +43,18 @@ def extract_data(**context):
     if not api_key:
         raise ValueError("❌ API Key for BOT is not set. Please set it in Airflow Variables or Environment Variables.")
 
-    # Use data_interval_end or ds (run date) to fetch data for that day.
-    # Note: BOT data is usually slightly delayed from the current date; adjust start_period to an earlier date if necessary.
-    execution_date = context['ds'] 
-    # execution_date = context['yesterday_ds']
+    # Determine Data Date based on Run Type
+    run_type = context['dag_run'].run_type
+
+    if run_type == 'manual':
+        # Manual Run: ds is Today (e.g. 13th). We want Yesterday (12th).
+        execution_date = (datetime.strptime(context['ds'], '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
+    else:
+        # Scheduled Run: ds is already the Start of Interval (e.g. 11th for run on 12th). Use as is.
+        execution_date = context['ds']
     
     logging.info(f"Fetching BOT data for date: {execution_date}")
+    context["ti"].xcom_push(key="data_date", value=execution_date)
     
     headers = {
         "Authorization": api_key,
@@ -114,20 +120,21 @@ def transform_data(**context):
             
     logging.info(f"Transformed data: {len(transformed_data)} records")
 
-    # Create filename based on date (Dynamic Filename)
-    csv_file_path = f"{CSV_REPORT_BASE_PATH}_{context['ds']}.csv"
+    # Create filename based on Data Date (from Extract task) not Run Date (ds)
+    data_date = context["ti"].xcom_pull(task_ids="extract_bot_data", key="data_date") or context['ds']
+    csv_file_path = f"{CSV_REPORT_BASE_PATH}_{data_date}.csv"
     
     # Create CSV file for email attachment
     if transformed_data:
         # If data exists: Use Keys from actual data (Dynamic), no Hardcoding needed
         fieldnames = transformed_data[0].keys()
-        with open(csv_file_path, "w", newline="", encoding="utf-8") as f:
+        with open(csv_file_path, "w", newline="", encoding="utf-8-sig") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
             writer.writerows(transformed_data)
     else:
         # If no data: Create a simple text file indicating no data (prevents FileNotFoundError)
-        with open(csv_file_path, "w", encoding="utf-8") as f:
+        with open(csv_file_path, "w", encoding="utf-8-sig") as f:
             f.write("No data available for this date.")
             
     context["ti"].xcom_push(key="cleaned_bot_data", value=transformed_data)
@@ -139,20 +146,27 @@ def load_data(**context):
     """
     data = context["ti"].xcom_pull(key="cleaned_bot_data")
     if not data:
-        logging.info("No data to load")
-        return
+        raise ValueError("❌ No data to load! Pipeline stopped. Please check Date or API response.")
+    
+    logging.info(f"Preparing to load {len(data)} rows. Sample Date: {data[0].get('period', 'Unknown')}")
 
     mysql_hook = MySqlHook(mysql_conn_id=MYSQL_CONN_ID)
     conn = mysql_hook.get_conn()
     cursor = conn.cursor()
+
+    # Debug: Print Database Name to verify where data is being loaded
+    cursor.execute("SELECT DATABASE();")
+    current_db = cursor.fetchone()[0]
+    logging.info(f"🔌 Connection established. Target Database: '{current_db}'")
 
     # Self-Healing: Check if the table has a Primary Key (prevents duplicate data from old table versions)
     cursor.execute(f"SHOW TABLES LIKE '{TABLE_NAME}'")
     if cursor.fetchone():
         cursor.execute(f"SHOW KEYS FROM {TABLE_NAME} WHERE Key_name = 'PRIMARY'")
         if not cursor.fetchone():
-            logging.warning(f"Table {TABLE_NAME} exists but missing Primary Key. Dropping to recreate with correct schema.")
-            cursor.execute(f"DROP TABLE {TABLE_NAME}")
+            # Warning only: Do not drop table automatically to prevent data loss
+            logging.warning(f"⚠️ Table {TABLE_NAME} exists but missing Primary Key. Upsert might create duplicates.")
+            # cursor.execute(f"DROP TABLE {TABLE_NAME}") # <--- Disabled to prevent data loss
 
     # 1. Analyze data to create Schema
     first_row = data[0]
@@ -194,13 +208,16 @@ def load_data(**context):
     sql = f"INSERT INTO {TABLE_NAME} ({cols_str}) VALUES ({vals_str}) ON DUPLICATE KEY UPDATE {update_clause}"
     
     # Prepare data and Execute in Batch
-    values = [[row[col] for col in columns] for row in data]
+    # Convert to list of tuples for safer execution with some drivers
+    values = [tuple(row[col] for col in columns) for row in data]
+    
+    logging.info(f"Executing Batch Insert into table '{TABLE_NAME}' in database '{current_db}'...")
     cursor.executemany(sql, values)
 
     conn.commit()
     cursor.close()
     conn.close()
-    logging.info(f"Loaded {len(data)} rows into MySQL")
+    logging.info(f"✅ Successfully loaded {len(data)} rows into {current_db}.{TABLE_NAME}")
 
 # --- DAG Definition ---
 default_args = {
@@ -241,9 +258,9 @@ with DAG(
     email_success_task = EmailOperator(
         task_id="send_email_success",
         to="bot_exchange_rate@email.com", # <--- Change to your email
-        subject="✅ BOT Exchange Rate Pipeline Success ({{ ds }})",
+        subject="✅ BOT Exchange Rate Pipeline Success ({{ ti.xcom_pull(task_ids='extract_bot_data', key='data_date') }})",
         html_content="<h3>Pipeline Completed Successfully</h3><p>Data has been loaded into MySQL. Please find the attached CSV report.</p>",
-        files=[f"{CSV_REPORT_BASE_PATH}_{{{{ ds }}}}.csv"]
+        files=[f"{CSV_REPORT_BASE_PATH}_{{{{ ti.xcom_pull(task_ids='extract_bot_data', key='data_date') }}}}.csv"]
     )
 
     extract_task >> transform_task >> load_task >> email_success_task
