@@ -29,6 +29,7 @@ from airflow.operators.email import EmailOperator
 from airflow.providers.mysql.hooks.mysql import MySqlHook
 import pandas as pd
 import requests
+import pendulum
 import os
 
 # Configuration
@@ -37,6 +38,9 @@ ORDERS_TABLE = "orders"
 REPORTS_TABLE = "daily_reports"
 API_URL = "https://dummyjson.com/products"  # Real e-commerce API with prices
 TEMP_REPORT_PATH = "/tmp/daily_sales_report.csv"
+
+# Set local timezone for consistent date handling (especially for email content)
+local_tz = pendulum.timezone("Asia/Bangkok")
 
 def extract_orders(**context):
     """Extract: Fetch real product orders data from DummyJSON API"""
@@ -240,7 +244,7 @@ def generate_report(**context):
 # DAG Configuration
 default_args = {
     "owner": "dataeng",
-    "start_date": datetime(2024, 1, 1),
+    "start_date": datetime(2024, 1, 1, tzinfo=local_tz),
     "email": ["reports@company.com"],
     "email_on_failure": True,
     "retries": 2,

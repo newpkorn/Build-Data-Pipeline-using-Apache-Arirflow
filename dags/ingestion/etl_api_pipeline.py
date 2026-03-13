@@ -18,11 +18,15 @@ from airflow.providers.mysql.hooks.mysql import MySqlHook
 
 import requests
 import json
+import pendulum
 
 # Configuration
 MYSQL_CONN_ID = "mysql_default"
 TABLE_NAME = "api_data"
 API_URL = "https://jsonplaceholder.typicode.com/posts"  # Example API
+
+# Set local timezone for consistent date handling
+local_tz = pendulum.timezone("Asia/Bangkok")
 
 def extract_data(**context):
     """Extract data from API"""
@@ -42,7 +46,7 @@ def transform_data(**context):
     ]
     # Add processed timestamp
     for item in cleaned_data:
-        item["processed_at"] = datetime.now().isoformat()
+        item["processed_at"] = pendulum.now(local_tz).isoformat()
     context["ti"].xcom_push(key="cleaned_data", value=cleaned_data)
     return cleaned_data
 
@@ -81,7 +85,7 @@ def load_data(**context):
 # DAG definition
 default_args = {
     "owner": "dataeng",
-    "start_date": datetime(2024, 1, 1),
+    "start_date": datetime(2024, 1, 1, tzinfo=local_tz),
     "retries": 1,
 }
 
