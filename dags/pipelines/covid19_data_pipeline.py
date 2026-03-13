@@ -1,6 +1,7 @@
 import requests
 import csv
 import os
+import pendulum
 from datetime import datetime
 from airflow import DAG
 from airflow.operators.python import PythonOperator
@@ -11,6 +12,9 @@ from airflow.providers.mysql.hooks.mysql import MySqlHook
 MYSQL_CONN_ID = "mysql_default"
 TABLE_NAME = "covid19_global_auto"
 TEMP_CSV_PATH = "/tmp/covid_report.csv"
+
+# Set local timezone for consistent date handling (especially for email content)
+local_tz = pendulum.timezone("Asia/Bangkok")
 
 
 # ==============================
@@ -130,7 +134,7 @@ def generate_report(**context):
     <li><b>Cases:</b> {cases:,}</li>
     <li><b>Deaths:</b> {deaths:,}</li>
     <li><b>Recovered:</b> {recovered:,}</li>
-    <li><b>Last Update:</b> {datetime.fromtimestamp(updated/1000) if updated else 'N/A'}</li>
+    <li><b>Last Update:</b> {pendulum.from_timestamp(updated/1000, tz=local_tz).strftime('%Y-%m-%d %H:%M:%S') if updated else 'N/A'}</li>
 </ul>
 </body>
 </html>""".strip()
@@ -145,7 +149,7 @@ def generate_report(**context):
 
 default_args = {
     "owner": "dataeng",
-    "start_date": datetime(2024, 1, 1),
+    "start_date": datetime(2024, 1, 1, tzinfo=local_tz),
     "email": ["covid19-daily-report@email.com"],
     "email_on_failure": True,
 }

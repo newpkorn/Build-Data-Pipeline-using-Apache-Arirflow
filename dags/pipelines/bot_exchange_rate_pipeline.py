@@ -16,6 +16,7 @@ from airflow.operators.python import PythonOperator
 from airflow.operators.email import EmailOperator
 from airflow.providers.mysql.hooks.mysql import MySqlHook
 from airflow.models import Variable
+import pendulum
 import requests
 import logging
 import os
@@ -24,6 +25,9 @@ import csv
 # --- Configuration ---
 MYSQL_CONN_ID = "mysql_default"
 TABLE_NAME = "bot_exchange_rates"
+
+# Set local timezone for consistent date handling (especially for email content)
+local_tz = pendulum.timezone("Asia/Bangkok")
 
 # BOT API Configuration
 # Register for an API Key at: https://portal.api.bot.or.th/ (New Portal)
@@ -115,7 +119,7 @@ def transform_data(**context):
             "buying_rate": float(item.get("buying_transfer", 0) or 0), # Use buying_transfer as primary
             "selling_rate": float(item.get("selling", 0) or 0),
             "mid_rate": float(item.get("mid_rate", 0) or 0),
-            "updated_at": datetime.now().isoformat()
+            "updated_at": pendulum.now(local_tz).isoformat()
         })
             
     logging.info(f"Transformed data: {len(transformed_data)} records")
@@ -233,6 +237,7 @@ default_args = {
 
 with DAG(
     dag_id="bot_exchange_rate_pipeline",
+    start_date=datetime(2026, 1, 1, tzinfo=local_tz), 
     schedule="0 13 * * 1-5", # Run every Monday-Friday at 13:00 (BOT data usually arrives in the afternoon)
     catchup=False,
     default_args=default_args,
