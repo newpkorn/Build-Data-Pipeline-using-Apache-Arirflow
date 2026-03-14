@@ -30,7 +30,7 @@ def extract_reviews(**context):
     # Resolve dynamic path
     raw_path = RAW_REVIEWS_PATH.replace("{{ ds }}", context['ds'])
 
-    num_reviews = 100000 # Simulate a large number of reviews
+    num_reviews = 5000 # Reduced from 100,000 to prevent Out-Of-Memory (OOM) in local Docker
     reviews = []
     products = ["Laptop", "Smartphone", "Headphones", "Smartwatch", "Monitor"]
     sentiments = ["positive", "negative", "neutral"]
@@ -252,7 +252,6 @@ def generate_sentiment_dashboard(**context):
 # --- DAG Definition ---
 default_args = {
     "owner": "dataeng",
-    "start_date": datetime(2024, 1, 1, tzinfo=local_tz),
     "email": ["non-reply@example.com"], # Change to your email
     "email_on_failure": True,
     "retries": 3,
@@ -261,6 +260,7 @@ default_args = {
 
 with DAG(
     dag_id="customer_review_sentiment_pipeline",
+    start_date=datetime(2026, 1, 1, tzinfo=local_tz),
     schedule="@daily", # Run once daily at midnight UTC
     catchup=False,
     default_args=default_args,

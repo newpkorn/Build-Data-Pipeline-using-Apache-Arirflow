@@ -5,6 +5,12 @@ from airflow.hooks.base import BaseHook
 import pandas as pd
 from sqlalchemy import create_engine
 import logging
+import pendulum
+
+# Set local timezone for consistent date handling
+local_tz = pendulum.timezone("Asia/Bangkok")
+
+
 
 CSV_FILE_PATH = "/opt/airflow/data/people.csv"
 # CSV_FILE_PATH = "/opt/airflow/data/raw_customer_reviews.csv"
@@ -33,7 +39,7 @@ default_args = {
 
 with DAG(
     dag_id="csv_to_mysql",
-    start_date=datetime(2024, 1, 1),
+    start_date=datetime(2026, 1, 1, tzinfo=local_tz),
     schedule=None,
     catchup=False,
     default_args=default_args,

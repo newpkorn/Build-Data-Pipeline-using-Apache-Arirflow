@@ -1,6 +1,14 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime
+<<<<<<< HEAD
+=======
+import pendulum
+
+# Set local timezone for consistent date handling (especially for email content)
+local_tz = pendulum.timezone("Asia/Bangkok")
+
+>>>>>>> eefe3c4 (refactor(Pipelines): Enhance data integrity and pipeline reliability)
 
 def extract():
     pass
@@ -18,7 +26,7 @@ default_args = {
 
 with DAG(
     dag_id="etl_pipeline_template",
-    start_date=datetime(2024,1,1),
+    start_date=datetime(2026,1,1, tzinfo=local_tz),
     schedule="@daily",
     catchup=False,
     default_args=default_args,

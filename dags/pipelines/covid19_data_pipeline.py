@@ -149,13 +149,13 @@ def generate_report(**context):
 
 default_args = {
     "owner": "dataeng",
-    "start_date": datetime(2024, 1, 1, tzinfo=local_tz),
     "email": ["covid19-daily-report@email.com"],
     "email_on_failure": True,
 }
 
 with DAG(
     dag_id="covid19_enterprise_pipeline",
+    start_date=datetime(2026, 1, 1, tzinfo=local_tz),
     schedule="@daily",
     catchup=False,
     default_args=default_args,
