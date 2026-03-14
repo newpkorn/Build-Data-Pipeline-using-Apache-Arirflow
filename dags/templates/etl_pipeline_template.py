@@ -1,14 +1,11 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime
-<<<<<<< HEAD
-=======
 import pendulum
 
 # Set local timezone for consistent date handling (especially for email content)
 local_tz = pendulum.timezone("Asia/Bangkok")
 
->>>>>>> eefe3c4 (refactor(Pipelines): Enhance data integrity and pipeline reliability)
 
 def extract():
     pass
