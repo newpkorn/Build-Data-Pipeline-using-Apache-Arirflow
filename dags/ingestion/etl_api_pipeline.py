@@ -85,12 +85,12 @@ def load_data(**context):
 # DAG definition
 default_args = {
     "owner": "dataeng",
-    "start_date": datetime(2024, 1, 1, tzinfo=local_tz),
     "retries": 1,
 }
 
 with DAG(
     dag_id="etl_api_pipeline",
+    start_date=datetime(2026, 1, 1, tzinfo=local_tz),
     schedule="@daily",
     catchup=False,
     default_args=default_args,

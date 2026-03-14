@@ -244,7 +244,6 @@ def generate_report(**context):
 # DAG Configuration
 default_args = {
     "owner": "dataeng",
-    "start_date": datetime(2024, 1, 1, tzinfo=local_tz),
     "email": ["reports@company.com"],
     "email_on_failure": True,
     "retries": 2,
@@ -253,6 +252,7 @@ default_args = {
 
 with DAG(
     dag_id="ecommerce_full_pipeline",
+    start_date=datetime(2026, 1, 1, tzinfo=local_tz),
     schedule="@daily",
     catchup=False,
     default_args=default_args,

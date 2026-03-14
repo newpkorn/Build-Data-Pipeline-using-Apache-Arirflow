@@ -27,8 +27,8 @@ def update_schema(df: pd.DataFrame, table_name: str, conn_id: str):
                 mysql_hook.run(f"ALTER TABLE {table_name} MODIFY id INT AUTO_INCREMENT PRIMARY KEY")
 
     # Get existing columns
-    existing_cols_df = mysql_hook.get_pandas_df(f"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table_name}'")
-    existing_cols = existing_cols_df['COLUMN_NAME'].tolist()
+    existing_cols_df = mysql_hook.get_pandas_df(f"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table_name}' AND TABLE_SCHEMA = DATABASE()")
+    existing_cols = existing_cols_df['COLUMN_NAME'].tolist() if not existing_cols_df.empty else []
 
     # Add missing columns
     for col in df.columns:
@@ -38,24 +38,26 @@ def update_schema(df: pd.DataFrame, table_name: str, conn_id: str):
 
 def load_df_to_db(df: pd.DataFrame, table_name: str, conn_id: str):
     """
-    Loads a DataFrame into a MySQL table, deleting old data for the same date first.
+    Atomically loads a DataFrame into a MySQL table. It deletes old data for the
+    same date and inserts new data within a single transaction.
     """
     if df.empty:
         return
 
     mysql_hook = MySqlHook(mysql_conn_id=conn_id)
+    engine = mysql_hook.get_sqlalchemy_engine()
     
     # Ensure required columns exist
     if 'rate_date' not in df.columns:
         raise ValueError("DataFrame must contain 'rate_date' column.")
 
-    # Delete old data to ensure idempotency
     dates = df["rate_date"].unique()
-    for d in dates:
-        # Using mysql_hook.run ensures proper connection handling and autocommit
-        mysql_hook.run(f"DELETE FROM {table_name} WHERE rate_date = %s", parameters=(d,))
 
-    # Use pandas to_sql for efficient bulk insertion
-    # This requires sqlalchemy to be installed
-    engine = mysql_hook.get_sqlalchemy_engine()
-    df.to_sql(table_name, engine, if_exists='append', index=False)
+    # Use a transaction to ensure atomicity of delete and insert
+    with engine.begin() as connection:
+        from sqlalchemy.sql import text
+        for d in dates:
+            connection.execute(text(f"DELETE FROM {table_name} WHERE rate_date = :date"), {"date": d})
+        
+        # Insert new data in the same transaction
+        df.to_sql(table_name, connection, if_exists='append', index=False)

@@ -131,9 +131,12 @@ def transform_data(**context):
     # Create CSV file for email attachment
     if transformed_data:
         # If data exists: Use Keys from actual data (Dynamic), no Hardcoding needed
-        fieldnames = transformed_data[0].keys()
+        fieldnames = list(transformed_data[0].keys())
+        if "updated_at" in fieldnames:
+            fieldnames.remove("updated_at")
+            
         with open(csv_file_path, "w", newline="", encoding="utf-8-sig") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction='ignore')
             writer.writeheader()
             writer.writerows(transformed_data)
     else:
@@ -226,8 +229,7 @@ def load_data(**context):
 # --- DAG Definition ---
 default_args = {
     "owner": "dataeng",
-    "start_date": datetime(2024, 1, 1),
-    "email": ["bot_exchange_rate@email.com"], # <--- 
+    "email": ["bot_exchange_rate@email.com"], # <--- Change to your email
     "email_on_failure": True,            # <--- Enable email alerts on failure
     "retries": 1,
     # "on_failure_callback": slack_alert, # <--- Slack alert on failure
