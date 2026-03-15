@@ -104,37 +104,10 @@ def load_sentiment_data(**context):
     conn = mysql_hook.get_conn()
     cursor = conn.cursor()
 
-    # Self-Healing: Check if the table has a Primary Key
-    cursor.execute(f"SHOW TABLES LIKE '{TABLE_NAME}'")
-    if cursor.fetchone():
-        cursor.execute(f"SHOW KEYS FROM {TABLE_NAME} WHERE Key_name = 'PRIMARY'")
-        if not cursor.fetchone():
-            logging.warning(f"Table {TABLE_NAME} exists but missing Primary Key. Dropping to recreate with correct schema.")
-            cursor.execute(f"DROP TABLE {TABLE_NAME}")
-
     first_row = data_df.iloc[0]
     columns = data_df.columns.tolist()
 
-    def get_sql_type(col_name, value):
-        if col_name == 'review_date': return 'DATE'
-        if col_name == 'rating': return 'INT'
-        if col_name == 'review_id': return 'INT'
-        return 'VARCHAR(255)' # Default for strings
-
-    col_defs = [f"{col} {get_sql_type(col, first_row[col])}" for col in columns]
     pk_cols = [c for c in ['review_id'] if c in columns] # Assuming review_id is the primary key
-    pk_sql = f", PRIMARY KEY ({', '.join(pk_cols)})" if pk_cols else ""
-
-    create_sql = f"CREATE TABLE IF NOT EXISTS {TABLE_NAME} ({', '.join(col_defs)}{pk_sql});"
-    cursor.execute(create_sql)
-
-    cursor.execute(f"DESCRIBE {TABLE_NAME}")
-    existing_columns = {row[0] for row in cursor.fetchall()}
-    
-    for col in columns:
-        if col not in existing_columns:
-            alter_sql = f"ALTER TABLE {TABLE_NAME} ADD COLUMN {col} {get_sql_type(col, first_row[col])}"
-            cursor.execute(alter_sql)
 
     cols_str = ", ".join(columns)
     vals_str = ", ".join(["%s"] * len(columns))

@@ -13,6 +13,7 @@ from utils.alerting import discord_alert
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.exceptions import AirflowSkipException
 from airflow.operators.email import EmailOperator
 from airflow.providers.mysql.hooks.mysql import MySqlHook
 from airflow.models import Variable
@@ -51,8 +52,15 @@ def extract_data(**context):
     run_type = context['dag_run'].run_type
 
     if run_type == 'manual':
-        # Manual Run: ds is Today (e.g. 13th). We want Yesterday (12th).
-        execution_date = (datetime.strptime(context['ds'], '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
+        # Manual Run: Find the last business day based on today (ds)
+        current_date = datetime.strptime(context['ds'], '%Y-%m-%d')
+        if current_date.weekday() == 0:    # 0 = Monday -> step back 3 days to Friday
+            target_date = current_date - timedelta(days=3)
+        elif current_date.weekday() == 6:  # 6 = Sunday -> step back 2 days to Friday
+            target_date = current_date - timedelta(days=2)
+        else:                              # Tuesday - Saturday -> step back 1 day
+            target_date = current_date - timedelta(days=1)
+        execution_date = target_date.strftime('%Y-%m-%d')
     else:
         # Scheduled Run: ds is already the Start of Interval (e.g. 11th for run on 12th). Use as is.
         execution_date = context['ds']
@@ -153,7 +161,8 @@ def load_data(**context):
     """
     data = context["ti"].xcom_pull(key="cleaned_bot_data")
     if not data:
-        raise ValueError("❌ No data to load! Pipeline stopped. Please check Date or API response.")
+        logging.info("No data to load. This usually happens on weekends or holidays.")
+        raise AirflowSkipException("⚠️ No data to load! Skipping task instead of failing.")
     
     logging.info(f"Preparing to load {len(data)} rows. Sample Date: {data[0].get('period', 'Unknown')}")
 
@@ -166,48 +175,13 @@ def load_data(**context):
     current_db = cursor.fetchone()[0]
     logging.info(f"🔌 Connection established. Target Database: '{current_db}'")
 
-    # Self-Healing: Check if the table has a Primary Key (prevents duplicate data from old table versions)
-    cursor.execute(f"SHOW TABLES LIKE '{TABLE_NAME}'")
-    if cursor.fetchone():
-        cursor.execute(f"SHOW KEYS FROM {TABLE_NAME} WHERE Key_name = 'PRIMARY'")
-        if not cursor.fetchone():
-            # Warning only: Do not drop table automatically to prevent data loss
-            logging.warning(f"⚠️ Table {TABLE_NAME} exists but missing Primary Key. Upsert might create duplicates.")
-            # cursor.execute(f"DROP TABLE {TABLE_NAME}") # <--- Disabled to prevent data loss
-
-    # 1. Analyze data to create Schema
     first_row = data[0]
     columns = list(first_row.keys())
 
-    # Helper: Map Python Type -> MySQL Type
-    def get_sql_type(col_name, value):
-        if col_name == 'period': return 'DATE'
-        if 'rate' in col_name: return 'DECIMAL(10,4)' # Catch buying_rate, selling_rate
-        if 'updated_at' in col_name: return 'TIMESTAMP'
-        if isinstance(value, int): return 'INT'
-        if isinstance(value, float): return 'DECIMAL(10,4)'
-        return 'VARCHAR(255)' # Default for general String
-
-    # 2. Create Table (Dynamic Create)
-    col_defs = [f"{col} {get_sql_type(col, first_row[col])}" for col in columns]
-    
     # Define Primary Key (assuming period and currency_code are always primary keys)
     pk_cols = [c for c in ['period', 'currency_code'] if c in columns]
-    pk_sql = f", PRIMARY KEY ({', '.join(pk_cols)})" if pk_cols else ""
 
-    create_sql = f"CREATE TABLE IF NOT EXISTS {TABLE_NAME} ({', '.join(col_defs)}{pk_sql});"
-    cursor.execute(create_sql)
-
-    # 3. Check and add missing Columns (Schema Evolution)
-    cursor.execute(f"DESCRIBE {TABLE_NAME}")
-    existing_columns = {row[0] for row in cursor.fetchall()}
-    
-    for col in columns:
-        if col not in existing_columns:
-            alter_sql = f"ALTER TABLE {TABLE_NAME} ADD COLUMN {col} {get_sql_type(col, first_row[col])}"
-            cursor.execute(alter_sql)
-
-    # 4. Create Insert statement (Dynamic Upsert)
+    # 1. Create Insert statement (Dynamic Upsert)
     cols_str = ", ".join(columns)
     vals_str = ", ".join(["%s"] * len(columns))
     update_clause = ", ".join([f"{col}=VALUES({col})" for col in columns if col not in pk_cols])

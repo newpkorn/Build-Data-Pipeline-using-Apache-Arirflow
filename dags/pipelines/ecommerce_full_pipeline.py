@@ -124,19 +124,6 @@ def load_orders(**context):
     conn = mysql_hook.get_conn()
     cursor = conn.cursor()
 
-    # Create orders table
-    cursor.execute(f"""
-        CREATE TABLE IF NOT EXISTS {ORDERS_TABLE} (
-            order_id INT PRIMARY KEY,
-            product_name VARCHAR(255),
-            price DECIMAL(10,2),
-            category VARCHAR(100),
-            order_date DATE,
-            quantity INT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-    """)
-
     # Insert orders
     for order in orders:
         cursor.execute(f"""
@@ -167,18 +154,6 @@ def load_reports(**context):
     mysql_hook = MySqlHook(mysql_conn_id=MYSQL_CONN_ID)
     conn = mysql_hook.get_conn()
     cursor = conn.cursor()
-
-    # Create reports table
-    cursor.execute(f"""
-        CREATE TABLE IF NOT EXISTS {REPORTS_TABLE} (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            category VARCHAR(100),
-            total_sales DECIMAL(10,2),
-            total_quantity INT,
-            report_date DATE,
-            processed_at TIMESTAMP
-        );
-    """)
 
     # Insert reports
     for report in reports:
