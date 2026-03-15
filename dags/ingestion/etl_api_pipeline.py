@@ -57,18 +57,6 @@ def load_data(**context):
     conn = mysql_hook.get_conn()
     cursor = conn.cursor()
 
-    # Create table if not exists
-    create_table_sql = f"""
-    CREATE TABLE IF NOT EXISTS {TABLE_NAME} (
-        id INT PRIMARY KEY,
-        userId INT,
-        title VARCHAR(255),
-        body TEXT,
-        processed_at TIMESTAMP
-    );
-    """
-    cursor.execute(create_table_sql)
-
     # Insert data
     for item in cleaned_data:
         cursor.execute(f"""

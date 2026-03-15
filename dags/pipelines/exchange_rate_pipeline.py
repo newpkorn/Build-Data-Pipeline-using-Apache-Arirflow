@@ -41,15 +41,6 @@ def _extract_and_load(**context):
     # Get the actual date from data to use in downstream tasks
     data_date = df['rate_date'].iloc[0] if not df.empty else context['ds']
 
-    # Handle Schema Update error to prevent failure if Primary Key already exists
-    try:
-        update_schema(df, TABLE_NAME, MYSQL_CONN_ID)
-    except Exception as e:
-        if '1068' in str(e) or 'Multiple primary key' in str(e):
-            logging.warning("Schema update bypassed: Primary key already defined.")
-        else:
-            raise
-
     load_df_to_db(df, TABLE_NAME, MYSQL_CONN_ID)
     
     # Push data to XComs for downstream tasks to ensure idempotency
