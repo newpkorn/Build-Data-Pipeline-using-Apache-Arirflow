@@ -10,7 +10,7 @@ import logging
 
 # Import refactored functions
 from utils.api_client import fetch_exchange_rates
-from utils.db_manager import update_schema, load_df_to_db
+from utils.db_manager import load_df_to_db
 from utils.data_quality import check_null_rates_for_date
 from utils.reporting import create_csv_report, generate_html_summary, generate_html_summary_from_df
 from utils.alerting import discord_alert

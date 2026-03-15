@@ -2,24 +2,28 @@ x-airflow-common: &airflow-common
   build:
     context: .
     dockerfile: docker/airflow/Dockerfile
-
   env_file:
     - .env
-
   environment: &airflow-common-env
-    AIRFLOW__CORE__EXECUTOR: LocalExecutor
-    AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE: Asia/Bangkok
-    TZ: Asia/Bangkok
+    AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+    AIRFLOW__CORE__FERNET_KEY: ${FERNET_KEY}
+
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}
+    AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}
 
     AIRFLOW__CORE__LOAD_EXAMPLES: "false"
     AIRFLOW__CORE__STORE_SERIALIZED_DAGS: "false"
     AIRFLOW__SCHEDULER__STANDALONE_DAG_PROCESSOR: "false"
 
-    AIRFLOW__WEBSERVER__WORKERS: 1
-    AIRFLOW__WEBSERVER__WORKER_CLASS: sync
+    AIRFLOW__WEBSERVER__WORKERS: 3
+    AIRFLOW__WEBSERVER__WORKER_CLASS: gthread
+    AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX: "True"
+    AIRFLOW__WEBSERVER__WORKER_REFRESH_INTERVAL: 600
     AIRFLOW__WEBSERVER__WEB_SERVER_MASTER_TIMEOUT: 300
     AIRFLOW__WEBSERVER__WEB_SERVER_WORKER_TIMEOUT: 300
+    AIRFLOW__WEBSERVER__DEFAULT_UI_TIMEZONE: Asia/Bangkok
+    AIRFLOW__WEBSERVER__BASE_URL: ${AIRFLOW__WEBSERVER__BASE_URL:-http://localhost:8080}
 
     AIRFLOW__SMTP__SMTP_HOST: mailhog
     AIRFLOW__SMTP__SMTP_PORT: 1025
@@ -27,8 +31,7 @@ x-airflow-common: &airflow-common
     AIRFLOW__SMTP__SMTP_STARTTLS: "False"
     AIRFLOW__SMTP__SMTP_SSL: "False"
 
-    AIRFLOW__WEBSERVER__BASE_URL: ${AIRFLOW__WEBSERVER__BASE_URL:-http://localhost:8080}
-    AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX: "True"
+    TZ: Asia/Bangkok
 
   volumes:
     - ./dags:/opt/airflow/dags
@@ -37,6 +40,8 @@ x-airflow-common: &airflow-common
     - ./scripts:/opt/airflow/scripts
     - ./config/airflow.cfg:/opt/airflow/airflow.cfg
     - ./tests:/opt/airflow/tests
+
+  restart: always
 
 services:
 
@@ -55,6 +60,31 @@ services:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
       interval: 10s
       retries: 5
+    restart: always
+
+  redis:
+    image: redis:7
+    container_name: airflow-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      retries: 5
+    restart: always
+
+  airflow-init:
+    <<: *airflow-common
+    container_name: airflow-init
+    command: bash /opt/airflow/scripts/init_airflow.sh
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: "no"
 
   mysql:
     image: mysql:8.0
@@ -77,6 +107,54 @@ services:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}" ]
       interval: 10s
       retries: 5
+    restart: always
+
+  webserver:
+    <<: *airflow-common
+    container_name: airflow-webserver
+    command: airflow webserver
+    ports:
+      - "8080:8080"
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  scheduler:
+    <<: *airflow-common
+    container_name: airflow-scheduler
+    command: airflow scheduler
+    depends_on:
+      webserver:
+        condition: service_started
+
+  worker:
+    <<: *airflow-common
+    container_name: airflow-worker
+    command: airflow celery worker
+    depends_on:
+      - scheduler
+      - redis
+    restart: always
+
+  triggerer:
+    <<: *airflow-common
+    container_name: airflow-triggerer
+    command: airflow triggerer
+    depends_on:
+      webserver:
+        condition: service_started
+      scheduler:
+        condition: service_started
+
+  flower:
+    <<: *airflow-common
+    container_name: airflow-flower
+    command: airflow celery flower
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+      - scheduler
 
   mailhog:
     image: mailhog/mailhog
@@ -104,42 +182,6 @@ services:
     volumes:
       - grafana-storage:/var/lib/grafana
       - ./grafana/dashboards:/var/lib/grafana/dashboards
-
-  airflow-init:
-    <<: *airflow-common
-    container_name: airflow-init
-    depends_on:
-      postgres:
-        condition: service_healthy
-      mysql:
-        condition: service_healthy
-    command: bash /opt/airflow/scripts/init_airflow.sh
-
-  webserver:
-    <<: *airflow-common
-    container_name: airflow-webserver
-    command: airflow webserver
-    ports:
-      - "8080:8080"
-    depends_on:
-      airflow-init:
-        condition: service_completed_successfully
-
-  scheduler:
-    <<: *airflow-common
-    container_name: airflow-scheduler
-    command: airflow scheduler
-    depends_on:
-      webserver:
-        condition: service_started
-
-  triggerer:
-    <<: *airflow-common
-    container_name: airflow-triggerer
-    command: airflow triggerer
-    depends_on:
-      webserver:
-        condition: service_started
 
 volumes:
   postgres-db-volume:
