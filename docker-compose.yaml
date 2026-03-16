@@ -150,7 +150,7 @@ services:
   flower:
     <<: *airflow-common
     container_name: airflow-flower
-    command: airflow celery flower --url_prefix=flower
+    command: airflow celery flower -- --url_prefix=flower --address=0.0.0.0 --port=5555
     ports:
       - "5555:5555"
     depends_on:
