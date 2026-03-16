@@ -150,11 +150,9 @@ services:
   flower:
     <<: *airflow-common
     container_name: airflow-flower
-    command: airflow celery flower
+    command: airflow celery flower --url_prefix=flower
     ports:
       - "5555:5555"
-    environment:
-      - FLOWER_SERVER_ROOT_URL=${FLOWER_SERVER_ROOT_URL:-http://localhost:5555}
     depends_on:
       - redis
       - scheduler
