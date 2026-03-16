@@ -153,6 +153,8 @@ services:
     command: airflow celery flower
     ports:
       - "5555:5555"
+    environment:
+      - FLOWER_SERVER_ROOT_URL=${FLOWER_SERVER_ROOT_URL:-http://localhost:5555}
     depends_on:
       - redis
       - scheduler
