@@ -1,158 +1,1035 @@
 {
-    "title": "FinTech FX Intelligence Platform",
-    "schemaVersion": 38,
-    "refresh": "30s",
-    "time": {
-        "from": "now-5y",
-        "to": "now"
-    },
-    "templating": {
+    "annotations": {
         "list": [
             {
-                "name": "currency",
-                "type": "query",
-                "query": "SELECT DISTINCT currency_code FROM global_exchange_rates ORDER BY currency_code",
-                "refresh": 1,
-                "includeAll": true,
-                "multi": false
+                "builtIn": 1,
+                "datasource": {
+                    "type": "grafana",
+                    "uid": "-- Grafana --"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
             }
         ]
     },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "links": [],
     "panels": [
         {
-            "type": "stat",
-            "title": "Total FX Currencies",
-            "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
+            "datasource": {
+                "type": "mysql"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 4,
+                "x": 0,
+                "y": 0
+            },
+            "id": 1,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
             "targets": [
                 {
+                    "editorMode": "code",
+                    "format": "table",
                     "rawSql": "SELECT COUNT(DISTINCT currency_code) FROM global_exchange_rates",
-                    "refId": "A"
+                    "refId": "A",
+                    "sql": {
+                        "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50
+                    }
                 }
-            ]
+            ],
+            "title": "Total FX Currencies",
+            "type": "stat"
         },
-
         {
-            "type": "stat",
-            "title": "USD Rate",
-            "gridPos": { "h": 4, "w": 4, "x": 4, "y": 0 },
+            "datasource": {
+                "type": "mysql",
+                "uid": "affj3xjbtocu8f"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 4,
+                "x": 4,
+                "y": 0
+            },
+            "id": 2,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "/.*/",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
             "targets": [
                 {
+                    "editorMode": "code",
+                    "format": "table",
                     "rawSql": "SELECT rate FROM global_exchange_rates WHERE currency_code='USD' ORDER BY rate_date DESC LIMIT 1",
-                    "refId": "A"
+                    "refId": "A",
+                    "sql": {
+                        "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50
+                    }
                 }
-            ]
+            ],
+            "title": "USD Rate",
+            "type": "stat"
         },
-
         {
-            "type": "stat",
-            "title": "EUR Rate",
-            "gridPos": { "h": 4, "w": 4, "x": 8, "y": 0 },
+            "datasource": {
+                "type": "mysql",
+                "uid": "affj3xjbtocu8f"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 4,
+                "x": 8,
+                "y": 0
+            },
+            "id": 3,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "/.*/",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
             "targets": [
                 {
+                    "editorMode": "code",
+                    "format": "table",
                     "rawSql": "SELECT rate FROM global_exchange_rates WHERE currency_code='EUR' ORDER BY rate_date DESC LIMIT 1",
-                    "refId": "A"
+                    "refId": "A",
+                    "sql": {
+                        "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50
+                    }
                 }
-            ]
+            ],
+            "title": "EUR Rate",
+            "type": "stat"
         },
-
         {
-            "type": "stat",
-            "title": "GBP Rate",
-            "gridPos": { "h": 4, "w": 4, "x": 12, "y": 0 },
+            "datasource": {
+                "type": "mysql",
+                "uid": "affj3xjbtocu8f"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 4,
+                "x": 12,
+                "y": 0
+            },
+            "id": 4,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "/.*/",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
             "targets": [
                 {
+                    "editorMode": "code",
+                    "format": "table",
                     "rawSql": "SELECT rate FROM global_exchange_rates WHERE currency_code='GBP' ORDER BY rate_date DESC LIMIT 1",
-                    "refId": "A"
+                    "refId": "A",
+                    "sql": {
+                        "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50
+                    }
                 }
-            ]
+            ],
+            "title": "GBP Rate",
+            "type": "stat"
         },
-
         {
-            "type": "stat",
-            "title": "Average FX Rate",
-            "gridPos": { "h": 4, "w": 4, "x": 16, "y": 0 },
+            "datasource": {
+                "type": "mysql",
+                "uid": "affj3xjbtocu8f"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 4,
+                "x": 16,
+                "y": 0
+            },
+            "id": 5,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
             "targets": [
                 {
+                    "editorMode": "code",
+                    "format": "table",
                     "rawSql": "SELECT AVG(rate) FROM global_exchange_rates",
-                    "refId": "A"
+                    "refId": "A",
+                    "sql": {
+                        "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50
+                    }
                 }
-            ]
+            ],
+            "title": "Average FX Rate",
+            "type": "stat"
         },
-
         {
-            "type": "stat",
+            "datasource": {
+                "type": "mysql",
+                "uid": "affj3xjbtocu8f"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 4,
+                "x": 20,
+                "y": 0
+            },
+            "id": 6,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "-- SELECT COUNT(*) FROM bot_exchange_rates\nSELECT COUNT( DISTINCT currency_code ) FROM bot_exchange_rates;",
+                    "refId": "A",
+                    "sql": {
+                        "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50
+                    }
+                }
+            ],
             "title": "BOT Currency Count",
-            "gridPos": { "h": 4, "w": 4, "x": 20, "y": 0 },
-            "targets": [
-                {
-                    "rawSql": "SELECT COUNT(*) FROM bot_exchange_rates",
-                    "refId": "A"
-                }
-            ]
+            "type": "stat"
         },
-
         {
-            "type": "bargauge",
-            "title": "Top 10 Strongest Currencies",
-            "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+            "datasource": {
+                "type": "mysql",
+                "uid": "affj3xjbtocu8f"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 4
+            },
+            "id": 7,
+            "options": {
+                "displayMode": "gradient",
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "maxVizHeight": 300,
+                "minVizHeight": 16,
+                "minVizWidth": 8,
+                "namePlacement": "auto",
+                "orientation": "auto",
+                "reduceOptions": {
+                    "calcs": [],
+                    "fields": "",
+                    "values": true
+                },
+                "showUnfilled": true,
+                "sizing": "auto",
+                "valueMode": "color"
+            },
+            "pluginVersion": "12.4.0",
             "targets": [
                 {
+                    "editorMode": "code",
+                    "format": "table",
                     "rawSql": "SELECT currency_code as metric, rate FROM global_exchange_rates ORDER BY rate DESC LIMIT 10",
-                    "refId": "A"
+                    "refId": "A",
+                    "sql": {
+                        "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50
+                    }
                 }
-            ]
+            ],
+            "title": "Top 10 Strongest Currencies",
+            "type": "bargauge"
         },
-
         {
-            "type": "bargauge",
-            "title": "Top 10 Weakest Currencies",
-            "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+            "datasource": {
+                "type": "mysql",
+                "uid": "affj3xjbtocu8f"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 4
+            },
+            "id": 8,
+            "options": {
+                "displayMode": "basic",
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "maxVizHeight": 300,
+                "minVizHeight": 16,
+                "minVizWidth": 8,
+                "namePlacement": "auto",
+                "orientation": "horizontal",
+                "reduceOptions": {
+                    "calcs": [],
+                    "fields": "",
+                    "values": true
+                },
+                "showUnfilled": true,
+                "sizing": "auto",
+                "valueMode": "color"
+            },
+            "pluginVersion": "12.4.0",
             "targets": [
                 {
+                    "editorMode": "code",
+                    "format": "table",
                     "rawSql": "SELECT currency_code as metric, rate FROM global_exchange_rates ORDER BY rate ASC LIMIT 10",
-                    "refId": "A"
+                    "refId": "A",
+                    "sql": {
+                        "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50
+                    }
                 }
-            ]
+            ],
+            "title": "Top 10 Weakest Currencies",
+            "type": "bargauge"
         },
-
         {
-            "type": "timeseries",
+            "datasource": {
+                "type": "mysql",
+                "uid": "affj3xjbtocu8f"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": true,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "scheme",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "smooth",
+                        "lineStyle": {
+                            "fill": "solid"
+                        },
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "log": 2,
+                            "type": "log"
+                        },
+                        "showPoints": "always",
+                        "showValues": false,
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "normal"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 24,
+                "x": 0,
+                "y": 12
+            },
+            "id": 9,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT \n  STR_TO_DATE(rate_date, '%Y-%m-%d') AS time, \n  CAST(rate AS DECIMAL(18, 4)) AS rate \nFROM global_exchange_rates \nWHERE currency_code IN ($currency) \nORDER BY rate_date",
+                    "refId": "A",
+                    "sql": {
+                        "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50
+                    }
+                }
+            ],
             "title": "Currency Trend Explorer",
-            "gridPos": { "h": 8, "w": 24, "x": 0, "y": 12 },
-            "targets": [
-                {
-                    "rawSql": "SELECT rate_date as time, rate FROM global_exchange_rates WHERE currency_code='$currency' ORDER BY rate_date",
-                    "refId": "A"
-                }
-            ]
+            "type": "timeseries"
         },
-
         {
-            "type": "timeseries",
-            "title": "BOT Buy vs Sell",
-            "gridPos": { "h": 8, "w": 24, "x": 0, "y": 20 },
+            "datasource": {
+                "type": "mysql",
+                "uid": "affj3xjbtocu8f"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": true,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "series",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": 3600000,
+                        "lineInterpolation": "linear",
+                        "lineStyle": {
+                            "dash": [10, 10],
+                            "fill": "dash"
+                        },
+                        "lineWidth": 1,
+                        "pointSize": 7,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "always",
+                        "showValues": true,
+                        "spanNulls": true,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 24,
+                "x": 0,
+                "y": 20
+            },
+            "id": 10,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "12.4.0",
             "targets": [
                 {
-                    "rawSql": "SELECT updated_at as time, buying_rate as value, currency_code as metric FROM bot_exchange_rates",
-                    "refId": "A"
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT updated_at as time, buying_rate as buying, currency_code as metric FROM bot_exchange_rates",
+                    "refId": "A",
+                    "sql": {
+                        "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50
+                    }
                 },
                 {
-                    "rawSql": "SELECT updated_at as time, selling_rate as value, currency_code as metric FROM bot_exchange_rates",
-                    "refId": "B"
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT updated_at as time, selling_rate as selling, currency_code as metric FROM bot_exchange_rates",
+                    "refId": "B",
+                    "sql": {
+                        "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50
+                    }
                 }
-            ]
+            ],
+            "title": "BOT Buy vs Sell",
+            "type": "timeseries"
         },
-
         {
-            "type": "table",
-            "title": "BOT Official FX Table",
-            "gridPos": { "h": 8, "w": 24, "x": 0, "y": 28 },
+            "datasource": {
+                "type": "mysql",
+                "uid": "affj3xjbtocu8f"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "filterable": true,
+                        "footer": {
+                            "reducers": ["mean"]
+                        },
+                        "inspect": false,
+                        "wrapHeaderText": false,
+                        "wrapText": false
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 24,
+                "x": 0,
+                "y": 28
+            },
+            "id": 11,
+            "options": {
+                "cellHeight": "sm",
+                "enablePagination": true,
+                "showHeader": true
+            },
+            "pluginVersion": "12.4.0",
             "targets": [
                 {
-                    "rawSql": "SELECT currency_code,currency_name,buying_rate,selling_rate,mid_rate,updated_at FROM bot_exchange_rates ORDER BY currency_code",
-                    "refId": "A"
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT currency_code,currency_name,buying_rate,selling_rate,mid_rate,updated_at FROM bot_exchange_rates ORDER BY updated_at desc",
+                    "refId": "A",
+                    "sql": {
+                        "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50
+                    }
                 }
-            ]
+            ],
+            "title": "BOT Official FX Table",
+            "type": "table"
         }
-    ]
+    ],
+    "preload": false,
+    "refresh": "30s",
+    "schemaVersion": 42,
+    "tags": [],
+    "templating": {
+        "list": [
+            {
+                "current": {
+                    "text": "All",
+                    "value": "$__all"
+                },
+                "datasource": {
+                    "type": "mysql",
+                    "uid": "affj3xjbtocu8f"
+                },
+                "definition": "SELECT DISTINCT currency_code FROM global_exchange_rates ORDER BY currency_code",
+                "includeAll": true,
+                "name": "currency",
+                "options": [],
+                "query": {
+                    "editorMode": "code",
+                    "format": "table",
+                    "meta": {
+                        "textField": "currency_code",
+                        "valueField": "currency_code"
+                    },
+                    "query": "SELECT DISTINCT currency_code FROM global_exchange_rates ORDER BY currency_code",
+                    "rawQuery": true,
+                    "rawSql": "SELECT DISTINCT currency_code FROM global_exchange_rates ORDER BY currency_code",
+                    "refId": "SQLVariableQueryEditor-VariableQuery",
+                    "sql": {
+                        "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50
+                    }
+                },
+                "refresh": 1,
+                "regexApplyTo": "value",
+                "type": "query"
+            }
+        ]
+    },
+    "time": {
+        "from": "now-7d",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "FinTech FX Intelligence Platform",
+    "uid": "add7r49",
+    "version": 24,
+    "weekStart": ""
 }
