@@ -191,23 +191,6 @@ services:
   renderer:
     image: grafana/grafana-image-renderer
     container_name: grafana-renderer
-    restart: always	
-
-  loki:
-    image: grafana/loki:latest
-    container_name: loki
-    ports:
-      - "3100:3100"
-    restart: always
-
-  promtail:
-    image: grafana/promtail:latest
-    container_name: promtail
-    command: -config.file=/etc/promtail/config.yaml
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - ./docker/monitoring/promtail-config.yaml:/etc/promtail/config.yaml
     restart: always
 
   loki:
