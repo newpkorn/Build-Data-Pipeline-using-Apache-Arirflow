@@ -1,16 +1,24 @@
+# Environment
 .env
-__pycache__/
 
-# ignore all nested files and folders under logs
+# Python
+__pycache__/
+*.pyc
+
+# Airflow
+.airflow
+
+# Editor / OS
+.DS_Store
+.vscode/
+
+# Runtime logs
 logs/*
 !logs/.gitkeep
 
-.DS_Store
-.vscode
-
-*.pyc
-
+# Generated data
 data/*.csv
 !data/.gitkeep
 
-.airflow
+# Local-only archives and scratch files
+.local/
