@@ -1,0 +1,59 @@
+<svg width="1400" height="860" viewBox="0 0 1400 860" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1400" y2="860" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#E2E8F0"/>
+    </linearGradient>
+    <linearGradient id="card1" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#082F49"/>
+    </linearGradient>
+    <linearGradient id="card2" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#0B3B2E"/>
+      <stop offset="1" stop-color="#14532D"/>
+    </linearGradient>
+    <linearGradient id="card3" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#3F2A00"/>
+      <stop offset="1" stop-color="#92400E"/>
+    </linearGradient>
+    <linearGradient id="card4" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#3B0764"/>
+      <stop offset="1" stop-color="#581C87"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1400" height="860" fill="url(#bg)"/>
+
+  <text x="90" y="110" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="700">Grafana Portfolio Map</text>
+  <text x="90" y="154" fill="#475569" font-family="Arial, Helvetica, sans-serif" font-size="22">Curated production dashboards and their role in the platform experience.</text>
+
+  <line x1="700" y1="250" x2="700" y2="352" stroke="#94A3B8" stroke-width="3" stroke-dasharray="8 10"/>
+  <line x1="410" y1="458" x2="990" y2="458" stroke="#94A3B8" stroke-width="3" stroke-dasharray="8 10"/>
+
+  <rect x="430" y="200" width="540" height="140" rx="26" fill="url(#card1)"/>
+  <text x="470" y="255" fill="#7DD3FC" font-family="Arial, Helvetica, sans-serif" font-size="18" letter-spacing="3">LANDING</text>
+  <text x="470" y="300" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700">Atlas Executive Command Center</text>
+  <text x="470" y="328" fill="#CBD5E1" font-family="Arial, Helvetica, sans-serif" font-size="18">Cross-domain entry point for weather, FX, and reliability.</text>
+
+  <rect x="90" y="390" width="360" height="180" rx="26" fill="url(#card2)"/>
+  <text x="126" y="442" fill="#BBF7D0" font-family="Arial, Helvetica, sans-serif" font-size="18" letter-spacing="3">WEATHER</text>
+  <text x="126" y="486" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">Atmospheric Operations Suite</text>
+  <text x="126" y="524" fill="#DCFCE7" font-family="Arial, Helvetica, sans-serif" font-size="18">Temperature, humidity, wind, pressure,</text>
+  <text x="126" y="550" fill="#DCFCE7" font-family="Arial, Helvetica, sans-serif" font-size="18">freshness, and observation history.</text>
+
+  <rect x="520" y="390" width="360" height="180" rx="26" fill="url(#card3)"/>
+  <text x="556" y="442" fill="#FDE68A" font-family="Arial, Helvetica, sans-serif" font-size="18" letter-spacing="3">FX</text>
+  <text x="556" y="486" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">Global FX Intelligence Suite</text>
+  <text x="556" y="524" fill="#FEF3C7" font-family="Arial, Helvetica, sans-serif" font-size="18">Daily exchange snapshots, trend review,</text>
+  <text x="556" y="550" fill="#FEF3C7" font-family="Arial, Helvetica, sans-serif" font-size="18">and core pair monitoring.</text>
+
+  <rect x="950" y="390" width="360" height="180" rx="26" fill="url(#card4)"/>
+  <text x="986" y="442" fill="#DDD6FE" font-family="Arial, Helvetica, sans-serif" font-size="18" letter-spacing="3">RELIABILITY</text>
+  <text x="986" y="486" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">Platform Reliability Center</text>
+  <text x="986" y="524" fill="#E9D5FF" font-family="Arial, Helvetica, sans-serif" font-size="18">Loki-backed logs, diagnostics, and</text>
+  <text x="986" y="550" fill="#E9D5FF" font-family="Arial, Helvetica, sans-serif" font-size="18">runtime troubleshooting workflows.</text>
+
+  <rect x="90" y="652" width="1220" height="116" rx="24" fill="white" fill-opacity="0.74" stroke="#CBD5E1"/>
+  <text x="130" y="705" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700">Provisioning Model</text>
+  <text x="130" y="742" fill="#475569" font-family="Arial, Helvetica, sans-serif" font-size="20">Grafana auto-loads dashboards from curated/, keeps legacy boards in archive/, provisions MySQL and Loki datasources, and opens directly on the landing dashboard.</text>
+</svg>

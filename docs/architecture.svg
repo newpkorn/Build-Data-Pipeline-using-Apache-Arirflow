@@ -1,0 +1,53 @@
+<svg width="1400" height="860" viewBox="0 0 1400 860" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1400" y2="860" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#E2E8F0"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#1E293B"/>
+    </linearGradient>
+  </defs>
+  <rect width="1400" height="860" fill="url(#bg)"/>
+  <text x="90" y="110" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="700">Platform Architecture</text>
+  <text x="90" y="154" fill="#475569" font-family="Arial, Helvetica, sans-serif" font-size="22">Airflow-orchestrated pipelines with MySQL analytics, Grafana observability, and runtime services.</text>
+
+  <rect x="90" y="240" width="240" height="120" rx="24" fill="url(#card)"/>
+  <text x="126" y="292" fill="#7DD3FC" font-family="Arial, Helvetica, sans-serif" font-size="18">SOURCES</text>
+  <text x="126" y="334" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">CSV + APIs</text>
+
+  <rect x="410" y="240" width="280" height="120" rx="24" fill="url(#card)"/>
+  <text x="446" y="292" fill="#86EFAC" font-family="Arial, Helvetica, sans-serif" font-size="18">ORCHESTRATION</text>
+  <text x="446" y="334" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">Apache Airflow</text>
+
+  <rect x="770" y="240" width="240" height="120" rx="24" fill="url(#card)"/>
+  <text x="806" y="292" fill="#FDE68A" font-family="Arial, Helvetica, sans-serif" font-size="18">STORAGE</text>
+  <text x="806" y="334" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">MySQL</text>
+
+  <rect x="1090" y="240" width="220" height="120" rx="24" fill="url(#card)"/>
+  <text x="1126" y="292" fill="#FDBA74" font-family="Arial, Helvetica, sans-serif" font-size="18">METADATA</text>
+  <text x="1126" y="334" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">Postgres</text>
+
+  <path d="M330 300H410" stroke="#94A3B8" stroke-width="4" stroke-dasharray="10 10"/>
+  <path d="M690 300H770" stroke="#94A3B8" stroke-width="4" stroke-dasharray="10 10"/>
+  <path d="M1010 300H1090" stroke="#94A3B8" stroke-width="4" stroke-dasharray="10 10"/>
+
+  <rect x="250" y="500" width="300" height="140" rx="24" fill="#082F49"/>
+  <text x="286" y="552" fill="#7DD3FC" font-family="Arial, Helvetica, sans-serif" font-size="18">EXECUTION</text>
+  <text x="286" y="594" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">Celery + Redis</text>
+  <text x="286" y="624" fill="#CBD5E1" font-family="Arial, Helvetica, sans-serif" font-size="18">distributed task execution</text>
+
+  <rect x="600" y="500" width="300" height="140" rx="24" fill="#14532D"/>
+  <text x="636" y="552" fill="#BBF7D0" font-family="Arial, Helvetica, sans-serif" font-size="18">OBSERVABILITY</text>
+  <text x="636" y="594" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">Grafana + Loki</text>
+  <text x="636" y="624" fill="#DCFCE7" font-family="Arial, Helvetica, sans-serif" font-size="18">portfolio dashboards and logs</text>
+
+  <rect x="950" y="500" width="220" height="140" rx="24" fill="#7C2D12"/>
+  <text x="986" y="552" fill="#FED7AA" font-family="Arial, Helvetica, sans-serif" font-size="18">ALERTING</text>
+  <text x="986" y="594" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">Email + Discord</text>
+  <text x="986" y="624" fill="#FFEDD5" font-family="Arial, Helvetica, sans-serif" font-size="18">success and failure signals</text>
+
+  <path d="M550 570H600" stroke="#94A3B8" stroke-width="4" stroke-dasharray="10 10"/>
+  <path d="M900 570H950" stroke="#94A3B8" stroke-width="4" stroke-dasharray="10 10"/>
+</svg>

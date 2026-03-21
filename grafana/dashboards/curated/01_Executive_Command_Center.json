@@ -1,0 +1,694 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Weather Detail",
+      "type": "link",
+      "url": "/grafana/d/weather-ops-dashboard"
+    },
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "FX Detail",
+      "type": "link",
+      "url": "/grafana/d/fx-intelligence-dashboard"
+    },
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Observability",
+      "type": "link",
+      "url": "/grafana/d/overview-logs"
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "content": "<div style=\"height:100%;padding:24px;border-radius:26px;background:radial-gradient(circle at top left, rgba(125,211,252,0.22), transparent 22%), radial-gradient(circle at top right, rgba(34,197,94,0.16), transparent 20%), linear-gradient(140deg, #020617 0%, #0f172a 38%, #082f49 100%);box-shadow:0 24px 60px rgba(2,8,23,0.42);color:#f8fafc;border:1px solid rgba(148,163,184,0.12);\"><div style=\"display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;\"><div><div style=\"font-size:12px;letter-spacing:0.28em;text-transform:uppercase;opacity:0.72;\">Production Portfolio</div><h1 style=\"margin:10px 0 12px 0;font-size:34px;line-height:1.02;\">Executive Command Center</h1><p style=\"max-width:760px;margin:0;font-size:14px;line-height:1.7;opacity:0.92;\">Your premium landing view for weather intelligence, FX monitoring, and platform observability. Start here for the health of the whole stack, then drill into the focused dashboards for deeper decisions.</p></div><div style=\"min-width:220px;padding:12px 14px;border-radius:18px;background:rgba(15,23,42,0.46);border:1px solid rgba(125,211,252,0.18);backdrop-filter:blur(12px);\"><div style=\"font-size:11px;text-transform:uppercase;letter-spacing:0.18em;opacity:0.62;\">Portfolio Status</div><div style=\"margin-top:8px;font-size:24px;font-weight:700;color:#e0f2fe;\">Live</div><div style=\"margin-top:4px;font-size:13px;opacity:0.8;\">Weather, FX and logs provisioned</div></div></div><div style=\"display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:18px;\"><div style=\"padding:12px 14px;border-radius:18px;background:rgba(56,189,248,0.10);border:1px solid rgba(125,211,252,0.18);backdrop-filter:blur(10px);\"><div style=\"font-size:11px;letter-spacing:0.16em;text-transform:uppercase;opacity:0.66;\">Weather</div><div style=\"margin-top:8px;font-size:18px;font-weight:700;\">Ops Ready</div><div style=\"margin-top:4px;font-size:12px;opacity:0.76;\">Temperature, humidity, pressure</div></div><div style=\"padding:12px 14px;border-radius:18px;background:rgba(34,197,94,0.10);border:1px solid rgba(74,222,128,0.18);backdrop-filter:blur(10px);\"><div style=\"font-size:11px;letter-spacing:0.16em;text-transform:uppercase;opacity:0.66;\">FX</div><div style=\"margin-top:8px;font-size:18px;font-weight:700;\">Market Watch</div><div style=\"margin-top:4px;font-size:12px;opacity:0.76;\">Core pairs and trend overview</div></div><div style=\"padding:12px 14px;border-radius:18px;background:rgba(249,115,22,0.10);border:1px solid rgba(251,146,60,0.18);backdrop-filter:blur(10px);\"><div style=\"font-size:11px;letter-spacing:0.16em;text-transform:uppercase;opacity:0.66;\">Logs</div><div style=\"margin-top:8px;font-size:18px;font-weight:700;\">Observe</div><div style=\"margin-top:4px;font-size:12px;opacity:0.76;\">Loki-backed troubleshooting</div></div><div style=\"padding:12px 14px;border-radius:18px;background:rgba(168,85,247,0.10);border:1px solid rgba(196,181,253,0.18);backdrop-filter:blur(10px);\"><div style=\"font-size:11px;letter-spacing:0.16em;text-transform:uppercase;opacity:0.66;\">Navigation</div><div style=\"margin-top:8px;font-size:18px;font-weight:700;\">Drill Down</div><div style=\"margin-top:4px;font-size:12px;opacity:0.76;\">Open detail boards below</div></div></div><div style=\"display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;\"><a href=\"/grafana/d/weather-ops-dashboard\" style=\"padding:10px 14px;border-radius:999px;background:rgba(56,189,248,0.18);color:#e0f2fe;text-decoration:none;border:1px solid rgba(125,211,252,0.28);\">Open Weather</a><a href=\"/grafana/d/fx-intelligence-dashboard\" style=\"padding:10px 14px;border-radius:999px;background:rgba(34,197,94,0.16);color:#dcfce7;text-decoration:none;border:1px solid rgba(74,222,128,0.28);\">Open FX</a><a href=\"/grafana/d/overview-logs\" style=\"padding:10px 14px;border-radius:999px;background:rgba(249,115,22,0.14);color:#ffedd5;text-decoration:none;border:1px solid rgba(251,146,60,0.28);\">Open Logs</a></div></div>",
+        "mode": "html"
+      },
+      "pluginVersion": "10.0.0",
+      "title": "Landing Header",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#38bdf8",
+                "value": null
+              },
+              {
+                "color": "#22c55e",
+                "value": 20
+              },
+              {
+                "color": "#f59e0b",
+                "value": 30
+              },
+              {
+                "color": "#ef4444",
+                "value": 35
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 0,
+        "y": 5
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          },
+          "format": "table",
+          "rawSql": "SELECT temperature_celsius AS value FROM weather_observations WHERE city = '${city}' ORDER BY observed_at_local DESC LIMIT 1",
+          "refId": "A"
+        }
+      ],
+      "title": "City Temperature",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#22c55e",
+                "value": null
+              },
+              {
+                "color": "#f59e0b",
+                "value": 70
+              },
+              {
+                "color": "#ef4444",
+                "value": 85
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 4,
+        "y": 5
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          },
+          "format": "table",
+          "rawSql": "SELECT humidity AS value FROM weather_observations WHERE city = '${city}' ORDER BY observed_at_local DESC LIMIT 1",
+          "refId": "A"
+        }
+      ],
+      "title": "Humidity",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 4,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#22c55e",
+                "value": null
+              },
+              {
+                "color": "#f59e0b",
+                "value": 34
+              },
+              {
+                "color": "#ef4444",
+                "value": 37
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 8,
+        "y": 5
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          },
+          "format": "table",
+          "rawSql": "SELECT rate AS value FROM global_exchange_rates WHERE currency_code='USD' ORDER BY rate_date DESC LIMIT 1",
+          "refId": "A"
+        }
+      ],
+      "title": "USD/THB",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 4
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 12,
+        "y": 5
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          },
+          "format": "table",
+          "rawSql": "SELECT rate AS value FROM global_exchange_rates WHERE currency_code='EUR' ORDER BY rate_date DESC LIMIT 1",
+          "refId": "A"
+        }
+      ],
+      "title": "EUR/THB",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 4
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 16,
+        "y": 5
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          },
+          "format": "table",
+          "rawSql": "SELECT COUNT(*) AS value FROM global_exchange_rates WHERE rate_date = (SELECT MAX(rate_date) FROM global_exchange_rates)",
+          "refId": "A"
+        }
+      ],
+      "title": "Tracked FX Pairs",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 20,
+        "y": 5
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          },
+          "format": "table",
+          "rawSql": "SELECT TIMESTAMPDIFF(HOUR, MAX(observed_at_local), NOW()) AS value FROM weather_observations WHERE city = '${city}'",
+          "refId": "A"
+        }
+      ],
+      "title": "Weather Freshness (hrs)",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisPlacement": "auto",
+            "drawStyle": "line",
+            "fillOpacity": 12,
+            "gradientMode": "opacity",
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": true
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 10
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max",
+            "min"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          },
+          "format": "time_series",
+          "rawSql": "SELECT observed_at_local AS time, temperature_celsius AS value, 'Temperature' AS metric FROM weather_observations WHERE city = '${city}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          },
+          "format": "time_series",
+          "rawSql": "SELECT observed_at_local AS time, feels_like_celsius AS value, 'Feels Like' AS metric FROM weather_observations WHERE city = '${city}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
+          "refId": "B"
+        }
+      ],
+      "title": "Weather Overview Trend",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisPlacement": "auto",
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "opacity",
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "pointSize": 4,
+            "showPoints": "auto",
+            "spanNulls": true
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 10
+      },
+      "id": 9,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          },
+          "format": "time_series",
+          "rawSql": "SELECT rate_date AS time, rate AS value, currency_code AS metric FROM global_exchange_rates WHERE currency_code IN ('USD','EUR','JPY','GBP') AND $__timeFilter(rate_date) ORDER BY rate_date",
+          "refId": "A"
+        }
+      ],
+      "title": "FX Overview Trend",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 20
+      },
+      "id": 10,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          },
+          "format": "table",
+          "rawSql": "SELECT city, weather_description, temperature_celsius, humidity, wind_speed, observed_at_local FROM weather_observations WHERE city = '${city}' ORDER BY observed_at_local DESC LIMIT 5",
+          "refId": "A"
+        }
+      ],
+      "title": "Latest Weather Records",
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 20
+      },
+      "id": 11,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          },
+          "format": "table",
+          "rawSql": "SELECT currency_code, rate, rate_date FROM global_exchange_rates WHERE rate_date = (SELECT MAX(rate_date) FROM global_exchange_rates) ORDER BY rate DESC LIMIT 10",
+          "refId": "A"
+        }
+      ],
+      "title": "Latest FX Snapshot",
+      "transparent": true,
+      "type": "table"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "landing",
+    "executive",
+    "portfolio",
+    "command-center",
+    "mysql"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Bangkok",
+          "value": "Bangkok"
+        },
+        "datasource": {
+          "type": "mysql",
+          "uid": "mysql-airflow"
+        },
+        "definition": "SELECT DISTINCT city FROM weather_observations ORDER BY city",
+        "hide": 0,
+        "includeAll": false,
+        "label": "City",
+        "multi": false,
+        "name": "city",
+        "options": [],
+        "query": "SELECT DISTINCT city FROM weather_observations ORDER BY city",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Atlas Executive Command Center",
+  "uid": "executive-command-center",
+  "version": 1,
+  "weekStart": "",
+  "description": "Premium landing dashboard for the platform portfolio, combining weather operations, FX intelligence, and observability entry points."
+}

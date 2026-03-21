@@ -32,5 +32,8 @@ echo "Setting Airflow variables..."
 
 airflow variables set bot_api_key ${BOT_API_KEY} || true
 airflow variables set discord_webhook ${DISCORD_WEBHOOK} || true
+airflow variables set openweather_api_key ${OPENWEATHER_API_KEY} || true
+airflow variables set weather_city ${WEATHER_CITY:-Portland} || true
+airflow variables set weather_alert_email ${WEATHER_ALERT_EMAIL:-airflow@example.com} || true
 
 echo "Airflow init finished"

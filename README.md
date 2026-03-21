@@ -2,7 +2,9 @@
 
 A production-style data engineering platform built with Apache Airflow and Docker.
 
-This project demonstrates how to design, orchestrate, monitor, and test scalable ETL pipelines using modern data engineering practices including CI/CD, data quality validation, monitoring dashboards, and automated deployments.
+This project demonstrates how to design, orchestrate, monitor, and test scalable ETL pipelines using modern data engineering practices including CI/CD, data quality validation, monitoring dashboards, automated provisioning, and production-style observability.
+
+![Portfolio Cover](docs/portfolio_cover.svg)
 
 ---
 
@@ -11,7 +13,7 @@ This project demonstrates how to design, orchestrate, monitor, and test scalable
 The platform processes data from multiple sources including CSV files and external APIs.
 Apache Airflow orchestrates ETL pipelines which transform and load data into MySQL while providing monitoring and alerting capabilities.
 
-![Architecture](docs/architecture.png)
+![Architecture](docs/architecture.svg)
 
 ## Architecture Layers
 
@@ -59,7 +61,7 @@ Contains business pipelines such as:
 
 ### 5. Observability Layer
 
-- Grafana dashboards
+- Curated Grafana portfolio
 - Discord alert notifications
 - Airflow monitoring UI
 
@@ -69,7 +71,7 @@ Contains business pipelines such as:
 
 Entity relationships are defined in the ER diagram.
 
-![ER Diagram](docs/er_diagram.png)
+![ER Diagram](docs/er_diagram.svg)
 
 ---
 
@@ -159,6 +161,9 @@ Examples include:
 │
 ├── grafana
 │   ├── dashboards
+│   │   ├── curated
+│   │   └── archive
+│   ├── provisioning
 │   └── queries
 │
 ├── scripts
@@ -196,6 +201,8 @@ POSTGRES_USER
 MYSQL_USER
 BOT_API_KEY
 DISCORD_WEBHOOK
+OPENWEATHER_API_KEY
+WEATHER_CITY
 ```
 
 ---
@@ -249,6 +256,13 @@ Grafana Dashboard
 http://localhost:3000
 ```
 
+Default credentials:
+
+```
+username: admin
+password: admin123
+```
+
 ---
 
 # Airflow Initialization
@@ -270,25 +284,119 @@ The script automatically:
 
 # Monitoring & Observability
 
-Pipeline metrics and analytics are visualized using Grafana dashboards.
+Pipeline metrics and analytics are visualized through a curated Grafana portfolio with automatic datasource and dashboard provisioning.
 
 Located in:
 
 ```
-grafana/dashboards/
+grafana/dashboards/curated/
 ```
 
-Available dashboards include:
+Provisioning files:
 
-- FX Intelligence Dashboard
-- FinTech FX Intelligence Platform
-- Global Currency Exchange Intelligence
-- Hedge Fund FX Monitoring
-- Ultimate FX Portfolio Dashboard
+```
+grafana/provisioning/
+```
+
+## Grafana Portfolio
+
+The production portfolio is intentionally reduced to four dashboards so the workspace stays clean, opinionated, and easy to operate.
+
+![Grafana Portfolio Map](docs/grafana_portfolio_map.svg)
+
+### 1. Atlas Executive Command Center
+
+Purpose:
+
+- default Grafana landing page
+- cross-domain executive summary for weather, FX, and platform health
+- drill-down navigation into specialized dashboards
+
+Primary audience:
+
+- engineering leads
+- operations managers
+- demo / stakeholder reviews
+
+### 2. Atmospheric Operations Suite
+
+Purpose:
+
+- monitor live weather conditions loaded by the Airflow weather pipeline
+- track temperature, feels-like conditions, humidity, wind, pressure, and recent observations
+- support operational review of incoming weather records
+
+Primary audience:
+
+- data engineers validating weather ingestion
+- operations users monitoring city conditions
+
+### 3. Global FX Intelligence Suite
+
+Purpose:
+
+- monitor exchange rate snapshots and recent currency movements
+- provide a focused market overview without the clutter of older experimental dashboards
+- serve as the production FX board for the platform
+
+Primary audience:
+
+- analysts
+- product demos
+- finance-oriented pipeline reviews
+
+### 4. Platform Reliability Center
+
+Purpose:
+
+- centralize logs and runtime visibility through Loki
+- support troubleshooting, incident review, and operational diagnostics
+- complement Airflow UI with platform-level observability
+
+Primary audience:
+
+- operators
+- platform engineers
+- anyone debugging pipeline runtime issues
+
+## Dashboard Lifecycle
+
+The dashboard repository is organized into two groups:
+
+```
+grafana/dashboards/curated/
+```
+
+Contains the dashboards that Grafana auto-loads in production.
+
+```
+grafana/dashboards/archive/
+```
+
+Contains legacy or superseded dashboards kept only for reference.
+
+## Portfolio Characteristics
+
+- dashboards are provisioned automatically at startup
+- MySQL and Loki datasources are provisioned automatically
+- Grafana opens directly to the executive landing dashboard
+- curated dashboards are cross-linked for clean navigation
+- legacy dashboards are archived instead of mixed into production views
+
+## Portfolio Branding
+
+The curated dashboards are positioned as a lightweight enterprise analytics package:
+
+- `Atlas Executive Command Center`
+- `Atmospheric Operations Suite`
+- `Global FX Intelligence Suite`
+- `Platform Reliability Center`
+
+This naming convention makes the monitoring layer read more like a product portfolio than a folder of unrelated Grafana files.
 
 Example Airflow UI:
 
-![Airflow UI](docs/airflow_ui.png)
+![Airflow UI](docs/airflow_ui.svg)
 
 ---
 
@@ -379,7 +487,7 @@ docker compose up -d --build
 
 The following diagram illustrates the end-to-end ETL workflow orchestrated by Apache Airflow.
 
-![ETL Pipeline](docs/dag_pipeline.png)
+![ETL Pipeline](docs/dag_pipeline.svg)
 
 Typical pipeline execution:
 
@@ -408,6 +516,7 @@ Core stack:
 - MySQL
 - PostgreSQL
 - Grafana
+- Loki
 
 Python ecosystem:
 
@@ -420,6 +529,7 @@ Infrastructure:
 - Docker Compose
 - GitHub Actions
 - GCP Virtual Machine
+- Grafana provisioning
 
 ---
 
