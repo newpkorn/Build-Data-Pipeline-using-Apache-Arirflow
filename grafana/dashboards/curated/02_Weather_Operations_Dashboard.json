@@ -1,0 +1,842 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [
+    {
+      "title": "Command Center",
+      "type": "link",
+      "url": "/grafana/d/executive-command-center",
+      "icon": "external link",
+      "targetBlank": false,
+      "keepTime": true,
+      "includeVars": false,
+      "asDropdown": false,
+      "tags": []
+    },
+    {
+      "title": "FX Detail",
+      "type": "link",
+      "url": "/grafana/d/fx-intelligence-dashboard",
+      "icon": "external link",
+      "targetBlank": false,
+      "keepTime": true,
+      "includeVars": false,
+      "asDropdown": false,
+      "tags": []
+    },
+    {
+      "title": "Observability",
+      "type": "link",
+      "url": "/grafana/d/overview-logs",
+      "icon": "external link",
+      "targetBlank": false,
+      "keepTime": true,
+      "includeVars": false,
+      "asDropdown": false,
+      "tags": []
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "content": "<div style=\"height:100%;padding:18px 20px;border-radius:20px;background:linear-gradient(135deg, rgba(8,47,73,0.92) 0%, rgba(14,116,144,0.78) 45%, rgba(186,230,253,0.50) 100%);box-shadow:0 18px 40px rgba(15,23,42,0.18);color:#f8fafc;\"><div style=\"font-size:13px;letter-spacing:0.18em;text-transform:uppercase;opacity:0.82;\">Atmospheric Intelligence</div><h1 style=\"margin:8px 0 10px 0;font-size:30px;line-height:1.05;\">Weather Operations Dashboard</h1><p style=\"max-width:760px;margin:0;font-size:14px;line-height:1.6;opacity:0.95;\">An executive weather view for operations teams. Track thermal conditions, humidity, wind, pressure, and latest observation quality from the Airflow weather pipeline in one clean cockpit.</p></div>",
+        "mode": "html"
+      },
+      "pluginVersion": "10.0.0",
+      "title": "Header",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#38bdf8",
+                "value": null
+              },
+              {
+                "color": "#22c55e",
+                "value": 20
+              },
+              {
+                "color": "#f59e0b",
+                "value": 30
+              },
+              {
+                "color": "#ef4444",
+                "value": 35
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 0,
+        "y": 4
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "format": "table",
+          "rawSql": "SELECT temperature_celsius AS value FROM weather_observations WHERE city = '${city}' ORDER BY observed_at_local DESC LIMIT 1",
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          }
+        }
+      ],
+      "title": "Temperature Now",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#38bdf8",
+                "value": null
+              },
+              {
+                "color": "#22c55e",
+                "value": 22
+              },
+              {
+                "color": "#f59e0b",
+                "value": 32
+              },
+              {
+                "color": "#ef4444",
+                "value": 36
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 4,
+        "y": 4
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "format": "table",
+          "rawSql": "SELECT feels_like_celsius AS value FROM weather_observations WHERE city = '${city}' ORDER BY observed_at_local DESC LIMIT 1",
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          }
+        }
+      ],
+      "title": "Feels Like",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#22c55e",
+                "value": null
+              },
+              {
+                "color": "#f59e0b",
+                "value": 70
+              },
+              {
+                "color": "#ef4444",
+                "value": 85
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 8,
+        "y": 4
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "format": "table",
+          "rawSql": "SELECT humidity AS value FROM weather_observations WHERE city = '${city}' ORDER BY observed_at_local DESC LIMIT 1",
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          }
+        }
+      ],
+      "title": "Humidity",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#22c55e",
+                "value": null
+              },
+              {
+                "color": "#f59e0b",
+                "value": 6
+              },
+              {
+                "color": "#ef4444",
+                "value": 10
+              }
+            ]
+          },
+          "unit": "velocityms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 12,
+        "y": 4
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "format": "table",
+          "rawSql": "SELECT wind_speed AS value FROM weather_observations WHERE city = '${city}' ORDER BY observed_at_local DESC LIMIT 1",
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          }
+        }
+      ],
+      "title": "Wind Speed",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#e2e8f0",
+                "value": null
+              },
+              {
+                "color": "#60a5fa",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 16,
+        "y": 4
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "format": "table",
+          "rawSql": "SELECT TIMESTAMPDIFF(HOUR, MAX(observed_at_local), NOW()) AS value FROM weather_observations WHERE city = '${city}'",
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          }
+        }
+      ],
+      "title": "Data Freshness (hrs)",
+      "transparent": true,
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "max": 1050,
+          "min": 980,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#38bdf8",
+                "value": null
+              },
+              {
+                "color": "#22c55e",
+                "value": 1000
+              },
+              {
+                "color": "#f59e0b",
+                "value": 1020
+              }
+            ]
+          },
+          "unit": "pressurehpa"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 20,
+        "y": 4
+      },
+      "id": 7,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "targets": [
+        {
+          "format": "table",
+          "rawSql": "SELECT pressure AS value FROM weather_observations WHERE city = '${city}' ORDER BY observed_at_local DESC LIMIT 1",
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          }
+        }
+      ],
+      "title": "Pressure",
+      "transparent": true,
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Celsius",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 14,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 3,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            }
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 14,
+        "x": 0,
+        "y": 9
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max",
+            "min"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "format": "time_series",
+          "rawSql": "SELECT observed_at_local AS time, temperature_celsius AS value, 'Temperature' AS metric FROM weather_observations WHERE city = '${city}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          }
+        },
+        {
+          "format": "time_series",
+          "rawSql": "SELECT observed_at_local AS time, feels_like_celsius AS value, 'Feels Like' AS metric FROM weather_observations WHERE city = '${city}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
+          "refId": "B",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          }
+        },
+        {
+          "format": "time_series",
+          "rawSql": "SELECT observed_at_local AS time, maximum_temp_celsius AS value, 'Daily Max' AS metric FROM weather_observations WHERE city = '${city}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
+          "refId": "C",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          }
+        },
+        {
+          "format": "time_series",
+          "rawSql": "SELECT observed_at_local AS time, minimum_temp_celsius AS value, 'Daily Min' AS metric FROM weather_observations WHERE city = '${city}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
+          "refId": "D",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          }
+        }
+      ],
+      "title": "Thermal Profile",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 3,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Humidity"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Wind Speed"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "velocityms"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 10,
+        "x": 14,
+        "y": 9
+      },
+      "id": 9,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "format": "time_series",
+          "rawSql": "SELECT observed_at_local AS time, humidity AS value, 'Humidity' AS metric FROM weather_observations WHERE city = '${city}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          }
+        },
+        {
+          "format": "time_series",
+          "rawSql": "SELECT observed_at_local AS time, wind_speed AS value, 'Wind Speed' AS metric FROM weather_observations WHERE city = '${city}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
+          "refId": "B",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          }
+        }
+      ],
+      "title": "Air and Movement",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 19
+      },
+      "id": 10,
+      "options": {
+        "cellHeight": "md",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "format": "table",
+          "rawSql": "SELECT city, weather_description, temperature_celsius, feels_like_celsius, humidity, wind_speed, pressure, observed_at_local FROM weather_observations WHERE city = '${city}' ORDER BY observed_at_local DESC LIMIT 1",
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          }
+        }
+      ],
+      "title": "Executive Snapshot",
+      "transparent": true,
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 16,
+        "x": 8,
+        "y": 19
+      },
+      "id": 11,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "observed_at_local"
+          }
+        ]
+      },
+      "targets": [
+        {
+          "format": "table",
+          "rawSql": "SELECT observed_at_local, weather_description, temperature_celsius, minimum_temp_celsius, maximum_temp_celsius, humidity, wind_speed, pressure, sunrise_local, sunset_local FROM weather_observations WHERE city = '${city}' ORDER BY observed_at_local DESC LIMIT 20",
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          }
+        }
+      ],
+      "title": "Observation Ledger",
+      "transparent": true,
+      "type": "table"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "weather",
+    "operations",
+    "executive",
+    "suite",
+    "mysql"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Bangkok",
+          "value": "Bangkok"
+        },
+        "datasource": {
+          "type": "mysql",
+          "uid": "mysql-airflow"
+        },
+        "definition": "SELECT DISTINCT city FROM weather_observations ORDER BY city",
+        "hide": 0,
+        "includeAll": false,
+        "label": "City",
+        "multi": false,
+        "name": "city",
+        "options": [],
+        "query": "SELECT DISTINCT city FROM weather_observations ORDER BY city",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Atmospheric Operations Suite",
+  "uid": "weather-ops-dashboard",
+  "version": 3,
+  "weekStart": "",
+  "description": "Executive-grade weather intelligence dashboard for operational monitoring of temperature, humidity, wind, pressure, and recent observations."
+}

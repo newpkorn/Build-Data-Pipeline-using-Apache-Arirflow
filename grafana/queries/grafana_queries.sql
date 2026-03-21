@@ -29,3 +29,31 @@ FROM global_exchange_rates
 WHERE rate_date = (SELECT MAX(rate_date) FROM global_exchange_rates)
 ORDER BY rate DESC
 LIMIT 10;
+
+
+-- Weather Temperature Trend
+
+SELECT
+observed_at_local as time,
+temperature_celsius as value,
+'Temperature' as metric
+FROM weather_observations
+WHERE city = 'Bangkok'
+ORDER BY observed_at_local ASC;
+
+
+-- Weather Latest Snapshot
+
+SELECT
+city,
+weather_description,
+temperature_celsius,
+feels_like_celsius,
+humidity,
+wind_speed,
+pressure,
+observed_at_local
+FROM weather_observations
+WHERE city = 'Bangkok'
+ORDER BY observed_at_local DESC
+LIMIT 1;

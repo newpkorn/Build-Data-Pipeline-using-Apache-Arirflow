@@ -1,0 +1,67 @@
+{
+  "title": "FX Exchange Rate Dashboard",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "USD -> THB Rate",
+      "targets": [
+        {
+          "rawSql": "SELECT UNIX_TIMESTAMP(rate_date) as time_sec, CAST(rate AS DECIMAL(10, 4)) as value, 'USD' as metric FROM global_exchange_rates WHERE currency_code = 'USD' ORDER BY rate_date ASC",
+          "format": "time_series",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          }
+        }
+      ],
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Latest Rate",
+      "targets": [
+        {
+          "rawSql": "SELECT CAST(rate AS DECIMAL(10, 4)) as rate FROM global_exchange_rates WHERE currency_code = 'USD' ORDER BY rate_date DESC LIMIT 1",
+          "format": "table",
+          "datasource": {
+            "type": "mysql",
+            "uid": "mysql-airflow"
+          }
+        }
+      ],
+      "datasource": {
+        "type": "mysql",
+        "uid": "mysql-airflow"
+      }
+    }
+  ],
+  "editable": true,
+  "graphTooltip": 1,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "fx",
+    "finance",
+    "mysql"
+  ],
+  "timezone": "browser",
+  "refresh": "1m",
+  "time": {
+    "from": "now-180d",
+    "to": "now"
+  },
+  "uid": "fx-exchange-rate-dashboard",
+  "version": 1,
+  "annotations": {
+    "list": []
+  },
+  "links": [],
+  "fiscalYearStartMonth": 0,
+  "liveNow": false,
+  "templating": {
+    "list": []
+  }
+}
