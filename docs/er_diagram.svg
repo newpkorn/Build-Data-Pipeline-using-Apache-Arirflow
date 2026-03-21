@@ -1,0 +1,39 @@
+<svg width="1400" height="860" viewBox="0 0 1400 860" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1400" height="860" fill="#F8FAFC"/>
+  <text x="90" y="110" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="700">Analytical Data Model</text>
+  <text x="90" y="154" fill="#475569" font-family="Arial, Helvetica, sans-serif" font-size="22">Core MySQL entities used by weather, FX, and API-driven ETL pipelines.</text>
+
+  <rect x="110" y="250" width="320" height="230" rx="24" fill="#0F172A"/>
+  <text x="146" y="304" fill="#7DD3FC" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">weather_observations</text>
+  <text x="146" y="350" fill="#CBD5E1" font-family="Arial, Helvetica, sans-serif" font-size="20">id (PK)</text>
+  <text x="146" y="382" fill="#CBD5E1" font-family="Arial, Helvetica, sans-serif" font-size="20">city</text>
+  <text x="146" y="414" fill="#CBD5E1" font-family="Arial, Helvetica, sans-serif" font-size="20">temperature_celsius</text>
+  <text x="146" y="446" fill="#CBD5E1" font-family="Arial, Helvetica, sans-serif" font-size="20">humidity / wind_speed / pressure</text>
+
+  <rect x="540" y="220" width="320" height="290" rx="24" fill="#082F49"/>
+  <text x="576" y="274" fill="#7DD3FC" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">global_exchange_rates</text>
+  <text x="576" y="320" fill="#E2E8F0" font-family="Arial, Helvetica, sans-serif" font-size="20">id (PK)</text>
+  <text x="576" y="352" fill="#E2E8F0" font-family="Arial, Helvetica, sans-serif" font-size="20">rate_date</text>
+  <text x="576" y="384" fill="#E2E8F0" font-family="Arial, Helvetica, sans-serif" font-size="20">currency_code</text>
+  <text x="576" y="416" fill="#E2E8F0" font-family="Arial, Helvetica, sans-serif" font-size="20">rate</text>
+  <text x="576" y="448" fill="#E2E8F0" font-family="Arial, Helvetica, sans-serif" font-size="20">period / currency / updated_at</text>
+
+  <rect x="970" y="250" width="320" height="230" rx="24" fill="#14532D"/>
+  <text x="1006" y="304" fill="#BBF7D0" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">bot_exchange_rates</text>
+  <text x="1006" y="350" fill="#DCFCE7" font-family="Arial, Helvetica, sans-serif" font-size="20">period + currency_code (PK)</text>
+  <text x="1006" y="382" fill="#DCFCE7" font-family="Arial, Helvetica, sans-serif" font-size="20">buying_rate / selling_rate</text>
+  <text x="1006" y="414" fill="#DCFCE7" font-family="Arial, Helvetica, sans-serif" font-size="20">mid_rate</text>
+  <text x="1006" y="446" fill="#DCFCE7" font-family="Arial, Helvetica, sans-serif" font-size="20">updated_at</text>
+
+  <rect x="370" y="580" width="300" height="150" rx="24" fill="#7C2D12"/>
+  <text x="404" y="632" fill="#FED7AA" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">api_data</text>
+  <text x="404" y="676" fill="#FFEDD5" font-family="Arial, Helvetica, sans-serif" font-size="20">example external API ingestion</text>
+
+  <rect x="740" y="580" width="300" height="150" rx="24" fill="#3B0764"/>
+  <text x="774" y="632" fill="#DDD6FE" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">supporting marts</text>
+  <text x="774" y="676" fill="#F3E8FF" font-family="Arial, Helvetica, sans-serif" font-size="20">orders, reports, sentiment outputs</text>
+
+  <path d="M430 365H540" stroke="#94A3B8" stroke-width="4" stroke-dasharray="10 10"/>
+  <path d="M860 365H970" stroke="#94A3B8" stroke-width="4" stroke-dasharray="10 10"/>
+  <path d="M700 510V580" stroke="#94A3B8" stroke-width="4" stroke-dasharray="10 10"/>
+</svg>

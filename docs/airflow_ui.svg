@@ -1,0 +1,47 @@
+<svg width="1400" height="860" viewBox="0 0 1400 860" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1400" height="860" fill="#EEF2FF"/>
+  <rect x="60" y="50" width="1280" height="760" rx="28" fill="white" stroke="#CBD5E1"/>
+  <rect x="60" y="50" width="1280" height="70" rx="28" fill="#0F172A"/>
+  <circle cx="108" cy="85" r="8" fill="#F87171"/>
+  <circle cx="136" cy="85" r="8" fill="#FBBF24"/>
+  <circle cx="164" cy="85" r="8" fill="#34D399"/>
+  <text x="210" y="93" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">Airflow Workspace</text>
+
+  <rect x="95" y="150" width="250" height="610" rx="22" fill="#F8FAFC" stroke="#E2E8F0"/>
+  <text x="128" y="198" fill="#475569" font-family="Arial, Helvetica, sans-serif" font-size="18">DAG Portfolio</text>
+  <rect x="120" y="226" width="200" height="64" rx="18" fill="#DBEAFE"/>
+  <text x="140" y="265" fill="#1D4ED8" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">weather_api_pipeline</text>
+  <rect x="120" y="306" width="200" height="64" rx="18" fill="#ECFCCB"/>
+  <text x="140" y="345" fill="#3F6212" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">exchange_rate_pipeline</text>
+  <rect x="120" y="386" width="200" height="64" rx="18" fill="#FFEDD5"/>
+  <text x="140" y="425" fill="#9A3412" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">bot_exchange_rate</text>
+
+  <rect x="380" y="150" width="915" height="160" rx="22" fill="#0F172A"/>
+  <text x="420" y="205" fill="#7DD3FC" font-family="Arial, Helvetica, sans-serif" font-size="18">PIPELINE STATUS</text>
+  <text x="420" y="255" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="700">Orchestration at a Glance</text>
+  <text x="420" y="292" fill="#CBD5E1" font-family="Arial, Helvetica, sans-serif" font-size="20">DAG health, schedule visibility, task flow, and recent operational history.</text>
+
+  <rect x="380" y="340" width="915" height="180" rx="22" fill="#F8FAFC" stroke="#E2E8F0"/>
+  <text x="416" y="388" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">Task Graph</text>
+  <circle cx="500" cy="450" r="34" fill="#38BDF8"/>
+  <circle cx="690" cy="450" r="34" fill="#22C55E"/>
+  <circle cx="880" cy="450" r="34" fill="#F59E0B"/>
+  <circle cx="1070" cy="450" r="34" fill="#A855F7"/>
+  <text x="468" y="456" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">Extract</text>
+  <text x="652" y="456" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">Transform</text>
+  <text x="852" y="456" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">Load</text>
+  <text x="1030" y="456" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700">Notify</text>
+  <path d="M534 450H656" stroke="#94A3B8" stroke-width="4" stroke-dasharray="10 10"/>
+  <path d="M724 450H846" stroke="#94A3B8" stroke-width="4" stroke-dasharray="10 10"/>
+  <path d="M914 450H1036" stroke="#94A3B8" stroke-width="4" stroke-dasharray="10 10"/>
+
+  <rect x="380" y="550" width="438" height="170" rx="22" fill="#EFF6FF" stroke="#BFDBFE"/>
+  <text x="416" y="596" fill="#1D4ED8" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">Recent Runs</text>
+  <text x="416" y="638" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="18">scheduled__2026-03-22  success</text>
+  <text x="416" y="672" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="18">manual__2026-03-21     success</text>
+
+  <rect x="857" y="550" width="438" height="170" rx="22" fill="#F0FDF4" stroke="#BBF7D0"/>
+  <text x="893" y="596" fill="#166534" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">Operational Notes</text>
+  <text x="893" y="638" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="18">Celery workers active</text>
+  <text x="893" y="672" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="18">Alerts routed to Email + Discord</text>
+</svg>
