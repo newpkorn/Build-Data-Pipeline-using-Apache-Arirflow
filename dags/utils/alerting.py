@@ -40,3 +40,26 @@ def discord_alert(context):
         webhook,
         json={"content": message}
     )
+
+
+def discord_success_alert(context):
+
+    webhook = Variable.get("discord_webhook")
+
+    dag = context["dag"].dag_id
+    dag_run = context.get("dag_run")
+    run_id = dag_run.run_id if dag_run else "unknown"
+    execution_date = context.get("logical_date") or context.get("execution_date")
+
+    message = f"""
+✅ **Airflow Success**
+
+**DAG:** {dag}
+**Run ID:** {run_id}
+**Execution:** {execution_date}
+"""
+
+    requests.post(
+        webhook,
+        json={"content": message}
+    )

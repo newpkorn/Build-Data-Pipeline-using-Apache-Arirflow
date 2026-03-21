@@ -59,3 +59,22 @@ CREATE TABLE IF NOT EXISTS global_exchange_rates (
     period DATE,
     currency VARCHAR(10)
 );
+
+-- Table for weather_api_pipeline.py
+CREATE TABLE IF NOT EXISTS weather_observations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    city VARCHAR(100) NOT NULL,
+    weather_description VARCHAR(255),
+    temperature_celsius DECIMAL(8,2),
+    feels_like_celsius DECIMAL(8,2),
+    minimum_temp_celsius DECIMAL(8,2),
+    maximum_temp_celsius DECIMAL(8,2),
+    pressure INT,
+    humidity INT,
+    wind_speed DECIMAL(8,2),
+    observed_at_local DATETIME NOT NULL,
+    sunrise_local DATETIME,
+    sunset_local DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uniq_weather_city_observed (city, observed_at_local)
+);
