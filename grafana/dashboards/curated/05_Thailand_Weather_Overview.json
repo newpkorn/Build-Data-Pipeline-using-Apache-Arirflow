@@ -1,519 +1,685 @@
 {
-  "annotations": {
-    "list": []
-  },
-  "description": "National overview dashboard for comparing Thai provinces by temperature, humidity, pressure, and latest observation status.",
-  "editable": true,
-  "fiscalYearStartMonth": 0,
-  "graphTooltip": 1,
-  "links": [
-    {
-      "asDropdown": false,
-      "icon": "external link",
-      "includeVars": false,
-      "keepTime": true,
-      "tags": [],
-      "targetBlank": false,
-      "title": "Command Center",
-      "type": "link",
-      "url": "/grafana/d/executive-command-center"
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "grafana",
+                    "uid": "-- Grafana --"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
+        ]
     },
-    {
-      "asDropdown": false,
-      "icon": "external link",
-      "includeVars": false,
-      "keepTime": true,
-      "tags": [],
-      "targetBlank": false,
-      "title": "Province Detail",
-      "type": "link",
-      "url": "/grafana/d/weather-ops-dashboard"
-    },
-    {
-      "asDropdown": false,
-      "icon": "external link",
-      "includeVars": false,
-      "keepTime": true,
-      "tags": [],
-      "targetBlank": false,
-      "title": "Regional Heat",
-      "type": "link",
-      "url": "/grafana/d/thailand-regional-heat-ranking"
-    },
-    {
-      "asDropdown": false,
-      "icon": "external link",
-      "includeVars": false,
-      "keepTime": true,
-      "tags": [],
-      "targetBlank": false,
-      "title": "FX Detail",
-      "type": "link",
-      "url": "/grafana/d/fx-intelligence-dashboard"
-    }
-  ],
-  "liveNow": false,
-  "panels": [
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 1,
-      "options": {
-        "content": "<div style=\"height:100%;padding:18px 20px;border-radius:20px;background:linear-gradient(135deg, rgba(3,105,161,0.94) 0%, rgba(8,47,73,0.95) 45%, rgba(15,23,42,0.98) 100%);box-shadow:0 18px 40px rgba(15,23,42,0.18);color:#f8fafc;\"><div style=\"font-size:13px;letter-spacing:0.18em;text-transform:uppercase;opacity:0.82;\">Thailand Overview</div><h1 style=\"margin:8px 0 10px 0;font-size:30px;line-height:1.05;\">Thailand Weather Overview</h1><p style=\"max-width:760px;margin:0;font-size:14px;line-height:1.6;opacity:0.95;\">Compare provincial weather conditions across Thailand and spot the hottest, coolest, most humid, and freshest observations in one view, then jump into regional hotspots.</p></div>",
-        "mode": "html"
-      },
-      "pluginVersion": "10.0.0",
-      "title": "Header",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 0,
-        "y": 4
-      },
-      "id": 2,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "value"
-      },
-      "targets": [
+    "description": "National overview dashboard for comparing Thai provinces by temperature, humidity, pressure, and latest observation status.",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 1,
+    "links": [
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT COUNT(DISTINCT province) AS value FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations)",
-          "refId": "A"
-        }
-      ],
-      "title": "Covered Provinces",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "celsius"
+            "asDropdown": false,
+            "icon": "external link",
+            "includeVars": false,
+            "keepTime": true,
+            "tags": [],
+            "targetBlank": false,
+            "title": "Command Center",
+            "type": "link",
+            "url": "/grafana/d/executive-command-center"
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 6,
-        "y": 4
-      },
-      "id": 3,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "value"
-      },
-      "targets": [
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT ROUND(AVG(temperature_celsius), 2) AS value FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations)",
-          "refId": "A"
-        }
-      ],
-      "title": "Average Temperature",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent"
+            "asDropdown": false,
+            "icon": "external link",
+            "includeVars": false,
+            "keepTime": true,
+            "tags": [],
+            "targetBlank": false,
+            "title": "Province Detail",
+            "type": "link",
+            "url": "/grafana/d/weather-ops-dashboard"
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 12,
-        "y": 4
-      },
-      "id": 4,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "value"
-      },
-      "targets": [
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT ROUND(AVG(humidity), 2) AS value FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations)",
-          "refId": "A"
-        }
-      ],
-      "title": "Average Humidity",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 18,
-        "y": 4
-      },
-      "id": 5,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "fields": "",
-          "values": false
+            "asDropdown": false,
+            "icon": "external link",
+            "includeVars": false,
+            "keepTime": true,
+            "tags": [],
+            "targetBlank": false,
+            "title": "Regional Heat",
+            "type": "link",
+            "url": "/grafana/d/thailand-regional-heat-ranking"
         },
-        "textMode": "value"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "targets": [
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT province FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations) ORDER BY temperature_celsius DESC LIMIT 1",
-          "refId": "A"
+            "asDropdown": false,
+            "icon": "external link",
+            "includeVars": false,
+            "keepTime": true,
+            "tags": [],
+            "targetBlank": false,
+            "title": "FX Detail",
+            "type": "link",
+            "url": "/grafana/d/fx-intelligence-dashboard"
         }
-      ],
-      "title": "Hottest Province",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-GrYlRd"
-          },
-          "unit": "celsius"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 9
-      },
-      "id": 6,
-      "options": {
-        "displayMode": "gradient",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true
-      },
-      "targets": [
+    ],
+    "panels": [
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT province AS metric, temperature_celsius AS value FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations) ORDER BY temperature_celsius DESC LIMIT 12",
-          "refId": "A"
-        }
-      ],
-      "title": "Top Hottest Provinces",
-      "transparent": true,
-      "type": "bargauge"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-BlYlRd"
-          },
-          "unit": "percent"
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            },
+            "id": 1,
+            "options": {
+                "code": {
+                    "language": "plaintext",
+                    "showLineNumbers": false,
+                    "showMiniMap": false
+                },
+                "content": "<div style=\"height:100%;padding:18px 20px;border-radius:20px;background:linear-gradient(135deg, rgba(3,105,161,0.94) 0%, rgba(8,47,73,0.95) 45%, rgba(15,23,42,0.98) 100%);box-shadow:0 18px 40px rgba(15,23,42,0.18);color:#f8fafc;\"><div style=\"font-size:13px;letter-spacing:0.18em;text-transform:uppercase;opacity:0.82;\">Thailand Overview</div><h1 style=\"margin:8px 0 10px 0;font-size:30px;line-height:1.05;\">Thailand Weather Overview</h1><p style=\"max-width:760px;margin:0;font-size:14px;line-height:1.6;opacity:0.95;\">Compare provincial weather conditions across Thailand and spot the hottest, coolest, most humid, and freshest observations in one view, then jump into regional hotspots.</p></div>",
+                "mode": "html"
+            },
+            "pluginVersion": "12.4.0",
+            "title": "Header",
+            "transparent": true,
+            "type": "text"
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 9
-      },
-      "id": 7,
-      "options": {
-        "displayMode": "gradient",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true
-      },
-      "targets": [
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT province AS metric, humidity AS value FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations) ORDER BY humidity DESC LIMIT 12",
-          "refId": "A"
-        }
-      ],
-      "title": "Most Humid Provinces",
-      "transparent": true,
-      "type": "bargauge"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisPlacement": "auto",
-            "drawStyle": "line",
-            "fillOpacity": 12,
-            "gradientMode": "opacity",
-            "lineInterpolation": "smooth",
-            "lineWidth": 3,
-            "pointSize": 4,
-            "showPoints": "auto",
-            "spanNulls": true
-          },
-          "unit": "celsius"
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "none"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 6,
+                "x": 0,
+                "y": 4
+            },
+            "id": 2,
+            "options": {
+                "colorMode": "background",
+                "graphMode": "none",
+                "justifyMode": "center",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "/.*/",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT COUNT(DISTINCT province) AS value FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations)",
+                    "refId": "A"
+                }
+            ],
+            "title": "Covered Provinces",
+            "transparent": true,
+            "type": "stat"
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 9
-      },
-      "id": 8,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "time_series",
-          "rawQuery": true,
-          "rawSql": "SELECT observed_at_local AS time, AVG(temperature_celsius) AS value, 'Thailand Avg Temp' AS metric FROM weather_observations WHERE $__timeFilter(observed_at_local) GROUP BY observed_at_local ORDER BY observed_at_local",
-          "refId": "A"
-        }
-      ],
-      "title": "Thailand Average Temperature Trend",
-      "transparent": true,
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto"
-          }
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "celsius"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 6,
+                "x": 6,
+                "y": 4
+            },
+            "id": 3,
+            "options": {
+                "colorMode": "background",
+                "graphMode": "none",
+                "justifyMode": "center",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT ROUND(AVG(temperature_celsius), 2) AS value FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations)",
+                    "refId": "A"
+                }
+            ],
+            "title": "Average Temperature",
+            "transparent": true,
+            "type": "stat"
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 24,
-        "x": 0,
-        "y": 17
-      },
-      "id": 9,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "show": false
-        },
-        "showHeader": true
-      },
-      "targets": [
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT province, city, weather_description, temperature_celsius, feels_like_celsius, humidity, wind_speed, pressure, observed_at_local FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations) ORDER BY temperature_celsius DESC",
-          "refId": "A"
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "mappings": [],
+                    "max": 100,
+                    "min": 0,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "percent"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 6,
+                "x": 12,
+                "y": 4
+            },
+            "id": 4,
+            "options": {
+                "colorMode": "background",
+                "graphMode": "none",
+                "justifyMode": "center",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT ROUND(AVG(humidity), 2) AS value FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations)",
+                    "refId": "A"
+                }
+            ],
+            "title": "Average Humidity",
+            "transparent": true,
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 6,
+                "x": 18,
+                "y": 4
+            },
+            "id": 5,
+            "options": {
+                "colorMode": "background",
+                "graphMode": "none",
+                "justifyMode": "center",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "/^value$/",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT province AS value FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations) ORDER BY temperature_celsius DESC LIMIT 1",
+                    "refId": "A"
+                }
+            ],
+            "title": "Hottest Province",
+            "transparent": true,
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "continuous-GrYlRd"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 8,
+                "x": 0,
+                "y": 9
+            },
+            "id": 6,
+            "options": {
+                "displayMode": "gradient",
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": false
+                },
+                "maxVizHeight": 300,
+                "minVizHeight": 16,
+                "minVizWidth": 8,
+                "namePlacement": "auto",
+                "orientation": "vertical",
+                "reduceOptions": {
+                    "calcs": [],
+                    "fields": "/^value$/",
+                    "values": true
+                },
+                "showUnfilled": true,
+                "sizing": "auto",
+                "valueMode": "color"
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT province AS metric, temperature_celsius AS value FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations) ORDER BY temperature_celsius DESC LIMIT 12",
+                    "refId": "A"
+                }
+            ],
+            "title": "Top Hottest Provinces",
+            "transparent": true,
+            "type": "bargauge"
+        },
+        {
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "continuous-BlYlRd"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 8,
+                "x": 8,
+                "y": 9
+            },
+            "id": 7,
+            "options": {
+                "displayMode": "gradient",
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": false
+                },
+                "maxVizHeight": 300,
+                "minVizHeight": 16,
+                "minVizWidth": 8,
+                "namePlacement": "auto",
+                "orientation": "horizontal",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": true
+                },
+                "showUnfilled": true,
+                "sizing": "auto",
+                "valueMode": "color"
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT province AS metric, humidity AS value FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations) ORDER BY humidity DESC LIMIT 12",
+                    "refId": "A"
+                }
+            ],
+            "title": "Most Humid Provinces",
+            "transparent": true,
+            "type": "bargauge"
+        },
+        {
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 12,
+                        "gradientMode": "opacity",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "smooth",
+                        "lineWidth": 3,
+                        "pointSize": 4,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "showValues": false,
+                        "spanNulls": true,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "celsius"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 8,
+                "x": 16,
+                "y": 9
+            },
+            "id": 8,
+            "options": {
+                "legend": {
+                    "calcs": ["lastNotNull"],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "time_series",
+                    "rawQuery": true,
+                    "rawSql": "SELECT observed_at_local AS time, AVG(temperature_celsius) AS value, 'Thailand Avg Temp' AS metric FROM weather_observations WHERE $__timeFilter(observed_at_local) GROUP BY observed_at_local ORDER BY observed_at_local",
+                    "refId": "A"
+                }
+            ],
+            "title": "Thailand Average Temperature Trend",
+            "transparent": true,
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "footer": {
+                            "reducers": []
+                        },
+                        "inspect": false
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 24,
+                "x": 0,
+                "y": 17
+            },
+            "id": 9,
+            "options": {
+                "cellHeight": "sm",
+                "showHeader": true
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT province, city, weather_description, temperature_celsius, feels_like_celsius, humidity, wind_speed, pressure, observed_at_local FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations) ORDER BY temperature_celsius DESC",
+                    "refId": "A"
+                }
+            ],
+            "title": "Latest Provincial Snapshot",
+            "transparent": true,
+            "type": "table"
         }
-      ],
-      "title": "Latest Provincial Snapshot",
-      "transparent": true,
-      "type": "table"
-    }
-  ],
-  "refresh": "1m",
-  "schemaVersion": 38,
-  "style": "dark",
-  "tags": [
-    "weather",
-    "overview",
-    "thailand",
-    "operations",
-    "mysql"
-  ],
-  "templating": {
-    "list": []
-  },
-  "time": {
-    "from": "now-30d",
-    "to": "now"
-  },
-  "timepicker": {},
-  "timezone": "browser",
-  "title": "Thailand Weather Overview",
-  "uid": "thailand-weather-overview",
-  "version": 1,
-  "weekStart": ""
+    ],
+    "preload": false,
+    "refresh": "1m",
+    "schemaVersion": 42,
+    "tags": ["weather", "overview", "thailand", "operations", "mysql"],
+    "templating": {
+        "list": []
+    },
+    "time": {
+        "from": "now-7d",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Thailand Weather Overview",
+    "uid": "thailand-weather-overview",
+    "version": 1,
+    "weekStart": ""
 }

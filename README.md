@@ -417,6 +417,109 @@ Contains local-only archives and reference assets that are intentionally exclude
 - Grafana opens directly to the executive landing dashboard
 - curated dashboards are cross-linked for clean navigation
 - local archives are kept outside the production dashboard path
+- provisioned dashboards allow UI edits, but repo files must still be synced manually
+
+## Grafana UI Sync Workflow
+
+Use this workflow when you want to fine-tune a provisioned dashboard in Grafana UI and then bring the final version back into the repository.
+
+### 1. Edit and save in Grafana UI
+
+- open the provisioned dashboard
+- make your layout, query, and panel changes in Grafana
+- click `Save dashboard`
+
+### 2. Export the dashboard JSON from Grafana
+
+- open the saved dashboard
+- choose `Share` or `Export`
+- download the dashboard JSON to your machine
+
+### 3. Sync the exported JSON back into the repo
+
+Use the helper script below. It accepts either:
+
+- a raw dashboard export from Grafana UI
+- an API-style export that wraps the dashboard under `dashboard`
+
+```bash
+bash scripts/sync_grafana_dashboard.sh \
+  ~/Downloads/Thailand_Weather_Overview.json \
+  grafana/dashboards/curated/05_Thailand_Weather_Overview.json
+```
+
+### 4. Validate and commit
+
+```bash
+python3 -m json.tool grafana/dashboards/curated/05_Thailand_Weather_Overview.json >/dev/null
+git add grafana/dashboards/curated/05_Thailand_Weather_Overview.json
+git commit -m "chore: sync grafana dashboard changes from ui export"
+```
+
+### 5. Redeploy Grafana
+
+```bash
+docker compose restart grafana
+```
+
+This keeps the UI convenient for fast iteration while preserving the repository as the source of truth for the provisioned dashboard files.
+
+## Grafana Dashboard Modes
+
+The project now supports two dashboard operating modes without changing the curated JSON structure in the repository.
+
+### 1. Fast mode: UI-persistent dashboards
+
+Use this when you want dashboards on production to behave like normal Grafana dashboards stored in the Grafana volume.
+
+Set:
+
+```bash
+GRAFANA_DASHBOARD_MODE=ui-persistent
+```
+
+Behavior:
+
+- datasources are still provisioned from files
+- dashboard file provisioning is skipped
+- dashboards stored in `grafana-storage` remain editable and survive container restarts
+- users can change and save dashboards directly in Grafana UI
+
+Start Grafana:
+
+```bash
+docker compose up -d grafana
+```
+
+### 2. Smoother mode: seed once, then use UI + volume
+
+Use this when you want to keep the curated JSON files as initial templates, but allow dashboards to live in Grafana DB after the first import.
+
+Set:
+
+```bash
+GRAFANA_DASHBOARD_MODE=seed-once
+```
+
+Then start Grafana and run the optional seeder profile:
+
+```bash
+docker compose up -d grafana
+docker compose --profile grafana-seed up grafana-dashboard-seeder
+```
+
+Behavior:
+
+- dashboard file provisioning is skipped
+- curated dashboards are imported once into Grafana DB if missing
+- dashboards then behave like user-created dashboards
+- user edits survive restarts and redeploys as long as `grafana-storage` volume is preserved
+
+### Which mode should I use?
+
+- `provisioned`: best for dev-managed official dashboards
+- `ui-persistent`: best for fast production editing with no automatic reseeding
+- `seed-once`: best when you want official starter dashboards plus long-term UI editing on production
 
 ## Portfolio Branding
 
