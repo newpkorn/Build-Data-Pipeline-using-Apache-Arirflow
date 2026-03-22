@@ -292,8 +292,9 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
-          }
+            "mode": "continuous-BlPu"
+          },
+          "decimals": 4
         },
         "overrides": []
       },
@@ -305,7 +306,7 @@
       },
       "id": 6,
       "options": {
-        "displayMode": "basic",
+        "displayMode": "gradient",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
