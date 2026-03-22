@@ -464,63 +464,6 @@ docker compose restart grafana
 
 This keeps the UI convenient for fast iteration while preserving the repository as the source of truth for the provisioned dashboard files.
 
-## Grafana Dashboard Modes
-
-The project now supports two dashboard operating modes without changing the curated JSON structure in the repository.
-
-### 1. Fast mode: UI-persistent dashboards
-
-Use this when you want dashboards on production to behave like normal Grafana dashboards stored in the Grafana volume.
-
-Set:
-
-```bash
-GRAFANA_DASHBOARD_MODE=ui-persistent
-```
-
-Behavior:
-
-- datasources are still provisioned from files
-- dashboard file provisioning is skipped
-- dashboards stored in `grafana-storage` remain editable and survive container restarts
-- users can change and save dashboards directly in Grafana UI
-
-Start Grafana:
-
-```bash
-docker compose up -d grafana
-```
-
-### 2. Smoother mode: seed once, then use UI + volume
-
-Use this when you want to keep the curated JSON files as initial templates, but allow dashboards to live in Grafana DB after the first import.
-
-Set:
-
-```bash
-GRAFANA_DASHBOARD_MODE=seed-once
-```
-
-Then start Grafana and run the optional seeder profile:
-
-```bash
-docker compose up -d grafana
-docker compose --profile grafana-seed up grafana-dashboard-seeder
-```
-
-Behavior:
-
-- dashboard file provisioning is skipped
-- curated dashboards are imported once into Grafana DB if missing
-- dashboards then behave like user-created dashboards
-- user edits survive restarts and redeploys as long as `grafana-storage` volume is preserved
-
-### Which mode should I use?
-
-- `provisioned`: best for dev-managed official dashboards
-- `ui-persistent`: best for fast production editing with no automatic reseeding
-- `seed-once`: best when you want official starter dashboards plus long-term UI editing on production
-
 ## Portfolio Branding
 
 The curated dashboards are positioned as a lightweight enterprise analytics package:
