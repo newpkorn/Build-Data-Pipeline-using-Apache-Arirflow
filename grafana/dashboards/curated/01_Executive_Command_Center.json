@@ -13,9 +13,31 @@
       "keepTime": true,
       "tags": [],
       "targetBlank": false,
-      "title": "Weather Detail",
+      "title": "Province Detail",
       "type": "link",
       "url": "/grafana/d/weather-ops-dashboard"
+    },
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Thailand Overview",
+      "type": "link",
+      "url": "/grafana/d/thailand-weather-overview"
+    },
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Regional Heat",
+      "type": "link",
+      "url": "/grafana/d/thailand-regional-heat-ranking"
     },
     {
       "asDropdown": false,
@@ -55,7 +77,7 @@
       },
       "id": 1,
       "options": {
-        "content": "<div style=\"height:100%;padding:24px;border-radius:26px;background:radial-gradient(circle at top left, rgba(125,211,252,0.22), transparent 22%), radial-gradient(circle at top right, rgba(34,197,94,0.16), transparent 20%), linear-gradient(140deg, #020617 0%, #0f172a 38%, #082f49 100%);box-shadow:0 24px 60px rgba(2,8,23,0.42);color:#f8fafc;border:1px solid rgba(148,163,184,0.12);\"><div style=\"display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;\"><div><div style=\"font-size:12px;letter-spacing:0.28em;text-transform:uppercase;opacity:0.72;\">Production Portfolio</div><h1 style=\"margin:10px 0 12px 0;font-size:34px;line-height:1.02;\">Executive Command Center</h1><p style=\"max-width:760px;margin:0;font-size:14px;line-height:1.7;opacity:0.92;\">Your premium landing view for weather intelligence, FX monitoring, and platform observability. Start here for the health of the whole stack, then drill into the focused dashboards for deeper decisions.</p></div><div style=\"min-width:220px;padding:12px 14px;border-radius:18px;background:rgba(15,23,42,0.46);border:1px solid rgba(125,211,252,0.18);backdrop-filter:blur(12px);\"><div style=\"font-size:11px;text-transform:uppercase;letter-spacing:0.18em;opacity:0.62;\">Portfolio Status</div><div style=\"margin-top:8px;font-size:24px;font-weight:700;color:#e0f2fe;\">Live</div><div style=\"margin-top:4px;font-size:13px;opacity:0.8;\">Weather, FX and logs provisioned</div></div></div><div style=\"display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:18px;\"><div style=\"padding:12px 14px;border-radius:18px;background:rgba(56,189,248,0.10);border:1px solid rgba(125,211,252,0.18);backdrop-filter:blur(10px);\"><div style=\"font-size:11px;letter-spacing:0.16em;text-transform:uppercase;opacity:0.66;\">Weather</div><div style=\"margin-top:8px;font-size:18px;font-weight:700;\">Ops Ready</div><div style=\"margin-top:4px;font-size:12px;opacity:0.76;\">Temperature, humidity, pressure</div></div><div style=\"padding:12px 14px;border-radius:18px;background:rgba(34,197,94,0.10);border:1px solid rgba(74,222,128,0.18);backdrop-filter:blur(10px);\"><div style=\"font-size:11px;letter-spacing:0.16em;text-transform:uppercase;opacity:0.66;\">FX</div><div style=\"margin-top:8px;font-size:18px;font-weight:700;\">Market Watch</div><div style=\"margin-top:4px;font-size:12px;opacity:0.76;\">Core pairs and trend overview</div></div><div style=\"padding:12px 14px;border-radius:18px;background:rgba(249,115,22,0.10);border:1px solid rgba(251,146,60,0.18);backdrop-filter:blur(10px);\"><div style=\"font-size:11px;letter-spacing:0.16em;text-transform:uppercase;opacity:0.66;\">Logs</div><div style=\"margin-top:8px;font-size:18px;font-weight:700;\">Observe</div><div style=\"margin-top:4px;font-size:12px;opacity:0.76;\">Loki-backed troubleshooting</div></div><div style=\"padding:12px 14px;border-radius:18px;background:rgba(168,85,247,0.10);border:1px solid rgba(196,181,253,0.18);backdrop-filter:blur(10px);\"><div style=\"font-size:11px;letter-spacing:0.16em;text-transform:uppercase;opacity:0.66;\">Navigation</div><div style=\"margin-top:8px;font-size:18px;font-weight:700;\">Drill Down</div><div style=\"margin-top:4px;font-size:12px;opacity:0.76;\">Open detail boards below</div></div></div><div style=\"display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;\"><a href=\"/grafana/d/weather-ops-dashboard\" style=\"padding:10px 14px;border-radius:999px;background:rgba(56,189,248,0.18);color:#e0f2fe;text-decoration:none;border:1px solid rgba(125,211,252,0.28);\">Open Weather</a><a href=\"/grafana/d/fx-intelligence-dashboard\" style=\"padding:10px 14px;border-radius:999px;background:rgba(34,197,94,0.16);color:#dcfce7;text-decoration:none;border:1px solid rgba(74,222,128,0.28);\">Open FX</a><a href=\"/grafana/d/overview-logs\" style=\"padding:10px 14px;border-radius:999px;background:rgba(249,115,22,0.14);color:#ffedd5;text-decoration:none;border:1px solid rgba(251,146,60,0.28);\">Open Logs</a></div></div>",
+        "content": "<div style=\"height:100%;padding:24px;border-radius:26px;background:radial-gradient(circle at top left, rgba(125,211,252,0.22), transparent 22%), radial-gradient(circle at top right, rgba(34,197,94,0.16), transparent 20%), linear-gradient(140deg, #020617 0%, #0f172a 38%, #082f49 100%);box-shadow:0 24px 60px rgba(2,8,23,0.42);color:#f8fafc;border:1px solid rgba(148,163,184,0.12);\"><div style=\"display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;\"><div><div style=\"font-size:12px;letter-spacing:0.28em;text-transform:uppercase;opacity:0.72;\">Production Portfolio</div><h1 style=\"margin:10px 0 12px 0;font-size:34px;line-height:1.02;\">Executive Command Center</h1><p style=\"max-width:760px;margin:0;font-size:14px;line-height:1.7;opacity:0.92;\">Your premium landing view for weather intelligence, FX monitoring, and platform observability. Start here for the health of the whole stack, then drill into the focused dashboards for deeper decisions.</p></div><div style=\"min-width:220px;padding:12px 14px;border-radius:18px;background:rgba(15,23,42,0.46);border:1px solid rgba(125,211,252,0.18);backdrop-filter:blur(12px);\"><div style=\"font-size:11px;text-transform:uppercase;letter-spacing:0.18em;opacity:0.62;\">Portfolio Status</div><div style=\"margin-top:8px;font-size:24px;font-weight:700;color:#e0f2fe;\">Live</div><div style=\"margin-top:4px;font-size:13px;opacity:0.8;\">Weather, FX and logs provisioned</div></div></div><div style=\"display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:18px;\"><div style=\"padding:12px 14px;border-radius:18px;background:rgba(56,189,248,0.10);border:1px solid rgba(125,211,252,0.18);backdrop-filter:blur(10px);\"><div style=\"font-size:11px;letter-spacing:0.16em;text-transform:uppercase;opacity:0.66;\">Weather</div><div style=\"margin-top:8px;font-size:18px;font-weight:700;\">Ops Ready</div><div style=\"margin-top:4px;font-size:12px;opacity:0.76;\">Temperature, humidity, pressure</div></div><div style=\"padding:12px 14px;border-radius:18px;background:rgba(34,197,94,0.10);border:1px solid rgba(74,222,128,0.18);backdrop-filter:blur(10px);\"><div style=\"font-size:11px;letter-spacing:0.16em;text-transform:uppercase;opacity:0.66;\">FX</div><div style=\"margin-top:8px;font-size:18px;font-weight:700;\">Market Watch</div><div style=\"margin-top:4px;font-size:12px;opacity:0.76;\">Core pairs and trend overview</div></div><div style=\"padding:12px 14px;border-radius:18px;background:rgba(249,115,22,0.10);border:1px solid rgba(251,146,60,0.18);backdrop-filter:blur(10px);\"><div style=\"font-size:11px;letter-spacing:0.16em;text-transform:uppercase;opacity:0.66;\">Logs</div><div style=\"margin-top:8px;font-size:18px;font-weight:700;\">Observe</div><div style=\"margin-top:4px;font-size:12px;opacity:0.76;\">Loki-backed troubleshooting</div></div><div style=\"padding:12px 14px;border-radius:18px;background:rgba(168,85,247,0.10);border:1px solid rgba(196,181,253,0.18);backdrop-filter:blur(10px);\"><div style=\"font-size:11px;letter-spacing:0.16em;text-transform:uppercase;opacity:0.66;\">Navigation</div><div style=\"margin-top:8px;font-size:18px;font-weight:700;\">Drill Down</div><div style=\"margin-top:4px;font-size:12px;opacity:0.76;\">Open detail boards below</div></div></div><div style=\"display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;\"><a href=\"/grafana/d/weather-ops-dashboard\" style=\"padding:10px 14px;border-radius:999px;background:rgba(56,189,248,0.18);color:#e0f2fe;text-decoration:none;border:1px solid rgba(125,211,252,0.28);\">Province Detail</a><a href=\"/grafana/d/fx-intelligence-dashboard\" style=\"padding:10px 14px;border-radius:999px;background:rgba(34,197,94,0.16);color:#dcfce7;text-decoration:none;border:1px solid rgba(74,222,128,0.28);\">Open FX</a><a href=\"/grafana/d/thailand-weather-overview\" style=\"padding:10px 14px;border-radius:999px;background:rgba(14,165,233,0.14);color:#e0f2fe;text-decoration:none;border:1px solid rgba(125,211,252,0.28);\">Thailand Overview</a><a href=\"/grafana/d/overview-logs\" style=\"padding:10px 14px;border-radius:999px;background:rgba(249,115,22,0.14);color:#ffedd5;text-decoration:none;border:1px solid rgba(251,146,60,0.28);\">Open Logs</a><a href=\"/grafana/d/thailand-regional-heat-ranking\" style=\"padding:10px 14px;border-radius:999px;background:rgba(248,113,113,0.14);color:#fee2e2;text-decoration:none;border:1px solid rgba(252,165,165,0.28);\">Regional Heat</a></div></div>",
         "mode": "html"
       },
       "pluginVersion": "10.0.0",
@@ -126,11 +148,11 @@
             "uid": "mysql-airflow"
           },
           "format": "table",
-          "rawSql": "SELECT temperature_celsius AS value FROM weather_observations WHERE city = '${city}' ORDER BY observed_at_local DESC LIMIT 1",
+          "rawSql": "SELECT temperature_celsius AS value FROM weather_observations WHERE province = '${province}' ORDER BY observed_at_local DESC LIMIT 1",
           "refId": "A"
         }
       ],
-      "title": "City Temperature",
+      "title": "Province Temperature",
       "transparent": true,
       "type": "stat"
     },
@@ -193,11 +215,11 @@
             "uid": "mysql-airflow"
           },
           "format": "table",
-          "rawSql": "SELECT humidity AS value FROM weather_observations WHERE city = '${city}' ORDER BY observed_at_local DESC LIMIT 1",
+          "rawSql": "SELECT humidity AS value FROM weather_observations WHERE province = '${province}' ORDER BY observed_at_local DESC LIMIT 1",
           "refId": "A"
         }
       ],
-      "title": "Humidity",
+      "title": "Province Humidity",
       "transparent": true,
       "type": "stat"
     },
@@ -410,11 +432,11 @@
             "uid": "mysql-airflow"
           },
           "format": "table",
-          "rawSql": "SELECT TIMESTAMPDIFF(HOUR, MAX(observed_at_local), NOW()) AS value FROM weather_observations WHERE city = '${city}'",
+          "rawSql": "SELECT TIMESTAMPDIFF(HOUR, MAX(observed_at_local), NOW()) AS value FROM weather_observations WHERE province = '${province}'",
           "refId": "A"
         }
       ],
-      "title": "Weather Freshness (hrs)",
+      "title": "Province Freshness (hrs)",
       "transparent": true,
       "type": "stat"
     },
@@ -476,7 +498,7 @@
             "uid": "mysql-airflow"
           },
           "format": "time_series",
-          "rawSql": "SELECT observed_at_local AS time, temperature_celsius AS value, 'Temperature' AS metric FROM weather_observations WHERE city = '${city}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
+          "rawSql": "SELECT observed_at_local AS time, temperature_celsius AS value, 'Temperature' AS metric FROM weather_observations WHERE province = '${province}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
           "refId": "A"
         },
         {
@@ -485,11 +507,11 @@
             "uid": "mysql-airflow"
           },
           "format": "time_series",
-          "rawSql": "SELECT observed_at_local AS time, feels_like_celsius AS value, 'Feels Like' AS metric FROM weather_observations WHERE city = '${city}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
+          "rawSql": "SELECT observed_at_local AS time, feels_like_celsius AS value, 'Feels Like' AS metric FROM weather_observations WHERE province = '${province}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
           "refId": "B"
         }
       ],
-      "title": "Weather Overview Trend",
+      "title": "Selected Province Trend",
       "transparent": true,
       "type": "timeseries"
     },
@@ -591,11 +613,11 @@
             "uid": "mysql-airflow"
           },
           "format": "table",
-          "rawSql": "SELECT city, weather_description, temperature_celsius, humidity, wind_speed, observed_at_local FROM weather_observations WHERE city = '${city}' ORDER BY observed_at_local DESC LIMIT 5",
+          "rawSql": "SELECT province, city, weather_description, temperature_celsius, humidity, wind_speed, observed_at_local FROM weather_observations WHERE province = '${province}' ORDER BY observed_at_local DESC LIMIT 5",
           "refId": "A"
         }
       ],
-      "title": "Latest Weather Records",
+      "title": "Province Latest Records",
       "transparent": true,
       "type": "table"
     },
@@ -664,14 +686,14 @@
           "type": "mysql",
           "uid": "mysql-airflow"
         },
-        "definition": "SELECT DISTINCT city FROM weather_observations ORDER BY city",
+        "definition": "SELECT DISTINCT province AS __text, province AS __value FROM weather_observations ORDER BY province",
         "hide": 0,
         "includeAll": false,
-        "label": "City",
+        "label": "Province",
         "multi": false,
-        "name": "city",
+        "name": "province",
         "options": [],
-        "query": "SELECT DISTINCT city FROM weather_observations ORDER BY city",
+        "query": "SELECT DISTINCT province AS __text, province AS __value FROM weather_observations ORDER BY province",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,

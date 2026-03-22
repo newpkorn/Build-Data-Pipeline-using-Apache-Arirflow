@@ -49,6 +49,7 @@ dags/pipelines/
 Contains business pipelines such as:
 
 - Exchange rate analytics
+- Thailand weather intelligence pipeline
 - COVID-19 dataset processing
 - Customer review sentiment analysis
 - E-commerce analytics pipeline
@@ -158,11 +159,11 @@ Examples include:
 ├── docker
 │   ├── airflow
 │   └── mysql
+│       └── migrations
 │
 ├── grafana
 │   ├── dashboards
-│   │   ├── curated
-│   │   └── archive
+│   │   └── curated
 │   ├── provisioning
 │   └── queries
 │
@@ -175,6 +176,9 @@ Examples include:
 │
 ├── .github/workflows
 │   └── airflow-ci.yml
+│
+├── .local
+│   └── ...
 │
 ├── docker-compose.yaml
 ├── requirements.txt
@@ -202,7 +206,9 @@ MYSQL_USER
 BOT_API_KEY
 DISCORD_WEBHOOK
 OPENWEATHER_API_KEY
-WEATHER_CITY
+WEATHER_CITIES
+WEATHER_ALERT_EMAIL
+GRAFANA_RENDERING_AUTH_TOKEN
 ```
 
 ---
@@ -278,7 +284,7 @@ The script automatically:
 - Runs database migrations
 - Creates the admin user
 - Configures database connections
-- Registers Airflow variables
+- Registers Airflow variables including weather pipeline settings
 
 ---
 
@@ -300,7 +306,7 @@ grafana/provisioning/
 
 ## Grafana Portfolio
 
-The production portfolio is intentionally reduced to four dashboards so the workspace stays clean, opinionated, and easy to operate.
+The production portfolio is intentionally curated into a focused set of dashboards so the workspace stays clean, opinionated, and easy to operate.
 
 ![Grafana Portfolio Map](docs/grafana_portfolio_map.svg)
 
@@ -310,6 +316,7 @@ Purpose:
 
 - default Grafana landing page
 - cross-domain executive summary for weather, FX, and platform health
+- fast province filter for Thailand weather drill-down
 - drill-down navigation into specialized dashboards
 
 Primary audience:
@@ -322,16 +329,44 @@ Primary audience:
 
 Purpose:
 
-- monitor live weather conditions loaded by the Airflow weather pipeline
+- monitor live province-level weather conditions loaded by the Airflow weather pipeline
 - track temperature, feels-like conditions, humidity, wind, pressure, and recent observations
-- support operational review of incoming weather records
+- support operational review of incoming Thailand weather records
 
 Primary audience:
 
 - data engineers validating weather ingestion
-- operations users monitoring city conditions
+- operations users monitoring province conditions
 
-### 3. Global FX Intelligence Suite
+### 3. Thailand Weather Overview
+
+Purpose:
+
+- provide a nationwide view of latest weather conditions across provinces
+- compare hottest, coolest, and most humid provinces at a glance
+- support executive review without opening the province detail board
+
+Primary audience:
+
+- stakeholders
+- operations leads
+- demo walkthroughs
+
+### 4. Thailand Regional Heat Ranking
+
+Purpose:
+
+- group provinces by region such as North, Northeast, Central, East, West, and South
+- rank temperatures and humidity within each region
+- make countrywide weather monitoring easier for non-technical users
+
+Primary audience:
+
+- operations teams
+- analysts
+- anyone reviewing national weather patterns
+
+### 5. Global FX Intelligence Suite
 
 Purpose:
 
@@ -345,7 +380,7 @@ Primary audience:
 - product demos
 - finance-oriented pipeline reviews
 
-### 4. Platform Reliability Center
+### 6. Platform Reliability Center
 
 Purpose:
 
@@ -370,10 +405,10 @@ grafana/dashboards/curated/
 Contains the dashboards that Grafana auto-loads in production.
 
 ```
-grafana/dashboards/archive/
+.local/
 ```
 
-Contains legacy or superseded dashboards kept only for reference.
+Contains local-only archives and reference assets that are intentionally excluded from the production dashboard set.
 
 ## Portfolio Characteristics
 
@@ -381,7 +416,7 @@ Contains legacy or superseded dashboards kept only for reference.
 - MySQL and Loki datasources are provisioned automatically
 - Grafana opens directly to the executive landing dashboard
 - curated dashboards are cross-linked for clean navigation
-- legacy dashboards are archived instead of mixed into production views
+- local archives are kept outside the production dashboard path
 
 ## Portfolio Branding
 
@@ -389,6 +424,8 @@ The curated dashboards are positioned as a lightweight enterprise analytics pack
 
 - `Atlas Executive Command Center`
 - `Atmospheric Operations Suite`
+- `Thailand Weather Overview`
+- `Thailand Regional Heat Ranking`
 - `Global FX Intelligence Suite`
 - `Platform Reliability Center`
 
@@ -503,6 +540,77 @@ Load into MySQL
 Generate Reports
       ↓
 Send Alerts
+```
+
+---
+
+# Weather Pipeline
+
+The weather pipeline ingests Thailand province-level weather data from OpenWeather, stores observations in MySQL, and pushes notifications to Discord and email.
+
+Key behavior:
+
+- reads `OPENWEATHER_API_KEY` from Airflow Variables or environment variables
+- reads `WEATHER_CITIES` as a comma-separated override list
+- defaults to a built-in Thailand province list when `WEATHER_CITIES` is empty
+- writes weather data into `weather_observations`
+- supports province and region analytics for Grafana dashboards
+
+Schema source of truth:
+
+```
+docker/mysql/init.sql
+```
+
+The Airflow DAG no longer creates `weather_observations`. It only inserts and updates records.
+
+For existing environments with an older MySQL volume, run the migration below before executing the updated weather DAG:
+
+```
+docker/mysql/migrations/001_weather_observations_region_upgrade.sql
+```
+
+## Production Migration Runbook
+
+Use this only on environments that already have a `weather_observations` table from an older schema.
+
+### 1. Back up the table
+
+```bash
+docker compose exec -T mysql sh -lc 'ts=$(date +%Y%m%d_%H%M%S); mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "CREATE TABLE weather_observations_backup_${ts} LIKE weather_observations; INSERT INTO weather_observations_backup_${ts} SELECT * FROM weather_observations; SHOW TABLES LIKE '\''weather_observations_backup_%'\'';"'
+```
+
+### 2. Run the migration
+
+```bash
+docker compose up -d mysql
+docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' < docker/mysql/migrations/001_weather_observations_region_upgrade.sql
+```
+
+### 3. Verify the schema
+
+```bash
+docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "SHOW COLUMNS FROM weather_observations; SHOW INDEX FROM weather_observations;"'
+```
+
+### 4. Deploy the refreshed stack
+
+```bash
+docker compose up -d --build
+```
+
+### 5. Validate new weather records
+
+```bash
+docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "SELECT province, region, city, observed_at_local FROM weather_observations ORDER BY observed_at_local DESC LIMIT 10;"'
+```
+
+### 6. Optional rollback pattern
+
+Replace `YYYYMMDD_HHMMSS` with the backup suffix created in step 1.
+
+```bash
+docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "DROP TABLE weather_observations; RENAME TABLE weather_observations_backup_YYYYMMDD_HHMMSS TO weather_observations;"'
 ```
 
 ---
