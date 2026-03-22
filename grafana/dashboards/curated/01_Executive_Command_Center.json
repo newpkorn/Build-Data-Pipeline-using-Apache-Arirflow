@@ -693,7 +693,12 @@
         "multi": false,
         "name": "province",
         "options": [],
-        "query": "SELECT DISTINCT province AS __text, province AS __value FROM weather_observations ORDER BY province",
+        "query": {
+          "query": "SELECT DISTINCT province AS __text, province AS __value FROM weather_observations ORDER BY province",
+          "rawSql": "SELECT DISTINCT province AS __text, province AS __value FROM weather_observations ORDER BY province",
+          "refId": "ExecutiveProvinceVariable",
+          "format": "table"
+        },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,

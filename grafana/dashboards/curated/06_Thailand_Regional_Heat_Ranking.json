@@ -493,7 +493,12 @@
         "multi": false,
         "name": "region",
         "options": [],
-        "query": "SELECT DISTINCT region AS __text, region AS __value FROM weather_observations ORDER BY region",
+        "query": {
+          "query": "SELECT DISTINCT region AS __text, region AS __value FROM weather_observations ORDER BY region",
+          "rawSql": "SELECT DISTINCT region AS __text, region AS __value FROM weather_observations ORDER BY region",
+          "refId": "WeatherRegionVariable",
+          "format": "table"
+        },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
