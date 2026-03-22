@@ -235,7 +235,7 @@
       },
       "id": 5,
       "options": {
-        "colorMode": "none",
+        "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
@@ -247,6 +247,23 @@
           "values": false
         },
         "textMode": "value"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
       },
       "targets": [
         {
@@ -274,7 +291,8 @@
         "defaults": {
           "color": {
             "mode": "continuous-GrYlRd"
-          }
+          },
+          "unit": "celsius"
         },
         "overrides": []
       },
@@ -323,7 +341,8 @@
         "defaults": {
           "color": {
             "mode": "continuous-BlYlRd"
-          }
+          },
+          "unit": "percent"
         },
         "overrides": []
       },
