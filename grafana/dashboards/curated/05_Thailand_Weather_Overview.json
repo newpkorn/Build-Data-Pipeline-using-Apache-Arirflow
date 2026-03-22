@@ -105,7 +105,7 @@
           "fields": "",
           "values": false
         },
-        "textMode": "value_and_name"
+        "textMode": "value"
       },
       "targets": [
         {
@@ -154,7 +154,7 @@
           "fields": "",
           "values": false
         },
-        "textMode": "value_and_name"
+        "textMode": "value"
       },
       "targets": [
         {
@@ -203,7 +203,7 @@
           "fields": "",
           "values": false
         },
-        "textMode": "value_and_name"
+        "textMode": "value"
       },
       "targets": [
         {
@@ -235,18 +235,18 @@
       },
       "id": 5,
       "options": {
-        "colorMode": "background",
+        "colorMode": "none",
         "graphMode": "none",
         "justifyMode": "center",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "last"
           ],
           "fields": "",
           "values": false
         },
-        "textMode": "value_and_name"
+        "textMode": "value"
       },
       "targets": [
         {
@@ -257,7 +257,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT province AS value FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations) ORDER BY temperature_celsius DESC LIMIT 1",
+          "rawSql": "SELECT province FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations) ORDER BY temperature_celsius DESC LIMIT 1",
           "refId": "A"
         }
       ],
