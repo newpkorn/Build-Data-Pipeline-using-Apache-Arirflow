@@ -1,497 +1,632 @@
 {
-  "annotations": {
-    "list": []
-  },
-  "description": "Production FX monitoring dashboard for rate snapshots, core currency trends, and daily market intelligence.",
-  "editable": true,
-  "fiscalYearStartMonth": 0,
-  "graphTooltip": 1,
-  "links": [
-    {
-      "asDropdown": false,
-      "icon": "external link",
-      "includeVars": false,
-      "keepTime": true,
-      "tags": [],
-      "targetBlank": false,
-      "title": "Command Center",
-      "type": "link",
-      "url": "/grafana/d/executive-command-center"
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "grafana",
+                    "uid": "-- Grafana --"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
+        ]
     },
-    {
-      "asDropdown": false,
-      "icon": "external link",
-      "includeVars": false,
-      "keepTime": true,
-      "tags": [],
-      "targetBlank": false,
-      "title": "Weather Detail",
-      "type": "link",
-      "url": "/grafana/d/weather-ops-dashboard"
-    },
-    {
-      "asDropdown": false,
-      "icon": "external link",
-      "includeVars": false,
-      "keepTime": true,
-      "tags": [],
-      "targetBlank": false,
-      "title": "Observability",
-      "type": "link",
-      "url": "/grafana/d/overview-logs"
-    }
-  ],
-  "liveNow": false,
-  "panels": [
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 1,
-      "options": {
-        "content": "<div style=\"height:100%;padding:18px 20px;border-radius:22px;background:linear-gradient(135deg, rgba(51,65,85,0.95) 0%, rgba(15,23,42,0.98) 40%, rgba(120,53,15,0.88) 100%);box-shadow:0 18px 40px rgba(15,23,42,0.20);color:#f8fafc;\"><div style=\"font-size:13px;letter-spacing:0.18em;text-transform:uppercase;opacity:0.82;\">Market Intelligence</div><h1 style=\"margin:8px 0 10px 0;font-size:30px;line-height:1.05;\">Global FX Intelligence Suite</h1><p style=\"max-width:760px;margin:0;font-size:14px;line-height:1.6;opacity:0.95;\">Monitor core currency snapshots, daily movement, and market coverage from the platform's exchange-rate pipelines.</p></div>",
-        "mode": "html"
-      },
-      "pluginVersion": "10.0.0",
-      "title": "Header",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 50
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 0,
-        "y": 4
-      },
-      "id": 2,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "value"
-      },
-      "targets": [
+    "description": "Production FX monitoring dashboard for rate snapshots, core currency trends, and daily market intelligence.",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 1,
+    "links": [
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT COUNT(DISTINCT currency_code) AS value FROM global_exchange_rates WHERE rate_date = (SELECT MAX(rate_date) FROM global_exchange_rates)",
-          "refId": "A"
-        }
-      ],
-      "title": "Tracked Currencies",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 4
+            "asDropdown": false,
+            "icon": "external link",
+            "includeVars": false,
+            "keepTime": true,
+            "tags": [],
+            "targetBlank": false,
+            "title": "Command Center",
+            "type": "link",
+            "url": "/grafana/d/executive-command-center"
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 6,
-        "y": 4
-      },
-      "id": 3,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "value"
-      },
-      "targets": [
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT rate AS value FROM global_exchange_rates WHERE currency_code = 'USD' ORDER BY rate_date DESC LIMIT 1",
-          "refId": "A"
-        }
-      ],
-      "title": "USD Rate",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 4
+            "asDropdown": false,
+            "icon": "external link",
+            "includeVars": false,
+            "keepTime": true,
+            "tags": [],
+            "targetBlank": false,
+            "title": "Weather Detail",
+            "type": "link",
+            "url": "/grafana/d/weather-ops-dashboard"
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 12,
-        "y": 4
-      },
-      "id": 4,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "value"
-      },
-      "targets": [
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT rate AS value FROM global_exchange_rates WHERE currency_code = 'EUR' ORDER BY rate_date DESC LIMIT 1",
-          "refId": "A"
+            "asDropdown": false,
+            "icon": "external link",
+            "includeVars": false,
+            "keepTime": true,
+            "tags": [],
+            "targetBlank": false,
+            "title": "Observability",
+            "type": "link",
+            "url": "/grafana/d/overview-logs"
         }
-      ],
-      "title": "EUR Rate",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 4
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 18,
-        "y": 4
-      },
-      "id": 5,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "value"
-      },
-      "targets": [
+    ],
+    "panels": [
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT rate AS value FROM global_exchange_rates WHERE currency_code = 'GBP' ORDER BY rate_date DESC LIMIT 1",
-          "refId": "A"
-        }
-      ],
-      "title": "GBP Rate",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-BlPu"
-          },
-          "decimals": 4
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            },
+            "id": 1,
+            "options": {
+                "code": {
+                    "language": "plaintext",
+                    "showLineNumbers": false,
+                    "showMiniMap": false
+                },
+                "content": "<div style=\"height:100%;padding:18px 20px;border-radius:22px;background:linear-gradient(135deg, rgba(51,65,85,0.95) 0%, rgba(15,23,42,0.98) 40%, rgba(120,53,15,0.88) 100%);box-shadow:0 18px 40px rgba(15,23,42,0.20);color:#f8fafc;\"><div style=\"font-size:13px;letter-spacing:0.18em;text-transform:uppercase;opacity:0.82;\">Market Intelligence</div><h1 style=\"margin:8px 0 10px 0;font-size:30px;line-height:1.05;\">Global FX Intelligence Suite</h1><p style=\"max-width:760px;margin:0;font-size:14px;line-height:1.6;opacity:0.95;\">Monitor core currency snapshots, daily movement, and market coverage from the platform's exchange-rate pipelines.</p></div>",
+                "mode": "html"
+            },
+            "pluginVersion": "12.4.0",
+            "title": "Header",
+            "transparent": true,
+            "type": "text"
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 10,
-        "x": 0,
-        "y": 9
-      },
-      "id": 6,
-      "options": {
-        "displayMode": "gradient",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showUnfilled": true
-      },
-      "targets": [
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT currency_code AS metric, rate AS value FROM global_exchange_rates WHERE rate_date = (SELECT MAX(rate_date) FROM global_exchange_rates) ORDER BY rate DESC LIMIT 10",
-          "refId": "A"
-        }
-      ],
-      "title": "Top 10 Latest Rates",
-      "transparent": true,
-      "type": "bargauge"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto"
-          }
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "orange",
+                                "value": 50
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 6,
+                "x": 0,
+                "y": 4
+            },
+            "id": 2,
+            "options": {
+                "colorMode": "background",
+                "graphMode": "none",
+                "justifyMode": "center",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "value",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT COUNT(DISTINCT currency_code) AS value FROM global_exchange_rates WHERE rate_date = (SELECT MAX(rate_date) FROM global_exchange_rates)",
+                    "refId": "A"
+                }
+            ],
+            "title": "Tracked Currencies",
+            "transparent": true,
+            "type": "stat"
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 14,
-        "x": 10,
-        "y": 9
-      },
-      "id": 7,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "show": false
-        },
-        "showHeader": true
-      },
-      "targets": [
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT currency_code, rate, rate_date FROM global_exchange_rates WHERE rate_date = (SELECT MAX(rate_date) FROM global_exchange_rates) ORDER BY rate DESC LIMIT 20",
-          "refId": "A"
-        }
-      ],
-      "title": "Latest FX Snapshot",
-      "transparent": true,
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisPlacement": "auto",
-            "drawStyle": "line",
-            "fillOpacity": 12,
-            "gradientMode": "opacity",
-            "lineInterpolation": "smooth",
-            "lineWidth": 3,
-            "pointSize": 4,
-            "showPoints": "auto",
-            "spanNulls": true
-          }
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "decimals": 4,
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 6,
+                "x": 6,
+                "y": 4
+            },
+            "id": 3,
+            "options": {
+                "colorMode": "background",
+                "graphMode": "none",
+                "justifyMode": "center",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "value",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT rate AS value FROM global_exchange_rates WHERE currency_code = 'USD' ORDER BY rate_date DESC LIMIT 1",
+                    "refId": "A"
+                }
+            ],
+            "title": "USD Rate",
+            "transparent": true,
+            "type": "stat"
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 17
-      },
-      "id": 8,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "max",
-            "min"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "time_series",
-          "rawQuery": true,
-          "rawSql": "SELECT rate_date AS time, rate AS value, currency_code AS metric FROM global_exchange_rates WHERE currency_code = '${currency}' AND $__timeFilter(rate_date) ORDER BY rate_date",
-          "refId": "A"
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "decimals": 4,
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 6,
+                "x": 12,
+                "y": 4
+            },
+            "id": 4,
+            "options": {
+                "colorMode": "background",
+                "graphMode": "none",
+                "justifyMode": "center",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "value",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT rate AS value FROM global_exchange_rates WHERE currency_code = 'EUR' ORDER BY rate_date DESC LIMIT 1",
+                    "refId": "A"
+                }
+            ],
+            "title": "EUR Rate",
+            "transparent": true,
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "decimals": 4,
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 6,
+                "x": 18,
+                "y": 4
+            },
+            "id": 5,
+            "options": {
+                "colorMode": "background",
+                "graphMode": "none",
+                "justifyMode": "center",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "value",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT rate AS value FROM global_exchange_rates WHERE currency_code = 'GBP' ORDER BY rate_date DESC LIMIT 1",
+                    "refId": "A"
+                }
+            ],
+            "title": "GBP Rate",
+            "transparent": true,
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "continuous-BlPu"
+                    },
+                    "decimals": 4,
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 10,
+                "x": 0,
+                "y": 9
+            },
+            "id": 6,
+            "options": {
+                "displayMode": "gradient",
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": false
+                },
+                "maxVizHeight": 300,
+                "minVizHeight": 16,
+                "minVizWidth": 8,
+                "namePlacement": "auto",
+                "orientation": "horizontal",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": true
+                },
+                "showUnfilled": true,
+                "sizing": "auto",
+                "valueMode": "color"
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT currency_code AS metric, rate AS value FROM global_exchange_rates WHERE rate_date = (SELECT MAX(rate_date) FROM global_exchange_rates) ORDER BY rate DESC LIMIT 10",
+                    "refId": "A"
+                }
+            ],
+            "title": "Top 10 Latest Rates",
+            "transparent": true,
+            "type": "bargauge"
+        },
+        {
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "footer": {
+                            "reducers": []
+                        },
+                        "inspect": false
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 14,
+                "x": 10,
+                "y": 9
+            },
+            "id": 7,
+            "options": {
+                "cellHeight": "sm",
+                "showHeader": true
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT currency_code, rate, rate_date FROM global_exchange_rates WHERE rate_date = (SELECT MAX(rate_date) FROM global_exchange_rates) ORDER BY rate DESC LIMIT 20",
+                    "refId": "A"
+                }
+            ],
+            "title": "Latest FX Snapshot",
+            "transparent": true,
+            "type": "table"
+        },
+        {
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 12,
+                        "gradientMode": "opacity",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "smooth",
+                        "lineWidth": 3,
+                        "pointSize": 4,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "showValues": false,
+                        "spanNulls": true,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 10,
+                "w": 24,
+                "x": 0,
+                "y": 17
+            },
+            "id": 8,
+            "options": {
+                "legend": {
+                    "calcs": ["lastNotNull", "max", "min"],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "time_series",
+                    "rawQuery": true,
+                    "rawSql": "SELECT rate_date AS time, rate AS value, currency_code AS metric FROM global_exchange_rates WHERE currency_code = '${currency}' AND $__timeFilter(rate_date) ORDER BY rate_date",
+                    "refId": "A"
+                }
+            ],
+            "title": "Currency Explorer",
+            "transparent": true,
+            "type": "timeseries"
         }
-      ],
-      "title": "Currency Explorer",
-      "transparent": true,
-      "type": "timeseries"
-    }
-  ],
-  "refresh": "1m",
-  "schemaVersion": 38,
-  "style": "dark",
-  "tags": [
-    "fx",
-    "finance",
-    "executive",
-    "suite",
-    "mysql"
-  ],
-  "templating": {
-    "list": [
-      {
-        "current": {
-          "selected": false,
-          "text": "USD",
-          "value": "USD"
-        },
-        "datasource": {
-          "type": "mysql",
-          "uid": "mysql-airflow"
-        },
-        "definition": "SELECT DISTINCT currency_code AS __text, currency_code AS __value FROM global_exchange_rates ORDER BY currency_code",
-        "hide": 0,
-        "includeAll": false,
-        "label": "Currency",
-        "multi": false,
-        "name": "currency",
-        "options": [],
-        "query": "SELECT DISTINCT currency_code AS __text, currency_code AS __value FROM global_exchange_rates ORDER BY currency_code",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "type": "query"
-      }
-    ]
-  },
-  "time": {
-    "from": "now-180d",
-    "to": "now"
-  },
-  "timepicker": {},
-  "timezone": "browser",
-  "title": "Global FX Intelligence Suite",
-  "uid": "fx-intelligence-dashboard",
-  "version": 1,
-  "weekStart": ""
+    ],
+    "preload": false,
+    "refresh": "1m",
+    "schemaVersion": 42,
+    "tags": ["fx", "finance", "executive", "suite", "mysql"],
+    "templating": {
+        "list": [
+            {
+                "current": {
+                    "text": "USD",
+                    "value": "USD"
+                },
+                "datasource": {
+                    "type": "mysql",
+                    "uid": "mysql-airflow"
+                },
+                "definition": "SELECT DISTINCT currency_code AS __text, currency_code AS __value FROM global_exchange_rates ORDER BY currency_code",
+                "includeAll": false,
+                "label": "Currency",
+                "name": "currency",
+                "options": [],
+                "query": "SELECT DISTINCT currency_code AS __text, currency_code AS __value FROM global_exchange_rates ORDER BY currency_code",
+                "refresh": 1,
+                "regex": "",
+                "regexApplyTo": "value",
+                "sort": 1,
+                "type": "query"
+            }
+        ]
+    },
+    "time": {
+        "from": "now-7d",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Global FX Intelligence Suite",
+    "uid": "fx-intelligence-dashboard",
+    "version": 2,
+    "weekStart": ""
 }

@@ -1,664 +1,861 @@
 {
-  "annotations": {
-    "list": []
-  },
-  "description": "Executive-grade province detail dashboard for operational monitoring of temperature, humidity, wind, pressure, and recent observations across Thailand.",
-  "editable": true,
-  "fiscalYearStartMonth": 0,
-  "graphTooltip": 1,
-  "links": [
-    {
-      "asDropdown": false,
-      "icon": "external link",
-      "includeVars": false,
-      "keepTime": true,
-      "tags": [],
-      "targetBlank": false,
-      "title": "Command Center",
-      "type": "link",
-      "url": "/grafana/d/executive-command-center"
-    },
-    {
-      "asDropdown": false,
-      "icon": "external link",
-      "includeVars": false,
-      "keepTime": true,
-      "tags": [],
-      "targetBlank": false,
-      "title": "Thailand Overview",
-      "type": "link",
-      "url": "/grafana/d/thailand-weather-overview"
-    },
-    {
-      "asDropdown": false,
-      "icon": "external link",
-      "includeVars": false,
-      "keepTime": true,
-      "tags": [],
-      "targetBlank": false,
-      "title": "FX Detail",
-      "type": "link",
-      "url": "/grafana/d/fx-intelligence-dashboard"
-    }
-  ],
-  "liveNow": false,
-  "panels": [
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 1,
-      "options": {
-        "content": "<div style=\"height:100%;padding:18px 20px;border-radius:20px;background:linear-gradient(135deg, rgba(8,47,73,0.92) 0%, rgba(14,116,144,0.78) 45%, rgba(186,230,253,0.50) 100%);box-shadow:0 18px 40px rgba(15,23,42,0.18);color:#f8fafc;\"><div style=\"font-size:13px;letter-spacing:0.18em;text-transform:uppercase;opacity:0.82;\">Province Detail</div><h1 style=\"margin:8px 0 10px 0;font-size:30px;line-height:1.05;\">Atmospheric Operations Suite</h1><p style=\"max-width:760px;margin:0;font-size:14px;line-height:1.6;opacity:0.95;\">Inspect a selected Thai province with current conditions, comfort indicators, and recent weather history.</p></div>",
-        "mode": "html"
-      },
-      "pluginVersion": "10.0.0",
-      "title": "Header",
-      "transparent": true,
-      "type": "text"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#38bdf8",
-                "value": null
-              },
-              {
-                "color": "#22c55e",
-                "value": 20
-              },
-              {
-                "color": "#f59e0b",
-                "value": 30
-              },
-              {
-                "color": "#ef4444",
-                "value": 35
-              }
-            ]
-          },
-          "unit": "celsius"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 0,
-        "y": 4
-      },
-      "id": 2,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "value"
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT temperature_celsius AS value FROM weather_observations WHERE province = '${province}' ORDER BY observed_at_local DESC LIMIT 1",
-          "refId": "A"
-        }
-      ],
-      "title": "Temperature Now",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "unit": "celsius"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 4,
-        "y": 4
-      },
-      "id": 3,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "value"
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT feels_like_celsius AS value FROM weather_observations WHERE province = '${province}' ORDER BY observed_at_local DESC LIMIT 1",
-          "refId": "A"
-        }
-      ],
-      "title": "Feels Like",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 8,
-        "y": 4
-      },
-      "id": 4,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "value"
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT humidity AS value FROM weather_observations WHERE province = '${province}' ORDER BY observed_at_local DESC LIMIT 1",
-          "refId": "A"
-        }
-      ],
-      "title": "Humidity",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "unit": "velocityms"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 12,
-        "y": 4
-      },
-      "id": 5,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "value"
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT wind_speed AS value FROM weather_observations WHERE province = '${province}' ORDER BY observed_at_local DESC LIMIT 1",
-          "refId": "A"
-        }
-      ],
-      "title": "Wind Speed",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 16,
-        "y": 4
-      },
-      "id": 6,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "value"
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT TIMESTAMPDIFF(HOUR, MAX(observed_at_local), NOW()) AS value FROM weather_observations WHERE province = '${province}'",
-          "refId": "A"
-        }
-      ],
-      "title": "Data Freshness (hrs)",
-      "transparent": true,
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "max": 1050,
-          "min": 980,
-          "unit": "pressurehpa"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 20,
-        "y": 4
-      },
-      "id": 7,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT pressure AS value FROM weather_observations WHERE province = '${province}' ORDER BY observed_at_local DESC LIMIT 1",
-          "refId": "A"
-        }
-      ],
-      "title": "Pressure",
-      "transparent": true,
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisPlacement": "auto",
-            "drawStyle": "line",
-            "fillOpacity": 18,
-            "gradientMode": "opacity",
-            "lineInterpolation": "smooth",
-            "lineWidth": 3,
-            "pointSize": 4,
-            "showPoints": "auto",
-            "spanNulls": true
-          },
-          "unit": "celsius"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 14,
-        "x": 0,
-        "y": 9
-      },
-      "id": 8,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "max",
-            "min"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "time_series",
-          "rawQuery": true,
-          "rawSql": "SELECT observed_at_local AS time, temperature_celsius AS value, 'Temperature' AS metric FROM weather_observations WHERE province = '${province}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "time_series",
-          "rawQuery": true,
-          "rawSql": "SELECT observed_at_local AS time, feels_like_celsius AS value, 'Feels Like' AS metric FROM weather_observations WHERE province = '${province}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
-          "refId": "B"
-        }
-      ],
-      "title": "Province Temperature Trend",
-      "transparent": true,
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Humidity"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "percent"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Wind Speed"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "velocityms"
-              }
-            ]
-          }
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "grafana",
+                    "uid": "-- Grafana --"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
         ]
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 10,
-        "x": 14,
-        "y": 9
-      },
-      "id": 9,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "time_series",
-          "rawQuery": true,
-          "rawSql": "SELECT observed_at_local AS time, humidity AS value, 'Humidity' AS metric FROM weather_observations WHERE province = '${province}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "time_series",
-          "rawQuery": true,
-          "rawSql": "SELECT observed_at_local AS time, wind_speed AS value, 'Wind Speed' AS metric FROM weather_observations WHERE province = '${province}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
-          "refId": "B"
-        }
-      ],
-      "title": "Humidity and Wind Trend",
-      "transparent": true,
-      "type": "timeseries"
     },
-    {
-      "datasource": {
-        "type": "mysql",
-        "uid": "mysql-airflow"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto"
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 24,
-        "x": 0,
-        "y": 18
-      },
-      "id": 10,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "show": false
-        },
-        "showHeader": true
-      },
-      "targets": [
+    "description": "Executive-grade province detail dashboard for operational monitoring of temperature, humidity, wind, pressure, and recent observations across Thailand.",
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 1,
+    "links": [
         {
-          "datasource": {
-            "type": "mysql",
-            "uid": "mysql-airflow"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT province, city, weather_description, temperature_celsius, feels_like_celsius, minimum_temp_celsius, maximum_temp_celsius, humidity, wind_speed, pressure, observed_at_local FROM weather_observations WHERE province = '${province}' ORDER BY observed_at_local DESC LIMIT 20",
-          "refId": "A"
+            "asDropdown": false,
+            "icon": "external link",
+            "includeVars": false,
+            "keepTime": true,
+            "tags": [],
+            "targetBlank": false,
+            "title": "Command Center",
+            "type": "link",
+            "url": "/grafana/d/executive-command-center"
+        },
+        {
+            "asDropdown": false,
+            "icon": "external link",
+            "includeVars": false,
+            "keepTime": true,
+            "tags": [],
+            "targetBlank": false,
+            "title": "Thailand Overview",
+            "type": "link",
+            "url": "/grafana/d/thailand-weather-overview"
+        },
+        {
+            "asDropdown": false,
+            "icon": "external link",
+            "includeVars": false,
+            "keepTime": true,
+            "tags": [],
+            "targetBlank": false,
+            "title": "FX Detail",
+            "type": "link",
+            "url": "/grafana/d/fx-intelligence-dashboard"
         }
-      ],
-      "title": "Province Observation Ledger",
-      "transparent": true,
-      "type": "table"
-    }
-  ],
-  "refresh": "1m",
-  "schemaVersion": 38,
-  "style": "dark",
-  "tags": [
-    "weather",
-    "operations",
-    "executive",
-    "suite",
-    "mysql"
-  ],
-  "templating": {
-    "list": [
-      {
-        "current": {
-          "selected": false,
-          "text": "Bangkok",
-          "value": "Bangkok"
+    ],
+    "panels": [
+        {
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            },
+            "id": 1,
+            "options": {
+                "code": {
+                    "language": "plaintext",
+                    "showLineNumbers": false,
+                    "showMiniMap": false
+                },
+                "content": "<div style=\"height:100%;padding:18px 20px;border-radius:20px;background:linear-gradient(135deg, rgba(8,47,73,0.92) 0%, rgba(14,116,144,0.78) 45%, rgba(186,230,253,0.50) 100%);box-shadow:0 18px 40px rgba(15,23,42,0.18);color:#f8fafc;\"><div style=\"font-size:13px;letter-spacing:0.18em;text-transform:uppercase;opacity:0.82;\">Province Detail</div><h1 style=\"margin:8px 0 10px 0;font-size:30px;line-height:1.05;\">Atmospheric Operations Suite</h1><p style=\"max-width:760px;margin:0;font-size:14px;line-height:1.6;opacity:0.95;\">Inspect a selected Thai province with current conditions, comfort indicators, and recent weather history.</p></div>",
+                "mode": "html"
+            },
+            "pluginVersion": "12.4.0",
+            "title": "Header",
+            "transparent": true,
+            "type": "text"
         },
-        "datasource": {
-          "type": "mysql",
-          "uid": "mysql-airflow"
+        {
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "#38bdf8",
+                                "value": 0
+                            },
+                            {
+                                "color": "#22c55e",
+                                "value": 20
+                            },
+                            {
+                                "color": "#f59e0b",
+                                "value": 30
+                            },
+                            {
+                                "color": "#ef4444",
+                                "value": 35
+                            }
+                        ]
+                    },
+                    "unit": "celsius"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 4,
+                "x": 0,
+                "y": 4
+            },
+            "id": 2,
+            "options": {
+                "colorMode": "background",
+                "graphMode": "area",
+                "justifyMode": "center",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "value",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT temperature_celsius AS value FROM weather_observations WHERE province = '${province}' ORDER BY observed_at_local DESC LIMIT 1",
+                    "refId": "A"
+                }
+            ],
+            "title": "Temperature Now",
+            "transparent": true,
+            "type": "stat"
         },
-        "definition": "SELECT DISTINCT province AS __text, province AS __value FROM weather_observations ORDER BY province",
-        "hide": 0,
-        "includeAll": false,
-        "label": "Province",
-        "multi": false,
-        "name": "province",
-        "options": [],
-        "query": {
-          "query": "SELECT DISTINCT province AS __text, province AS __value FROM weather_observations ORDER BY province",
-          "rawSql": "SELECT DISTINCT province AS __text, province AS __value FROM weather_observations ORDER BY province",
-          "refId": "WeatherProvinceVariable",
-          "format": "table"
+        {
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "#6ED0E0",
+                                "value": 20
+                            },
+                            {
+                                "color": "#EAB839",
+                                "value": 30
+                            },
+                            {
+                                "color": "#EF843C",
+                                "value": 40
+                            }
+                        ]
+                    },
+                    "unit": "celsius"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 4,
+                "x": 4,
+                "y": 4
+            },
+            "id": 3,
+            "options": {
+                "colorMode": "background",
+                "graphMode": "none",
+                "justifyMode": "center",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "value",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT feels_like_celsius AS value FROM weather_observations WHERE province = '${province}' ORDER BY observed_at_local DESC LIMIT 1",
+                    "refId": "A"
+                }
+            ],
+            "title": "Feels Like",
+            "transparent": true,
+            "type": "stat"
         },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "type": "query"
-      }
-    ]
-  },
-  "time": {
-    "from": "now-30d",
-    "to": "now"
-  },
-  "timepicker": {},
-  "timezone": "browser",
-  "title": "Atmospheric Operations Suite",
-  "uid": "weather-ops-dashboard",
-  "version": 1,
-  "weekStart": ""
+        {
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "max": 100,
+                    "min": 0,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "percent"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 4,
+                "x": 8,
+                "y": 4
+            },
+            "id": 4,
+            "options": {
+                "colorMode": "background",
+                "graphMode": "none",
+                "justifyMode": "center",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "value",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT humidity AS value FROM weather_observations WHERE province = '${province}' ORDER BY observed_at_local DESC LIMIT 1",
+                    "refId": "A"
+                }
+            ],
+            "title": "Humidity",
+            "transparent": true,
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "velocityms"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 4,
+                "x": 12,
+                "y": 4
+            },
+            "id": 5,
+            "options": {
+                "colorMode": "background",
+                "graphMode": "none",
+                "justifyMode": "center",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "value",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT wind_speed AS value FROM weather_observations WHERE province = '${province}' ORDER BY observed_at_local DESC LIMIT 1",
+                    "refId": "A"
+                }
+            ],
+            "title": "Wind Speed",
+            "transparent": true,
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "none"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 4,
+                "x": 16,
+                "y": 4
+            },
+            "id": 6,
+            "options": {
+                "colorMode": "background",
+                "graphMode": "none",
+                "justifyMode": "center",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "value",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT TIMESTAMPDIFF(HOUR, MAX(observed_at_local), NOW()) AS value FROM weather_observations WHERE province = '${province}'",
+                    "refId": "A"
+                }
+            ],
+            "title": "Data Freshness (hrs)",
+            "transparent": true,
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "mappings": [],
+                    "max": 1050,
+                    "min": 980,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "pressurehpa"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 4,
+                "x": 20,
+                "y": 4
+            },
+            "id": 7,
+            "options": {
+                "minVizHeight": 75,
+                "minVizWidth": 75,
+                "orientation": "auto",
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": false
+                },
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true,
+                "sizing": "auto"
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT pressure AS value FROM weather_observations WHERE province = '${province}' ORDER BY observed_at_local DESC LIMIT 1",
+                    "refId": "A"
+                }
+            ],
+            "title": "Pressure",
+            "transparent": true,
+            "type": "gauge"
+        },
+        {
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 18,
+                        "gradientMode": "opacity",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "smooth",
+                        "lineWidth": 3,
+                        "pointSize": 4,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "showValues": false,
+                        "spanNulls": true,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "celsius"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 14,
+                "x": 0,
+                "y": 9
+            },
+            "id": 8,
+            "options": {
+                "legend": {
+                    "calcs": ["lastNotNull", "max", "min"],
+                    "displayMode": "table",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "time_series",
+                    "rawQuery": true,
+                    "rawSql": "SELECT observed_at_local AS time, temperature_celsius AS value, 'Temperature' AS metric FROM weather_observations WHERE province = '${province}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "time_series",
+                    "rawQuery": true,
+                    "rawSql": "SELECT observed_at_local AS time, feels_like_celsius AS value, 'Feels Like' AS metric FROM weather_observations WHERE province = '${province}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
+                    "refId": "B"
+                }
+            ],
+            "title": "Province Temperature Trend",
+            "transparent": true,
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "showValues": false,
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Humidity"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "percent"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Wind Speed"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "velocityms"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 10,
+                "x": 14,
+                "y": 9
+            },
+            "id": 9,
+            "options": {
+                "legend": {
+                    "calcs": ["lastNotNull", "mean"],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "desc"
+                }
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "time_series",
+                    "rawQuery": true,
+                    "rawSql": "SELECT observed_at_local AS time, humidity AS value, 'Humidity' AS metric FROM weather_observations WHERE province = '${province}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
+                    "refId": "A"
+                },
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "time_series",
+                    "rawQuery": true,
+                    "rawSql": "SELECT observed_at_local AS time, wind_speed AS value, 'Wind Speed' AS metric FROM weather_observations WHERE province = '${province}' AND $__timeFilter(observed_at_local) ORDER BY observed_at_local",
+                    "refId": "B"
+                }
+            ],
+            "title": "Humidity and Wind Trend",
+            "transparent": true,
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "mysql",
+                "uid": "mysql-airflow"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "footer": {
+                            "reducers": []
+                        },
+                        "inspect": false
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 6,
+                "w": 24,
+                "x": 0,
+                "y": 18
+            },
+            "id": 10,
+            "options": {
+                "cellHeight": "sm",
+                "showHeader": true
+            },
+            "pluginVersion": "12.4.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "mysql",
+                        "uid": "mysql-airflow"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT province, city, weather_description, temperature_celsius, feels_like_celsius, minimum_temp_celsius, maximum_temp_celsius, humidity, wind_speed, pressure, observed_at_local FROM weather_observations WHERE province = '${province}' ORDER BY observed_at_local DESC LIMIT 20",
+                    "refId": "A"
+                }
+            ],
+            "title": "Province Observation Ledger",
+            "transparent": true,
+            "type": "table"
+        }
+    ],
+    "preload": false,
+    "refresh": "1m",
+    "schemaVersion": 42,
+    "tags": ["weather", "operations", "executive", "suite", "mysql"],
+    "templating": {
+        "list": [
+            {
+                "current": {
+                    "text": "Sing Buri",
+                    "value": "Sing Buri"
+                },
+                "datasource": {
+                    "type": "mysql",
+                    "uid": "mysql-airflow"
+                },
+                "definition": "SELECT DISTINCT province AS __text, province AS __value FROM weather_observations ORDER BY province",
+                "includeAll": false,
+                "label": "Province",
+                "name": "province",
+                "options": [],
+                "query": {
+                    "format": "table",
+                    "query": "SELECT DISTINCT province AS __text, province AS __value FROM weather_observations ORDER BY province",
+                    "rawSql": "SELECT DISTINCT province AS __text, province AS __value FROM weather_observations ORDER BY province",
+                    "refId": "WeatherProvinceVariable"
+                },
+                "refresh": 1,
+                "regex": "",
+                "regexApplyTo": "value",
+                "sort": 1,
+                "type": "query"
+            }
+        ]
+    },
+    "time": {
+        "from": "now-30d",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Atmospheric Operations Suite",
+    "uid": "weather-ops-dashboard",
+    "version": 3,
+    "weekStart": ""
 }
