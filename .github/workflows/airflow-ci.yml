@@ -18,7 +18,11 @@ jobs:
                   key: ${{ secrets.SSH_KEY }}
                   script: |
                       cd Build-Data-Pipeline-using-Apache-Arirflow
-                      git pull
+
+                      sudo chown -R $USER:$USER .
+
+                      git fetch origin
+                      git reset --hard origin/main
 
                       # create necessary directories and set permissions for Airflow
                       sudo mkdir -p dags logs data scripts
