@@ -170,9 +170,13 @@ Examples include:
 ├── scripts
 │   └── init_airflow.sh
 │
+├── docs
+│   └── operations_runbook.md
+│
 ├── tests
 │   ├── test_data_quality.py
-│   └── test_fx_pipeline.py
+│   ├── test_fx_pipeline.py
+│   └── test_weather_pipeline.py
 │
 ├── .github/workflows
 │   └── airflow-ci.yml
@@ -259,7 +263,7 @@ password: admin
 Grafana Dashboard
 
 ```
-http://localhost:3000
+http://localhost:3000/grafana/
 ```
 
 Default credentials:
@@ -642,10 +646,22 @@ or
 pytest tests/
 ```
 
+Useful Make targets:
+
+```
+make help
+make test-fast
+make test-dag
+make test-fx
+make test-data-quality
+make test-weather
+```
+
 Test coverage includes:
 
 - data quality checks
 - FX analytics pipelines
+- weather pipeline behavior
 - transformation logic
 
 ---
@@ -662,17 +678,13 @@ Workflow file:
 
 CI pipeline steps:
 
-1. Install dependencies
-2. Run automated tests
-3. Deploy to GCP VM via SSH
-4. Rebuild Docker containers
+1. Validate Docker Compose configuration
+2. Pull pinned upstream images
+3. Build custom Airflow images
+4. Deploy to GCP VM via SSH
+5. Refresh services in a safer rollout order
 
-Deployment command executed on the server:
-
-```
-docker compose down
-docker compose up -d --build
-```
+For the current deployment sequence and server-side troubleshooting guidance, see `docs/operations_runbook.md`.
 
 ---
 
