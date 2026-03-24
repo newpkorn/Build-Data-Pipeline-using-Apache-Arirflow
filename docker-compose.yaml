@@ -209,7 +209,7 @@ services:
       - portainer_data:/data
 
   renderer:
-    image: grafana/grafana-image-renderer:5.0.0
+    image: grafana/grafana-image-renderer:v5.7.1
     container_name: grafana-renderer
     restart: always
     environment:

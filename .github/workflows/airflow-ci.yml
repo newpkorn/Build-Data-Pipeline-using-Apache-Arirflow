@@ -17,6 +17,8 @@ jobs:
                   username: ${{ secrets.VM_USER }}
                   key: ${{ secrets.SSH_KEY }}
                   script: |
+                      set -e
+
                       cd Build-Data-Pipeline-using-Apache-Arirflow
 
                       sudo chown -R $USER:$USER .
@@ -28,6 +30,11 @@ jobs:
                       sudo mkdir -p dags logs data scripts
                       sudo chown -R 50000:0 dags logs data scripts
 
-                      docker compose down
-                      # Rebuild and start the containers. If it fails, show logs for debugging.
-                      docker compose up -d --build || (docker logs airflow-init && exit 1)
+                      docker compose config
+                      docker compose pull
+                      docker compose build airflow-init webserver scheduler worker triggerer flower
+
+                      docker compose up -d postgres mysql redis
+                      docker compose up -d renderer loki promtail grafana portainer mailhog
+                      docker compose up airflow-init || (docker compose logs --tail=100 airflow-init && exit 1)
+                      docker compose up -d webserver scheduler worker triggerer flower
