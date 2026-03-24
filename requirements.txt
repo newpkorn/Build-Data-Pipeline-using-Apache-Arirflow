@@ -2,9 +2,9 @@ pytest
 pandas
 pyarrow
 pymysql
+redis>=4.6,<6
 requests
 slack_sdk
 matplotlib
-sqlalchemy
 apache-airflow-providers-mysql
 apache-airflow-providers-slack
