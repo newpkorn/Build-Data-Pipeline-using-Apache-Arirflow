@@ -171,7 +171,7 @@ services:
       - mailhog-data:/var/lib/mailhog
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:12.4.1
     container_name: grafana
     env_file:
       - .env
@@ -196,7 +196,7 @@ services:
       - renderer
 
   portainer:
-    image: portainer/portainer-ce
+    image: portainer/portainer-ce:2.39.1
     container_name: portainer
     command: --base-url /portainer
     ports:
@@ -209,21 +209,21 @@ services:
       - portainer_data:/data
 
   renderer:
-    image: grafana/grafana-image-renderer
+    image: grafana/grafana-image-renderer:5.0.0
     container_name: grafana-renderer
     restart: always
     environment:
       - AUTH_TOKEN=${GRAFANA_RENDERING_AUTH_TOKEN}
 
   loki:
-    image: grafana/loki:latest
+    image: grafana/loki:3.6.7
     container_name: loki
     ports:
       - "3100:3100"
     restart: always
 
   promtail:
-    image: grafana/promtail:latest
+    image: grafana/promtail:3.6.7
     container_name: promtail
     command: -config.file=/etc/promtail/config.yaml
     volumes:

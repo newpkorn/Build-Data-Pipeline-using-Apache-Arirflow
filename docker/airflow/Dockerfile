@@ -7,9 +7,11 @@ FROM apache/airflow:${AIRFLOW_VERSION}-python${PYTHON_VERSION}
 # Switch to root user to install system packages
 USER root
 
-# Install dependencies for matplotlib and pyarrow
+# Install runtime dependencies and keep an explicit shell available for
+# operational debugging in the Airflow application containers.
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
+  bash \
   cmake \
   libfreetype6-dev \
   libpng-dev \

@@ -304,6 +304,116 @@ Provisioning files:
 grafana/provisioning/
 ```
 
+## Container Console Policy
+
+This stack uses a production-oriented shell policy instead of requiring every container to expose an interactive console.
+
+Principles:
+
+- custom application containers may include a shell for operational debugging
+- third-party infrastructure containers should stay lean unless there is a strong operational reason to customize them
+- Portainer console access depends on the shell that exists inside the target container image
+- `latest` tags should not be used in production because local and server deployments may resolve to different image builds
+
+### Shell Access By Service
+
+`Debuggable by default`
+
+- `airflow-init`
+- `webserver`
+- `scheduler`
+- `worker`
+- `triggerer`
+- `flower`
+
+Policy:
+
+- these services all come from the custom Airflow image in `docker/airflow/Dockerfile`
+- they should always provide at least `/bin/sh`
+- `bash` is acceptable here because these are the containers most likely to need package, env var, DAG, and filesystem debugging
+
+`Lean with optional shell`
+
+- `grafana`
+- `portainer`
+- `mailhog`
+
+Policy:
+
+- keep the upstream image unless there is a clear support burden that justifies customization
+- do not add `bash` only for convenience
+- use logs and service-specific UIs first, then console access only when the upstream image already supports it
+
+`Keep lean`
+
+- `postgres`
+- `mysql`
+- `redis`
+- `renderer`
+- `loki`
+- `promtail`
+
+Policy:
+
+- do not rebuild these vendor images just to add shell tooling
+- prefer logs, health checks, metrics, and service-native clients for diagnostics
+- if deeper debugging is required, use a temporary debug container on the same Docker network instead of mutating the production image
+
+### Operational Guidance
+
+- for app debugging, use the Airflow containers first
+- for infrastructure debugging, prefer logs and vendor tools over shell access
+- if Portainer console fails with `exec: "bash": executable file not found in $PATH`, retry with `sh` or `/bin/sh`
+- if a container has no shell at all, treat that as expected for a lean production image and use a debug sidecar workflow instead
+- pin image tags or digests for production deployments so local and server behavior stay aligned
+
+This policy keeps the Airflow application tier easy to operate while preserving a leaner and safer posture for the infrastructure tier.
+
+For rollout order and debug sidecar examples, see `docs/operations_runbook.md`.
+
+## Server Deployment Checklist
+
+Use this short checklist before and after deploying on the server.
+
+Before deploy:
+
+- confirm the target branch and `.env` values are correct for the server
+- review `docker-compose.yaml` for image tag changes and mounted path changes
+- run `docker compose config` to validate the rendered configuration
+- run `docker compose pull` for pinned upstream images
+- run `docker compose build airflow-init webserver scheduler worker triggerer flower` if the Airflow image or Python dependencies changed
+
+Deploy order:
+
+- update observability services first: `renderer`, `loki`, `promtail`, `grafana`, `portainer`, `mailhog`
+- restart `postgres`, `mysql`, or `redis` only if their image or config changed
+- run `docker compose up airflow-init` when bootstrap logic or the Airflow image changed
+- refresh the Airflow app tier in this order: `webserver`, `scheduler`, then `worker`, `triggerer`, `flower`
+
+After deploy:
+
+- run `docker compose ps`
+- review recent logs for `webserver`, `scheduler`, `worker`, `grafana`, and `portainer`
+- verify Airflow UI, Grafana, and Portainer are reachable from the server entrypoints
+- confirm there are no restart loops or failed health checks
+
+Quick command set:
+
+```bash
+docker compose config && \
+docker compose pull && \
+docker compose build airflow-init webserver scheduler worker triggerer flower && \
+docker compose up -d renderer loki promtail grafana portainer mailhog && \
+docker compose up airflow-init && \
+docker compose up -d webserver && \
+docker compose up -d scheduler && \
+docker compose up -d worker triggerer flower && \
+docker compose ps && \
+docker compose logs --tail=50 webserver scheduler worker grafana portainer
+```
+
+If there are no image, dependency, or bootstrap changes, you can skip the `build` step and the `airflow-init` step.
+
 ## Grafana Portfolio
 
 The production portfolio is intentionally curated into a focused set of dashboards so the workspace stays clean, opinionated, and easy to operate.
