@@ -89,7 +89,7 @@ def _prepare_email(**context):
 with DAG(
     dag_id="exchange_rate_pipeline",
     start_date=datetime(2026, 1, 1, tzinfo=local_tz), 
-    schedule_interval='@daily', # Run every day at midnight to capture the latest rates
+    schedule='@daily', # Run every day at midnight to capture the latest rates
     catchup=False,
     default_args={
         "email": ["global_fx_rate@email.com"], # <--- recipients for email alerts
