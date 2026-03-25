@@ -73,11 +73,12 @@ def test_extract_weather_data_raises_when_api_key_missing(mock_get_variable):
 
     with pytest.raises(
         ValueError,
-        match="OpenWeather API key is not configured.",
+        match="OpenWeather API key",
     ):
         weather.extract_weather_data(ti=ti)
 
-    mock_get_variable.assert_called_once_with("openweather_api_key", "OPENWEATHER_API_KEY")
+    mock_get_variable.assert_any_call("openweather_api_key", "OPENWEATHER_API_KEY")
+    mock_get_variable.assert_any_call("weather_cities", "WEATHER_CITIES", "")
 
 
 @patch("weather_api_pipeline.requests.Session")
