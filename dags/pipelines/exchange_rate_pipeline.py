@@ -13,7 +13,7 @@ from utils.api_client import fetch_exchange_rates
 from utils.db_manager import load_df_to_db
 from utils.data_quality import check_null_rates_for_date
 from utils.reporting import create_csv_report, generate_html_summary, generate_html_summary_from_df
-from utils.alerting import discord_alert
+from utils.alerting import discord_alert, discord_success_alert
 
 MYSQL_CONN_ID = "mysql_default"
 TABLE_NAME = "global_exchange_rates"
@@ -95,9 +95,10 @@ with DAG(
         "email": ["global_fx_rate@email.com"], # <--- recipients for email alerts
         "email_on_failure": True,              # <--- enable email alerts on failure
         "retries": 3,
-        "on_failure_callback": discord_alert,
+        "on_failure_callback": discord_alert, # <--- Discord alert on failure
         "retry_delay":timedelta(minutes=10)
     },
+    on_success_callback=discord_success_alert, # <--- Discord alert on success
     tags=["global", "exchange", "finance", "etl"]
 ) as dag:
 
