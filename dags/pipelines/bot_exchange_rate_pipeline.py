@@ -9,6 +9,7 @@
 # from utils.data_quality import check_null_rates
 # from utils.alerting import slack_alert
 from utils.alerting import discord_alert
+from utils.alerting import discord_alert, discord_success_alert
 
 from datetime import datetime, timedelta
 from airflow import DAG
@@ -216,6 +217,7 @@ with DAG(
     start_date=datetime(2026, 1, 1, tzinfo=local_tz), 
     schedule="0 13 * * 1-5", # Run every Monday-Friday at 13:00 (BOT data usually arrives in the afternoon)
     catchup=False,
+    on_success_callback=discord_success_alert, # <--- Discord alert on success
     default_args=default_args,
     tags=["bot", "finance", "etl"]
 ) as dag:
