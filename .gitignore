@@ -22,3 +22,7 @@ data/*.csv
 
 # Local-only archives and scratch files
 .local/
+
+COMMIT_MSG.txt
+PR_TEMPLATE.md
+git-commit.sh
