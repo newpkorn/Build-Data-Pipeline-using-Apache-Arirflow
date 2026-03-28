@@ -2,7 +2,7 @@ pytest
 pandas
 pyarrow
 pymysql
-redis<4,>=3.5
+redis>=4.5.2,<5.1
 requests
 slack_sdk
 matplotlib
