@@ -45,9 +45,18 @@ jobs:
                       git reset --hard origin/main
 
                       docker compose up -d mysql
+                      MYSQL_CID=$(docker compose ps -q mysql)
+                      if [ -z "$MYSQL_CID" ]; then
+                        echo "MySQL container not found"
+                        exit 1
+                      fi
+                      until [ "$(docker inspect -f '{{.State.Health.Status}}' "$MYSQL_CID")" = "healthy" ]; do
+                        echo "Waiting for MySQL to become healthy..."
+                        sleep 5
+                      done
 
                       # Backup current weather table before schema/data migration.
-                      docker compose exec -T mysql sh -lc 'ts=$(date +%Y%m%d_%H%M%S); mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "CREATE TABLE weather_observations_backup_${ts} LIKE weather_observations; INSERT INTO weather_observations_backup_${ts} SELECT * FROM weather_observations; SHOW TABLES LIKE '\''weather_observations_backup_%'\'';"'
+                      docker compose exec -T mysql sh -lc 'if mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -Nse "SHOW TABLES LIKE '\''weather_observations'\''" | grep -q weather_observations; then ts=$(date +%Y%m%d_%H%M%S); mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "CREATE TABLE weather_observations_backup_${ts} LIKE weather_observations; INSERT INTO weather_observations_backup_${ts} SELECT * FROM weather_observations; SHOW TABLES LIKE '\''weather_observations_backup_%'\'';"; else echo "weather_observations table not found, skipping backup"; fi'
 
                       docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' < docker/mysql/migrations/001_weather_observations_region_upgrade.sql
                       docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' < docker/mysql/migrations/002_weather_observations_daily_uniqueness.sql
