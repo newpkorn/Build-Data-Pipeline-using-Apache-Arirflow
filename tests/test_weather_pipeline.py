@@ -142,6 +142,7 @@ def test_transform_weather_data_returns_normalized_records():
     assert records[0]["region"] == "Central"
     assert records[0]["weather_description"] == "clear sky"
     assert records[0]["temperature_celsius"] == 33.12
+    assert records[0]["observed_date"] == records[0]["observed_at_local"].split(" ")[0]
     ti.xcom_push.assert_called_once_with(key="weather_records", value=records)
 
 
@@ -162,6 +163,7 @@ def test_load_weather_data_inserts_records(mock_mysql_hook):
             "humidity": 70,
             "wind_speed": 3.7,
             "observed_at_local": "2026-03-25 09:00:00",
+            "observed_date": "2026-03-25",
             "sunrise_local": "2026-03-25 06:15:00",
             "sunset_local": "2026-03-25 18:20:00",
             "created_at": "2026-03-25 09:01:00",
@@ -199,6 +201,7 @@ def test_prepare_weather_email_pushes_report_artifacts():
             "humidity": 70,
             "wind_speed": 3.7,
             "observed_at_local": "2026-03-25 09:00:00",
+            "observed_date": "2026-03-25",
             "sunrise_local": "2026-03-25 06:15:00",
             "sunset_local": "2026-03-25 18:20:00",
             "created_at": "2026-03-25 09:01:00",
@@ -217,6 +220,7 @@ def test_prepare_weather_email_pushes_report_artifacts():
             "humidity": 78,
             "wind_speed": 2.4,
             "observed_at_local": "2026-03-25 09:00:00",
+            "observed_date": "2026-03-25",
             "sunrise_local": "2026-03-25 06:20:00",
             "sunset_local": "2026-03-25 18:24:00",
             "created_at": "2026-03-25 09:01:00",

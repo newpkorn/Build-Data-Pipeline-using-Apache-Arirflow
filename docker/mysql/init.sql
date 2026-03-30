@@ -76,8 +76,9 @@ CREATE TABLE IF NOT EXISTS weather_observations (
     humidity INT,
     wind_speed DECIMAL(8,2),
     observed_at_local DATETIME NOT NULL,
+    observed_date DATE NOT NULL,
     sunrise_local DATETIME,
     sunset_local DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uniq_weather_province_observed (province, observed_at_local)
+    UNIQUE KEY uniq_weather_province_observed_day (province, observed_date)
 );

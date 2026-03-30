@@ -296,6 +296,7 @@ def transform_weather_data(**context) -> List[Dict[str, Any]]:
                 "humidity": int(data["main"]["humidity"]),
                 "wind_speed": float(data["wind"]["speed"]),
                 "observed_at_local": observed_at.strftime("%Y-%m-%d %H:%M:%S"),
+                "observed_date": observed_at.strftime("%Y-%m-%d"),
                 "sunrise_local": sunrise_time.strftime("%Y-%m-%d %H:%M:%S"),
                 "sunset_local": sunset_time.strftime("%Y-%m-%d %H:%M:%S"),
                 "created_at": pendulum.now(local_tz).strftime("%Y-%m-%d %H:%M:%S"),
@@ -332,6 +333,7 @@ def load_weather_data(**context) -> None:
             humidity,
             wind_speed,
             observed_at_local,
+            observed_date,
             sunrise_local,
             sunset_local,
             created_at
@@ -349,6 +351,7 @@ def load_weather_data(**context) -> None:
             %(humidity)s,
             %(wind_speed)s,
             %(observed_at_local)s,
+            %(observed_date)s,
             %(sunrise_local)s,
             %(sunset_local)s,
             %(created_at)s

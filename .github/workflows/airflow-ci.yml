@@ -6,8 +6,85 @@ on:
             - main
 
 jobs:
+    detect-changes:
+        runs-on: ubuntu-latest
+        outputs:
+            mysql_changed: ${{ steps.filter.outputs.mysql }}
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Detect MySQL migration-related changes
+              id: filter
+              uses: dorny/paths-filter@v3
+              with:
+                  filters: |
+                      mysql:
+                        - 'docker/mysql/**'
+
+    migrate-db:
+        runs-on: ubuntu-latest
+        needs: detect-changes
+        if: needs.detect-changes.outputs.mysql_changed == 'true'
+
+        steps:
+            - name: Run MySQL migrations on GCP VM
+              uses: appleboy/ssh-action@v1
+              with:
+                  host: ${{ secrets.VM_HOST }}
+                  username: ${{ secrets.VM_USER }}
+                  key: ${{ secrets.SSH_KEY }}
+                  script: |
+                      set -euo pipefail
+
+                      cd Build-Data-Pipeline-using-Apache-Arirflow
+
+                      sudo chown -R $USER:$USER .
+
+                      git fetch origin
+                      git reset --hard origin/main
+
+                      docker compose up -d mysql
+
+                      # Backup current weather table before schema/data migration.
+                      docker compose exec -T mysql sh -lc 'ts=$(date +%Y%m%d_%H%M%S); mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "CREATE TABLE weather_observations_backup_${ts} LIKE weather_observations; INSERT INTO weather_observations_backup_${ts} SELECT * FROM weather_observations; SHOW TABLES LIKE '\''weather_observations_backup_%'\'';"'
+
+                      docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' < docker/mysql/migrations/001_weather_observations_region_upgrade.sql
+                      docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' < docker/mysql/migrations/002_weather_observations_daily_uniqueness.sql
+
+                      # Verify uniqueness after migration to fail fast if inconsistent.
+                      docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "SHOW INDEX FROM weather_observations; SELECT COUNT(*) AS total_rows, COUNT(DISTINCT CONCAT(province, '\''|'\'', observed_date)) AS distinct_province_day FROM weather_observations; SELECT province, observed_date, COUNT(*) AS cnt FROM weather_observations GROUP BY province, observed_date HAVING COUNT(*) > 1 LIMIT 20;"'
+
+            - name: Notify migration failure (Discord/Slack)
+              if: failure()
+              env:
+                  DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+                  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+              run: |
+                  set -euo pipefail
+                  MSG="Migration job failed before deploy. Repo=${{ github.repository }}, workflow=${{ github.workflow }}, run=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+                  if [ -n "${DISCORD_WEBHOOK:-}" ]; then
+                    curl -sS -X POST "$DISCORD_WEBHOOK" \
+                      -H "Content-Type: application/json" \
+                      -d "{\"content\":\"$MSG\"}" >/dev/null
+                  fi
+
+                  if [ -n "${SLACK_WEBHOOK_URL:-}" ]; then
+                    curl -sS -X POST "$SLACK_WEBHOOK_URL" \
+                      -H "Content-type: application/json" \
+                      -d "{\"text\":\"$MSG\"}" >/dev/null
+                  fi
+
     deploy:
         runs-on: ubuntu-latest
+        needs: [detect-changes, migrate-db]
+        if: |
+            always() &&
+            (
+              needs.detect-changes.outputs.mysql_changed != 'true' ||
+              needs.migrate-db.result == 'success'
+            )
 
         steps:
             - name: Deploy to GCP VM
