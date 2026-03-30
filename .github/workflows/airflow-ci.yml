@@ -54,15 +54,40 @@ jobs:
                         echo "Waiting for MySQL to become healthy..."
                         sleep 5
                       done
+                      DB_NAME="${MYSQL_DATABASE:-${MYSQL_DB:-airflow}}"
+                      DB_USER="${MYSQL_USER:-airflow}"
+                      DB_PASS="${MYSQL_PASSWORD:-}"
+                      ROOT_PASS="${MYSQL_ROOT_PASSWORD:-}"
+
+                      if [ -z "$DB_PASS" ] && [ -z "$ROOT_PASS" ]; then
+                        echo "Both MYSQL_PASSWORD and MYSQL_ROOT_PASSWORD are empty."
+                        exit 1
+                      fi
+
+                      if [ -n "$DB_PASS" ] && docker compose exec -T mysql sh -lc "mysql -u\"$DB_USER\" -p\"$DB_PASS\" \"$DB_NAME\" -e \"SELECT 1\" >/dev/null 2>&1"; then
+                        echo "Using app MySQL user: $DB_USER"
+                      elif [ -n "$ROOT_PASS" ] && docker compose exec -T mysql sh -lc "mysql -uroot -p\"$ROOT_PASS\" \"$DB_NAME\" -e \"SELECT 1\" >/dev/null 2>&1"; then
+                        DB_USER="root"
+                        DB_PASS="$ROOT_PASS"
+                        echo "Fallback to MySQL root user"
+                      else
+                        echo "Unable to authenticate to MySQL with app user or root user"
+                        exit 1
+                      fi
 
                       # Backup current weather table before schema/data migration.
-                      docker compose exec -T mysql sh -lc 'if mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -Nse "SHOW TABLES LIKE '\''weather_observations'\''" | grep -q weather_observations; then ts=$(date +%Y%m%d_%H%M%S); mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "CREATE TABLE weather_observations_backup_${ts} LIKE weather_observations; INSERT INTO weather_observations_backup_${ts} SELECT * FROM weather_observations; SHOW TABLES LIKE '\''weather_observations_backup_%'\'';"; else echo "weather_observations table not found, skipping backup"; fi'
+                      if docker compose exec -T mysql sh -lc "mysql -u\"$DB_USER\" -p\"$DB_PASS\" \"$DB_NAME\" -Nse \"SHOW TABLES LIKE 'weather_observations'\"" | grep -q weather_observations; then
+                        ts=$(date +%Y%m%d_%H%M%S)
+                        docker compose exec -T mysql sh -lc "mysql -u\"$DB_USER\" -p\"$DB_PASS\" \"$DB_NAME\" -e \"CREATE TABLE weather_observations_backup_${ts} LIKE weather_observations; INSERT INTO weather_observations_backup_${ts} SELECT * FROM weather_observations; SHOW TABLES LIKE 'weather_observations_backup_%';\""
+                      else
+                        echo "weather_observations table not found, skipping backup"
+                      fi
 
-                      docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' < docker/mysql/migrations/001_weather_observations_region_upgrade.sql
-                      docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' < docker/mysql/migrations/002_weather_observations_daily_uniqueness.sql
+                      docker compose exec -T mysql sh -lc "mysql -u\"$DB_USER\" -p\"$DB_PASS\" \"$DB_NAME\"" < docker/mysql/migrations/001_weather_observations_region_upgrade.sql
+                      docker compose exec -T mysql sh -lc "mysql -u\"$DB_USER\" -p\"$DB_PASS\" \"$DB_NAME\"" < docker/mysql/migrations/002_weather_observations_daily_uniqueness.sql
 
                       # Verify uniqueness after migration to fail fast if inconsistent.
-                      docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "SHOW INDEX FROM weather_observations; SELECT COUNT(*) AS total_rows, COUNT(DISTINCT CONCAT(province, '\''|'\'', observed_date)) AS distinct_province_day FROM weather_observations; SELECT province, observed_date, COUNT(*) AS cnt FROM weather_observations GROUP BY province, observed_date HAVING COUNT(*) > 1 LIMIT 20;"'
+                      docker compose exec -T mysql sh -lc "mysql -u\"$DB_USER\" -p\"$DB_PASS\" \"$DB_NAME\" -e \"SHOW INDEX FROM weather_observations; SELECT COUNT(*) AS total_rows, COUNT(DISTINCT CONCAT(province, '|', observed_date)) AS distinct_province_day FROM weather_observations; SELECT province, observed_date, COUNT(*) AS cnt FROM weather_observations GROUP BY province, observed_date HAVING COUNT(*) > 1 LIMIT 20;\""
 
             - name: Notify migration failure (Discord/Slack)
               if: failure()
