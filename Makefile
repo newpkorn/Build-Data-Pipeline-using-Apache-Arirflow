@@ -48,11 +48,11 @@ test-weather:
 # Weather migrations
 migrate-weather-001:
 	docker compose up -d mysql
-	docker compose exec -T mysql sh -lc 'mysql -uroot -p"$$MYSQL_ROOT_PASSWORD" "$$MYSQL_DATABASE"' < docker/mysql/migrations/001_weather_observations_region_upgrade.sql
+	docker compose exec -T mysql sh -lc 'mysql -u"$$MYSQL_USER" -p"$$MYSQL_PASSWORD" "$${MYSQL_DATABASE:-$$MYSQL_DB}"' < docker/mysql/migrations/001_weather_observations_region_upgrade.sql
 
 migrate-weather-002:
 	docker compose up -d mysql
-	docker compose exec -T mysql sh -lc 'mysql -uroot -p"$$MYSQL_ROOT_PASSWORD" "$$MYSQL_DATABASE"' < docker/mysql/migrations/002_weather_observations_daily_uniqueness.sql
+	docker compose exec -T mysql sh -lc 'mysql -u"$$MYSQL_USER" -p"$$MYSQL_PASSWORD" "$${MYSQL_DATABASE:-$$MYSQL_DB}"' < docker/mysql/migrations/002_weather_observations_daily_uniqueness.sql
 
 verify-weather-002:
-	docker compose exec -T mysql sh -lc 'mysql -uroot -p"$$MYSQL_ROOT_PASSWORD" "$$MYSQL_DATABASE" -e "SHOW INDEX FROM weather_observations; SELECT COUNT(*) AS total_rows, COUNT(DISTINCT CONCAT(province, '\''|'\'', observed_date)) AS distinct_province_day FROM weather_observations; SELECT province, observed_date, COUNT(*) AS cnt FROM weather_observations GROUP BY province, observed_date HAVING COUNT(*) > 1 LIMIT 20;"'
+	docker compose exec -T mysql sh -lc 'mysql -u"$$MYSQL_USER" -p"$$MYSQL_PASSWORD" "$${MYSQL_DATABASE:-$$MYSQL_DB}" -e "SHOW INDEX FROM weather_observations; SELECT COUNT(*) AS total_rows, COUNT(DISTINCT CONCAT(province, '\''|'\'', observed_date)) AS distinct_province_day FROM weather_observations; SELECT province, observed_date, COUNT(*) AS cnt FROM weather_observations GROUP BY province, observed_date HAVING COUNT(*) > 1 LIMIT 20;"'
