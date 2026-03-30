@@ -732,10 +732,11 @@ docker/mysql/init.sql
 
 The Airflow DAG no longer creates `weather_observations`. It only inserts and updates records.
 
-For existing environments with an older MySQL volume, run the migration below before executing the updated weather DAG:
+For existing environments with an older MySQL volume, run these migrations before executing the updated weather DAG:
 
 ```
 docker/mysql/migrations/001_weather_observations_region_upgrade.sql
+docker/mysql/migrations/002_weather_observations_daily_uniqueness.sql
 ```
 
 ## Production Migration Runbook
@@ -748,11 +749,12 @@ Use this only on environments that already have a `weather_observations` table f
 docker compose exec -T mysql sh -lc 'ts=$(date +%Y%m%d_%H%M%S); mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "CREATE TABLE weather_observations_backup_${ts} LIKE weather_observations; INSERT INTO weather_observations_backup_${ts} SELECT * FROM weather_observations; SHOW TABLES LIKE '\''weather_observations_backup_%'\'';"'
 ```
 
-### 2. Run the migration
+### 2. Run migrations
 
 ```bash
 docker compose up -d mysql
 docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' < docker/mysql/migrations/001_weather_observations_region_upgrade.sql
+docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"' < docker/mysql/migrations/002_weather_observations_daily_uniqueness.sql
 ```
 
 ### 3. Verify the schema
@@ -761,19 +763,25 @@ docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYS
 docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "SHOW COLUMNS FROM weather_observations; SHOW INDEX FROM weather_observations;"'
 ```
 
-### 4. Deploy the refreshed stack
+### 4. Verify daily uniqueness
+
+```bash
+docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "SELECT COUNT(*) AS total_rows, COUNT(DISTINCT CONCAT(province, '\''|'\'', observed_date)) AS distinct_province_day FROM weather_observations; SELECT province, observed_date, COUNT(*) AS cnt FROM weather_observations GROUP BY province, observed_date HAVING COUNT(*) > 1 LIMIT 20;"'
+```
+
+### 5. Deploy the refreshed stack
 
 ```bash
 docker compose up -d --build
 ```
 
-### 5. Validate new weather records
+### 6. Validate new weather records
 
 ```bash
-docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "SELECT province, region, city, observed_at_local FROM weather_observations ORDER BY observed_at_local DESC LIMIT 10;"'
+docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "SELECT province, region, city, observed_at_local, observed_date FROM weather_observations ORDER BY observed_at_local DESC LIMIT 10;"'
 ```
 
-### 6. Optional rollback pattern
+### 7. Optional rollback pattern
 
 Replace `YYYYMMDD_HHMMSS` with the backup suffix created in step 1.
 
