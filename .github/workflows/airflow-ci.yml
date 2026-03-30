@@ -42,7 +42,8 @@ jobs:
                       sudo chown -R $USER:$USER .
 
                       git fetch origin
-                      git reset --hard origin/main
+                      git checkout -f ${{ github.sha }}
+                      git rev-parse --short HEAD
 
                       docker compose up -d mysql
                       MYSQL_CID=$(docker compose ps -q mysql)
@@ -135,7 +136,8 @@ jobs:
                       sudo chown -R $USER:$USER .
 
                       git fetch origin
-                      git reset --hard origin/main
+                      git checkout -f ${{ github.sha }}
+                      git rev-parse --short HEAD
 
                       # create necessary directories and set permissions for Airflow
                       sudo mkdir -p dags logs data scripts
