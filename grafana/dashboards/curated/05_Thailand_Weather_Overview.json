@@ -149,7 +149,7 @@
                     "editorMode": "code",
                     "format": "table",
                     "rawQuery": true,
-                    "rawSql": "SELECT COUNT(DISTINCT province) AS value FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations)",
+                    "rawSql": "SELECT COUNT(DISTINCT province) AS value FROM weather_observations WHERE snapshot_date = (SELECT MAX(snapshot_date) FROM weather_observations)",
                     "refId": "A"
                 }
             ],
@@ -214,7 +214,7 @@
                     "editorMode": "code",
                     "format": "table",
                     "rawQuery": true,
-                    "rawSql": "SELECT ROUND(AVG(temperature_celsius), 2) AS value FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations)",
+                    "rawSql": "SELECT ROUND(AVG(temperature_celsius), 2) AS value FROM weather_observations WHERE snapshot_date = (SELECT MAX(snapshot_date) FROM weather_observations)",
                     "refId": "A"
                 }
             ],
@@ -281,7 +281,7 @@
                     "editorMode": "code",
                     "format": "table",
                     "rawQuery": true,
-                    "rawSql": "SELECT ROUND(AVG(humidity), 2) AS value FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations)",
+                    "rawSql": "SELECT ROUND(AVG(humidity), 2) AS value FROM weather_observations WHERE snapshot_date = (SELECT MAX(snapshot_date) FROM weather_observations)",
                     "refId": "A"
                 }
             ],
@@ -345,7 +345,7 @@
                     "editorMode": "code",
                     "format": "table",
                     "rawQuery": true,
-                    "rawSql": "SELECT province AS value FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations) ORDER BY temperature_celsius DESC LIMIT 1",
+                    "rawSql": "SELECT province AS value FROM weather_observations WHERE snapshot_date = (SELECT MAX(snapshot_date) FROM weather_observations) ORDER BY temperature_celsius DESC LIMIT 1",
                     "refId": "A"
                 }
             ],
@@ -419,7 +419,7 @@
                     "editorMode": "code",
                     "format": "table",
                     "rawQuery": true,
-                    "rawSql": "SELECT province AS metric, temperature_celsius AS value FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations) ORDER BY temperature_celsius DESC LIMIT 12",
+                    "rawSql": "SELECT province AS metric, temperature_celsius AS value FROM weather_observations WHERE snapshot_date = (SELECT MAX(snapshot_date) FROM weather_observations) ORDER BY temperature_celsius DESC LIMIT 12",
                     "refId": "A"
                 }
             ],
@@ -493,7 +493,7 @@
                     "editorMode": "code",
                     "format": "table",
                     "rawQuery": true,
-                    "rawSql": "SELECT province AS metric, humidity AS value FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations) ORDER BY humidity DESC LIMIT 12",
+                    "rawSql": "SELECT province AS metric, humidity AS value FROM weather_observations WHERE snapshot_date = (SELECT MAX(snapshot_date) FROM weather_observations) ORDER BY humidity DESC LIMIT 12",
                     "refId": "A"
                 }
             ],
@@ -656,7 +656,7 @@
                     "editorMode": "code",
                     "format": "table",
                     "rawQuery": true,
-                    "rawSql": "SELECT province, city, weather_description, temperature_celsius, feels_like_celsius, humidity, wind_speed, pressure, observed_at_local FROM weather_observations WHERE observed_at_local = (SELECT MAX(observed_at_local) FROM weather_observations) ORDER BY temperature_celsius DESC",
+                    "rawSql": "SELECT province, city, weather_description, temperature_celsius, feels_like_celsius, humidity, wind_speed, pressure, observed_at_local FROM weather_observations WHERE snapshot_date = (SELECT MAX(snapshot_date) FROM weather_observations) ORDER BY temperature_celsius DESC",
                     "refId": "A"
                 }
             ],

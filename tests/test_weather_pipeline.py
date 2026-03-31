@@ -143,6 +143,7 @@ def test_transform_weather_data_returns_normalized_records():
     assert records[0]["weather_description"] == "clear sky"
     assert records[0]["temperature_celsius"] == 33.12
     assert records[0]["observed_date"] == records[0]["observed_at_local"].split(" ")[0]
+    assert records[0]["snapshot_date"]
     ti.xcom_push.assert_called_once_with(key="weather_records", value=records)
 
 
@@ -167,6 +168,7 @@ def test_load_weather_data_inserts_records(mock_mysql_hook):
             "sunrise_local": "2026-03-25 06:15:00",
             "sunset_local": "2026-03-25 18:20:00",
             "created_at": "2026-03-25 09:01:00",
+            "snapshot_date": "2026-03-25",
         }
     ]
     ti = _build_task_instance()
@@ -205,6 +207,7 @@ def test_prepare_weather_email_pushes_report_artifacts():
             "sunrise_local": "2026-03-25 06:15:00",
             "sunset_local": "2026-03-25 18:20:00",
             "created_at": "2026-03-25 09:01:00",
+            "snapshot_date": "2026-03-25",
         },
         {
             "province": "Chiang Mai",
@@ -224,6 +227,7 @@ def test_prepare_weather_email_pushes_report_artifacts():
             "sunrise_local": "2026-03-25 06:20:00",
             "sunset_local": "2026-03-25 18:24:00",
             "created_at": "2026-03-25 09:01:00",
+            "snapshot_date": "2026-03-25",
         },
     ]
     ti = _build_task_instance()

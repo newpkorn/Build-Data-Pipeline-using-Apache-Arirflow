@@ -80,5 +80,7 @@ CREATE TABLE IF NOT EXISTS weather_observations (
     sunrise_local DATETIME,
     sunset_local DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uniq_weather_province_observed_day (province, observed_date)
+    snapshot_date DATE NOT NULL,
+    UNIQUE KEY uniq_weather_province_snapshot_day (province, snapshot_date),
+    KEY idx_weather_observed_date (observed_date)
 );

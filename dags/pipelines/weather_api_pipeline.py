@@ -275,6 +275,11 @@ def transform_weather_data(**context) -> List[Dict[str, Any]]:
         raise ValueError("No weather payloads found in XCom from extract_weather_data.")
 
     transformed_records: List[Dict[str, Any]] = []
+    data_interval_end = context.get("data_interval_end")
+    if data_interval_end:
+        snapshot_date = data_interval_end.in_timezone(local_tz).to_date_string()
+    else:
+        snapshot_date = pendulum.now(local_tz).to_date_string()
 
     for data in payloads:
         observed_at = datetime.utcfromtimestamp(data["dt"] + data["timezone"])
@@ -300,6 +305,7 @@ def transform_weather_data(**context) -> List[Dict[str, Any]]:
                 "sunrise_local": sunrise_time.strftime("%Y-%m-%d %H:%M:%S"),
                 "sunset_local": sunset_time.strftime("%Y-%m-%d %H:%M:%S"),
                 "created_at": pendulum.now(local_tz).strftime("%Y-%m-%d %H:%M:%S"),
+                "snapshot_date": snapshot_date,
             }
         )
 
@@ -336,7 +342,8 @@ def load_weather_data(**context) -> None:
             observed_date,
             sunrise_local,
             sunset_local,
-            created_at
+            created_at,
+            snapshot_date
         ) VALUES (
             %(province)s,
             %(region)s,
@@ -354,7 +361,8 @@ def load_weather_data(**context) -> None:
             %(observed_date)s,
             %(sunrise_local)s,
             %(sunset_local)s,
-            %(created_at)s
+            %(created_at)s,
+            %(snapshot_date)s
         )
         ON DUPLICATE KEY UPDATE
             city = VALUES(city),
