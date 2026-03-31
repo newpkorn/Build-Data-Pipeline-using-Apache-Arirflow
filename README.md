@@ -766,7 +766,7 @@ docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYS
 ### 4. Verify daily uniqueness
 
 ```bash
-docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "SELECT COUNT(*) AS total_rows, COUNT(DISTINCT CONCAT(province, '\''|'\'', observed_date)) AS distinct_province_day FROM weather_observations; SELECT province, observed_date, COUNT(*) AS cnt FROM weather_observations GROUP BY province, observed_date HAVING COUNT(*) > 1 LIMIT 20;"'
+docker compose exec -T mysql sh -lc 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -e "SELECT COUNT(*) AS total_rows, COUNT(DISTINCT CONCAT(province, '\''|'\'', snapshot_date)) AS distinct_province_day FROM weather_observations; SELECT province, snapshot_date, COUNT(*) AS cnt FROM weather_observations GROUP BY province, snapshot_date HAVING COUNT(*) > 1 LIMIT 20;"'
 ```
 
 ### 5. Deploy the refreshed stack

@@ -86,9 +86,10 @@ jobs:
 
                       docker compose exec -T mysql sh -lc "mysql -u\"$DB_USER\" -p\"$DB_PASS\" \"$DB_NAME\"" < docker/mysql/migrations/001_weather_observations_region_upgrade.sql
                       docker compose exec -T mysql sh -lc "mysql -u\"$DB_USER\" -p\"$DB_PASS\" \"$DB_NAME\"" < docker/mysql/migrations/002_weather_observations_daily_uniqueness.sql
+                      docker compose exec -T mysql sh -lc "mysql -u\"$DB_USER\" -p\"$DB_PASS\" \"$DB_NAME\"" < docker/mysql/migrations/003_weather_observations_snapshot_date.sql
 
                       # Verify uniqueness after migration to fail fast if inconsistent.
-                      docker compose exec -T mysql sh -lc "mysql -u\"$DB_USER\" -p\"$DB_PASS\" \"$DB_NAME\" -e \"SHOW INDEX FROM weather_observations; SELECT COUNT(*) AS total_rows, COUNT(DISTINCT CONCAT(province, '|', observed_date)) AS distinct_province_day FROM weather_observations; SELECT province, observed_date, COUNT(*) AS cnt FROM weather_observations GROUP BY province, observed_date HAVING COUNT(*) > 1 LIMIT 20;\""
+                      docker compose exec -T mysql sh -lc "mysql -u\"$DB_USER\" -p\"$DB_PASS\" \"$DB_NAME\" -e \"SHOW INDEX FROM weather_observations; SELECT COUNT(*) AS total_rows, COUNT(DISTINCT CONCAT(province, '|', snapshot_date)) AS distinct_province_day FROM weather_observations; SELECT province, snapshot_date, COUNT(*) AS cnt FROM weather_observations GROUP BY province, snapshot_date HAVING COUNT(*) > 1 LIMIT 20;\""
 
             - name: Notify migration failure (Discord/Slack)
               if: failure()

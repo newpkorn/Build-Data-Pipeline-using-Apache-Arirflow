@@ -1,4 +1,4 @@
-.PHONY: help up down logs test test-fast test-dag test-fx test-data-quality test-weather migrate-weather-001 migrate-weather-002 verify-weather-002
+.PHONY: help up down logs test test-fast test-dag test-fx test-data-quality test-weather migrate-weather-001 migrate-weather-002 migrate-weather-003 verify-weather-003
 
 # General
 help:
@@ -14,7 +14,8 @@ help:
 	@echo "  make test-weather      - Run weather pipeline tests"
 	@echo "  make migrate-weather-001 - Run weather region migration (001)"
 	@echo "  make migrate-weather-002 - Run weather daily uniqueness migration (002)"
-	@echo "  make verify-weather-002  - Verify weather daily uniqueness constraints"
+	@echo "  make migrate-weather-003 - Run weather snapshot-date migration (003)"
+	@echo "  make verify-weather-003  - Verify weather snapshot-date uniqueness constraints"
 
 # Docker
 up:
@@ -48,11 +49,15 @@ test-weather:
 # Weather migrations
 migrate-weather-001:
 	docker compose up -d mysql
-	docker compose exec -T mysql sh -lc 'mysql -uroot -p"$$MYSQL_ROOT_PASSWORD" "$$MYSQL_DATABASE"' < docker/mysql/migrations/001_weather_observations_region_upgrade.sql
+	docker compose exec -T mysql sh -lc 'mysql -u"$$MYSQL_USER" -p"$$MYSQL_PASSWORD" "$${MYSQL_DATABASE:-$$MYSQL_DB}"' < docker/mysql/migrations/001_weather_observations_region_upgrade.sql
 
 migrate-weather-002:
 	docker compose up -d mysql
-	docker compose exec -T mysql sh -lc 'mysql -uroot -p"$$MYSQL_ROOT_PASSWORD" "$$MYSQL_DATABASE"' < docker/mysql/migrations/002_weather_observations_daily_uniqueness.sql
+	docker compose exec -T mysql sh -lc 'mysql -u"$$MYSQL_USER" -p"$$MYSQL_PASSWORD" "$${MYSQL_DATABASE:-$$MYSQL_DB}"' < docker/mysql/migrations/002_weather_observations_daily_uniqueness.sql
 
-verify-weather-002:
-	docker compose exec -T mysql sh -lc 'mysql -uroot -p"$$MYSQL_ROOT_PASSWORD" "$$MYSQL_DATABASE" -e "SHOW INDEX FROM weather_observations; SELECT COUNT(*) AS total_rows, COUNT(DISTINCT CONCAT(province, '\''|'\'', observed_date)) AS distinct_province_day FROM weather_observations; SELECT province, observed_date, COUNT(*) AS cnt FROM weather_observations GROUP BY province, observed_date HAVING COUNT(*) > 1 LIMIT 20;"'
+migrate-weather-003:
+	docker compose up -d mysql
+	docker compose exec -T mysql sh -lc 'mysql -u"$$MYSQL_USER" -p"$$MYSQL_PASSWORD" "$${MYSQL_DATABASE:-$$MYSQL_DB}"' < docker/mysql/migrations/003_weather_observations_snapshot_date.sql
+
+verify-weather-003:
+	docker compose exec -T mysql sh -lc 'mysql -u"$$MYSQL_USER" -p"$$MYSQL_PASSWORD" "$${MYSQL_DATABASE:-$$MYSQL_DB}" -e "SHOW INDEX FROM weather_observations; SELECT COUNT(*) AS total_rows, COUNT(DISTINCT CONCAT(province, '\''|'\'', snapshot_date)) AS distinct_province_day FROM weather_observations; SELECT province, snapshot_date, COUNT(*) AS cnt FROM weather_observations GROUP BY province, snapshot_date HAVING COUNT(*) > 1 LIMIT 20;"'
