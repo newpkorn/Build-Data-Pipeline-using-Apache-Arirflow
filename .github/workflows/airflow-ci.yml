@@ -45,6 +45,13 @@ jobs:
                       git checkout -f ${{ github.sha }}
                       git rev-parse --short HEAD
 
+                      # Load repository env vars for migration auth on VM shell.
+                      if [ -f .env ]; then
+                        set -a
+                        . ./.env
+                        set +a
+                      fi
+
                       docker compose up -d mysql
                       MYSQL_CID=$(docker compose ps -q mysql)
                       if [ -z "$MYSQL_CID" ]; then
