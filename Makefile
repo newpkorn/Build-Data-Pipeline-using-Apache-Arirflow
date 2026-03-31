@@ -12,6 +12,7 @@ help:
 	@echo "  make test-fx           - Run FX pipeline tests"
 	@echo "  make test-data-quality - Run data quality tests"
 	@echo "  make test-weather      - Run weather pipeline tests"
+	@echo "  make backup-weather    - Run weather database backup"
 	@echo "  make migrate-weather-001 - Run weather region migration (001)"
 	@echo "  make migrate-weather-002 - Run weather daily uniqueness migration (002)"
 	@echo "  make migrate-weather-003 - Run weather snapshot-date migration (003)"
@@ -45,6 +46,10 @@ test-data-quality:
 
 test-weather:
 	docker exec -e PYTHONPATH=/opt/airflow/dags airflow-webserver pytest tests/test_weather_pipeline.py
+
+# Weather database backup
+backup-weather:
+	docker compose exec -T mysql sh -lc 'ts=$$(date +%Y%m%d_%H%M%S); mysql -u"$$MYSQL_USER" -p"$$MYSQL_PASSWORD" "$${MYSQL_DATABASE:-$$MYSQL_DB}" -e "CREATE TABLE weather_observations_backup_$${ts} LIKE weather_observations; INSERT INTO weather_observations_backup_$${ts} SELECT * FROM weather_observations;"'
 
 # Weather migrations
 migrate-weather-001:
